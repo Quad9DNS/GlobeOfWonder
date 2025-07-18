@@ -1,0 +1,52 @@
+name: Main build
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      VITE_APP_VERSION: "${{ github.ref_name }}.${{ github.sha }}"
+      VITE_WEBSOCKET_URL: "wss://view.quad9.net/websocket/5001"
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project in test mode
+        env:
+          VITE_SHOW_APP_VERSION: true
+          VITE_COUNTRIES_GEOJSON_URL: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/country-polygons/ne_110m_admin_0_countries.geojson"
+          VITE_COUNTRIES_STATES_GEOJSON_URL: "https://raw.githubusercontent.com/Quad9DNS/globeofwonder/refs/heads/main/public/assets/data/states/"
+          VITE_GLOBE_MAP_URL_DARK: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-night.jpg"
+          VITE_GLOBE_MAP_URL_LIGHT: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-day.jpg"
+          VITE_GLOBE_BUMP_MAP_URL: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-topology.jpg"
+        run: npm run build && rm -rf ./dist/assets/img && rm -rf ./dist/assets/data
+
+      - name: Upload testing build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-files
+          path: ./dist
+
+      - name: Build project in production mode
+        env:
+          VITE_SHOW_APP_VERSION: true
+        run: npm run build
+
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-files
+          path: ./dist

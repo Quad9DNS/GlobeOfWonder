@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint project
+        run: npm run lint
+
+      - name: Build the project
+        run: npm run build
