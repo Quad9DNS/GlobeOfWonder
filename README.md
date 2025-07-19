@@ -63,6 +63,7 @@ To also fix the issues which can be fixed automatically, run: `npm run lint:fix`
 <p align="center">
  <img src="gow2.png" alt="GlobeOfWonder-ExampleScreenshot1">
  <img src="gow3.png" alt="GlobeOfWonder-ExampleScreenshot2">
+ <img src="gow4.png" alt="GlobeOfWonder-ExampleScreenshot3">
  <img src="GoW-example3-2025-03-25.png" alt="GlobeOfWonder-ExampleScreenshot3">
  <img src="gow-pref1.png" alt="GlobeOfWonder-OptionsMenu">
    <img src="gow-pref2.png" alt="GlobeOfWonder-OptionsMenu2">
