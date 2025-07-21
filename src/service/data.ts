@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { clamp, lerp } from "three/src/math/MathUtils.js";
+import { clamp } from "three/src/math/MathUtils.js";
 import { ExplosionCustomizationData, ExplosionData } from "../data/explosion";
 import { LabelsData } from "../data/label";
 import { LinkData } from "../data/link";
@@ -105,8 +105,8 @@ export type LifetimeData = {
   fade_duration: number | null;
 };
 export type CounterData = {
-  counter: number | null;
-  counter_include: boolean | null;
+  counter?: number | null;
+  counter_include?: boolean | null;
 };
 type TypeData = {
   type:
@@ -360,18 +360,7 @@ function buildAndPublishType(
     case "explosion":
     default:
       state.newPointsQueue.push(
-        new ExplosionData({
-          inflation_factor:
-            (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
-              ? 1.0
-              : lerp(
-                  1,
-                  settings.maximumScale,
-                  clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
-                    settings.maximumScaleCounter,
-                ),
-          ...(data as ExplosionServiceData),
-        }),
+        ExplosionData.withSettings(data as ExplosionServiceData, settings),
       );
       break;
   }

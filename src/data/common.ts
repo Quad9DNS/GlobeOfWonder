@@ -3,7 +3,7 @@ import { LayerData, PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 export const VEC3_ZERO = new THREE.Vector3(0, 0, 0);
 
@@ -25,6 +25,7 @@ export abstract class CommonData<T>
   total_lifetime: number;
   fade_duration: number;
   always_faces_viewer: boolean;
+  counter: number | null;
 
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
@@ -110,10 +111,12 @@ export abstract class CommonData<T>
     ttl = null,
     fade_duration = null,
     always_faces_viewer = null,
+    counter = null,
     ...additional_data
   }: T &
     PositionData &
     LifetimeData &
+    CounterData &
     LabelsData &
     LinkData &
     LayerData &
@@ -133,6 +136,7 @@ export abstract class CommonData<T>
 
     this.total_lifetime = ttl ?? Infinity;
     this.fade_duration = fade_duration ?? 0;
+    this.counter = counter;
   }
 
   scaleZ(): boolean {

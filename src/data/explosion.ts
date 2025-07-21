@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { LayerData, PointData, ScaleData } from ".";
-import { lerp } from "three/src/math/MathUtils.js";
+import { clamp, lerp } from "three/src/math/MathUtils.js";
 import { HoverTextData } from "./hover";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
@@ -12,7 +12,8 @@ import {
   UNIT_KMS,
 } from "../globe/common";
 import { CommonData } from "./common";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { Settings } from "../settings";
 
 const MAX_SPAWN_DELAY_MS = 5000;
 const RANDOM_OFFSET_MAX_KM = 20;
@@ -101,17 +102,17 @@ export class ExplosionData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       ExplosionCustomizationData &
       HoverTextData &
       LabelsData &
       LinkData &
       LayerData &
-      ScaleData & { inflation_factor: number | null },
+      ScaleData & { inflation_factor?: number | null },
   ) {
     super(data);
-    this.inflation_factor = data.inflation_factor ?? 1.0;
-
+    this.inflation_factor = data.inflation_factor ?? 1;
     this.total_lifetime = data.explosion_fallback_radius_interval
       ? data.explosion_fallback_radius_interval +
         (data.explosion_initial_radius_interval ??
@@ -144,6 +145,32 @@ export class ExplosionData
     this.fallback_radius = data.explosion_fallback_radius_size
       ? data.explosion_fallback_radius_size / UNIT_KMS
       : 1;
+  }
+
+  public static withSettings(
+    data: PositionData &
+      CounterData &
+      LifetimeData &
+      ExplosionCustomizationData &
+      HoverTextData &
+      LabelsData &
+      LinkData &
+      LayerData &
+      ScaleData,
+    settings: Settings,
+  ) {
+    return new ExplosionData({
+      ...data,
+      inflation_factor:
+        (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
+          ? 1.0
+          : lerp(
+              1,
+              settings.maximumScale,
+              clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
+                settings.maximumScaleCounter,
+            ),
+    });
   }
 
   public get hover_text(): string | null {
@@ -308,6 +335,7 @@ export class ExplosionData
       fade_duration: this.fade_duration,
       inflation_factor: this.inflation_factor,
       always_faces_viewer: this.always_faces_viewer,
+      counter: this.counter,
       ...this.additional_data,
     });
     return new_data;

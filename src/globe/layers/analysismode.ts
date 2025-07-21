@@ -16,6 +16,7 @@ import {
   GlobeLayerPreUpdateHook,
   GlobeLayerSettingsHook,
 } from "../layer";
+import { AnalysisModeData } from "../../data/analysismode";
 
 /**
  * Globe layer that provides analysis mode implementation
@@ -34,13 +35,13 @@ export class AnalysisModeLayer
     GlobeLayerDataUpdateHook
 {
   readonly layerName: string = "AnalysisMode";
-  private barsData: ExplosionData[] = [];
+  private data: AnalysisModeData[] = [];
   private analysisModeDecay: number = 60;
   private startColor = QUAD9_COLOR;
   private endColor = DEFAULT_CRITICAL_COLOR;
   private maxHeightCount = 10000;
   private maxHeightKms = 800;
-  private globe: ThreeGlobe | null = null;
+  private globe?: ThreeGlobe;
 
   attachToGlobe(
     globe: ThreeGlobe,
@@ -69,7 +70,10 @@ export class AnalysisModeLayer
       )
       .hexBinPointLat("lat")
       .hexBinPointLng("lon")
-      .hexBinPointWeight((o: object) => (o as ExplosionData).inflation_factor)
+      .hexBinPointWeight((o: object) => {
+        // WARN: Internally, three-globe breaks down objects passed to hexBin, so we can't use methods from AnalysisModeData, only fields
+        return (o as AnalysisModeData).counter ?? 1;
+      })
       .hexBinMerge(true)
       .hexBinResolution(3)
       .hexAltitude(({ sumWeight }) =>
@@ -118,7 +122,7 @@ export class AnalysisModeLayer
   }
 
   preUpdate(): void {
-    mapAndFilter(this.barsData);
+    mapAndFilter(this.data);
   }
 
   shouldTakePoint(point: PointData): boolean {
@@ -126,13 +130,12 @@ export class AnalysisModeLayer
   }
 
   takeNewPoint(point: PointData): void {
-    (point as ExplosionData).total_lifetime = this.analysisModeDecay * 1000;
-    this.barsData.push(point as ExplosionData);
+    this.data.push(new AnalysisModeData(point, this.analysisModeDecay * 1000));
   }
 
   updateData(globe: ThreeGlobe, settings: Settings): void {
     if (settings.enableAnalysisMode) {
-      globe.hexBinPointsData(this.barsData);
+      globe.hexBinPointsData(this.data);
     } else {
       globe.hexBinPointsData([]);
     }

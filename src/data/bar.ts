@@ -5,7 +5,7 @@ import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { UNIT_KMS } from "../globe/common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize bar
@@ -46,6 +46,7 @@ export class BarData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       BarCustomizationData &
       LabelsData &
@@ -83,6 +84,7 @@ export class BarData
       ttl: this.total_lifetime,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
+      counter: this.counter,
       ...this.additional_data,
     });
     return new_data;

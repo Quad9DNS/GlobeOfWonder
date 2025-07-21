@@ -5,7 +5,7 @@ import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { geoDistance, geoMidPoint, UNIT_KMS } from "../globe/common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 export type ArcLineType = "solid" | "dashed_large" | "dashed_small" | "dots";
 
@@ -67,6 +67,7 @@ export class ArcData
 
   constructor(
     data: ArcCustomizationData &
+      CounterData &
       PositionData &
       LifetimeData &
       LabelsData &
@@ -124,6 +125,7 @@ export class ArcData
         ttl: this.total_lifetime - (this.arc_draw_duration ?? 200),
         fade_duration: this.fade_duration,
         always_faces_viewer: this.always_faces_viewer,
+        counter: this.counter,
         ...this.additional_data,
       },
     );
@@ -134,6 +136,7 @@ export class ArcData
       lat: this.lat,
       lon: this.lon,
       ttl: this.total_lifetime,
+      counter: this.counter,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
       ...this.additional_data,
@@ -156,6 +159,7 @@ export class ArcLabel
     defaultHeight: number,
     startTime: number,
     data: PositionData &
+      CounterData &
       LifetimeData &
       ArcCustomizationData &
       LabelsData &
@@ -182,6 +186,7 @@ export class ArcLabel
       lat: this.lat,
       lon: this.lon,
       ttl: this.total_lifetime,
+      counter: this.counter,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
     });

@@ -4,7 +4,7 @@ import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize pointers
@@ -45,6 +45,7 @@ export class PointerData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       PointerCustomizationData &
       LabelsData &
@@ -89,6 +90,7 @@ export class PointerData
       lon: this.lon,
       ttl: this.total_lifetime,
       fade_duration: this.fade_duration,
+      counter: this.counter,
       always_faces_viewer: this.always_faces_viewer,
       ...this.additional_data,
     });

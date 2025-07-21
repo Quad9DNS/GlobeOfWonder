@@ -3,7 +3,7 @@ import { CommonData } from "./common";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize downloaded objects (images).
@@ -39,6 +39,7 @@ export class DownloadedData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       DownloadedCustomizationData &
       LabelsData &
@@ -68,6 +69,7 @@ export class DownloadedData
       ttl: this.total_lifetime,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
+      counter: this.counter,
       ...this.additional_data,
     });
     return new_data;

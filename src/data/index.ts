@@ -28,6 +28,11 @@ export interface PointData {
   always_faces_viewer: boolean;
 
   /**
+   * Number of actual events represented by this point.
+   */
+  counter: number | null;
+
+  /**
    * Whether the object should be displayed. It can change throughout the object lifetime.
    *
    * @returns true if object should be visible, false otherwise
