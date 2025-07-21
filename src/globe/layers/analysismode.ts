@@ -36,7 +36,6 @@ export class AnalysisModeLayer
   readonly layerName: string = "AnalysisMode";
   private barsData: ExplosionData[] = [];
   private analysisModeDecay: number = 60;
-  private totalWeightSum = 0;
   private startColor = QUAD9_COLOR;
   private endColor = DEFAULT_CRITICAL_COLOR;
   private maxHeightCount = 10000;
@@ -119,12 +118,7 @@ export class AnalysisModeLayer
   }
 
   preUpdate(): void {
-    this.totalWeightSum = 0;
-    mapAndFilter(this.barsData, {
-      retainedElementCallback: (val) => {
-        this.totalWeightSum += val.inflation_factor;
-      },
-    });
+    mapAndFilter(this.barsData);
   }
 
   shouldTakePoint(point: PointData): boolean {

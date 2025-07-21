@@ -810,7 +810,7 @@ function renderDialog(dialogContainer: HTMLElement) {
         <label for="analysismodemaxheightkms">Analysis mode event maximum height in kms:</label>
         <input type="number" min="1" step="1" id="analysismodemaxheightkms" name="analysismodemaxheightkms" />
         <label for="analysismodedecay">Analysis mode decay in seconds:</label>
-        <input type="number" min="1" max="120" step="0.1" id="analysismodedecay" name="analysismodedecay" />
+        <input type="number" min="1" step="0.1" id="analysismodedecay" name="analysismodedecay" />
         <label for="analysismodestartcolor">Analysis mode color at lowest height:</label>
         <input type="color" id="analysismodestartcolor" name="analysismodestartcolor" />
         <label for="analysismodeendcolor">Analysis mode color at highest height:</label>
