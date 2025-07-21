@@ -70,6 +70,7 @@ export class DownloadedData
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
       counter: this.counter,
+      counter_include: this.counter_include,
       ...this.additional_data,
     });
     return new_data;

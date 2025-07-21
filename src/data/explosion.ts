@@ -333,6 +333,7 @@ export class ExplosionData
       inflation_factor: this.inflation_factor,
       always_faces_viewer: this.always_faces_viewer,
       counter: this.counter,
+      counter_include: this.counter_include,
       ...this.additional_data,
     });
     return new_data;

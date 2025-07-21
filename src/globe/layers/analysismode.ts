@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import ThreeGlobe from "three-globe";
 import { Settings, SettingsChangedEvent } from "../../settings";
-import { ExplosionData } from "../../data/explosion";
 import { mapAndFilter, PointData } from "../../data";
 import {
   DEFAULT_CRITICAL_COLOR,
@@ -126,7 +125,7 @@ export class AnalysisModeLayer
   }
 
   shouldTakePoint(point: PointData): boolean {
-    return point instanceof ExplosionData;
+    return point.counter_include ?? true;
   }
 
   takeNewPoint(point: PointData): void {

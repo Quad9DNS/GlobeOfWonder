@@ -80,6 +80,7 @@ export class CircleData
       ttl: this.total_lifetime,
       fade_duration: this.fade_duration,
       counter: this.counter,
+      counter_include: this.counter_include,
       always_faces_viewer: this.always_faces_viewer,
       ...this.additional_data,
     });

@@ -126,6 +126,7 @@ export class ArcData
         fade_duration: this.fade_duration,
         always_faces_viewer: this.always_faces_viewer,
         counter: this.counter,
+        counter_include: this.counter_include,
         ...this.additional_data,
       },
     );
@@ -137,6 +138,7 @@ export class ArcData
       lon: this.lon,
       ttl: this.total_lifetime,
       counter: this.counter,
+      counter_include: this.counter_include,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
       ...this.additional_data,
@@ -187,6 +189,7 @@ export class ArcLabel
       lon: this.lon,
       ttl: this.total_lifetime,
       counter: this.counter,
+      counter_include: this.counter_include,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
     });

@@ -26,6 +26,7 @@ export abstract class CommonData<T>
   fade_duration: number;
   always_faces_viewer: boolean;
   counter?: number;
+  counter_include?: boolean;
 
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
@@ -112,6 +113,7 @@ export abstract class CommonData<T>
     fade_duration = undefined,
     always_faces_viewer = undefined,
     counter = undefined,
+    counter_include = undefined,
     ...additional_data
   }: T &
     PositionData &
@@ -137,6 +139,7 @@ export abstract class CommonData<T>
     this.total_lifetime = ttl ?? Infinity;
     this.fade_duration = fade_duration ?? 0;
     this.counter = counter;
+    this.counter_include = counter_include;
   }
 
   scaleZ(): boolean {

@@ -33,6 +33,12 @@ export interface PointData {
   counter?: number;
 
   /**
+   * Whether this event is included in event counter (and other layers that might depend on it, like analysis)
+   * Defaults to true
+   */
+  counter_include?: boolean;
+
+  /**
    * Whether the object should be displayed. It can change throughout the object lifetime.
    *
    * @returns true if object should be visible, false otherwise
