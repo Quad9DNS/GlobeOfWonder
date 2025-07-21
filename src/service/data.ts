@@ -26,6 +26,7 @@ const COMMON_NON_FILTER_KEYS = [
   "lon",
   "ttl",
   "fade_duration",
+  "draw_delay",
   "opacity",
   "counter",
   "counter_include",
@@ -103,6 +104,7 @@ export type PositionData = {
 export type LifetimeData = {
   ttl: number | null;
   fade_duration: number | null;
+  draw_delay: number | null;
 };
 export type CounterData = {
   counter: number | null;

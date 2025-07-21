@@ -7,6 +7,15 @@ import { LifetimeData, PositionData } from "../service/data";
 
 export const VEC3_ZERO = new THREE.Vector3(0, 0, 0);
 
+type SharedData<T> = T &
+  PositionData &
+  LifetimeData &
+  LabelsData &
+  LinkData &
+  LayerData &
+  ScaleData &
+  HoverTextData;
+
 /**
  * Abstract point implementation.
  * Since many points will share a lot of data and logic, this is provided to make it easier to add new point types.
@@ -104,25 +113,11 @@ export abstract class CommonData<T>
     return this.additional_data.hover_text;
   }
 
-  constructor({
-    lat,
-    lon,
-    ttl = null,
-    fade_duration = null,
-    always_faces_viewer = null,
-    ...additional_data
-  }: T &
-    PositionData &
-    LifetimeData &
-    LabelsData &
-    LinkData &
-    LayerData &
-    ScaleData &
-    HoverTextData) {
+  constructor({ lat, lon, ...additional_data }: SharedData<T>) {
     this.lat = lat;
     this.lon = lon;
     this.startTime = Date.now();
-    this.always_faces_viewer = always_faces_viewer ?? false;
+    this.always_faces_viewer = additional_data.always_faces_viewer ?? false;
     this.lifetime = 0;
     this.additional_data = additional_data as T &
       LabelsData &
@@ -131,8 +126,13 @@ export abstract class CommonData<T>
       ScaleData &
       HoverTextData;
 
-    this.total_lifetime = ttl ?? Infinity;
-    this.fade_duration = fade_duration ?? 0;
+    this.total_lifetime = additional_data.ttl ?? Infinity;
+    this.fade_duration = additional_data.fade_duration ?? 0;
+
+    if (additional_data.draw_delay) {
+      this.startTime += additional_data.draw_delay;
+      this.lifetime -= additional_data.draw_delay;
+    }
   }
 
   scaleZ(): boolean {
@@ -188,6 +188,21 @@ export abstract class CommonData<T>
       0,
       (this.total_lifetime - this.lifetime) / this.fade_duration,
     );
+  }
+
+  /**
+   * Clones shared data used by this object
+   */
+  protected cloneData(): SharedData<T> {
+    return {
+      ...this.additional_data,
+      lat: this.lat,
+      lon: this.lon,
+      ttl: this.total_lifetime,
+      draw_delay: this.lifetime < 0 ? -this.lifetime : null,
+      fade_duration: this.fade_duration,
+      always_faces_viewer: this.always_faces_viewer,
+    };
   }
 
   clone(): PointData {

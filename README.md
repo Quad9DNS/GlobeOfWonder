@@ -33,9 +33,7 @@ Once a JSON websocket stream is successfully ingested, any fields in the JSON wi
 
 There are values that can be added to the URL for auto-connection and first-view behaviors: websocketUsername (string of username), websocketPassword (string of password, unencrypted), and autoconnect (true/false), startupZoom (how far to zoom the map) and startupLat/startupLon.
 
-The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates. 
-
-There is a slight randomized delay built in to events being placed on the map to "smooth" events across time. This was due to websocket buffers emptying quickly, which caused bursty behaviors and unpleasing rendering. This probably should be made into an optional smoothing mechanism but is currently hard-coded.
+The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates.
 
 Events with 0,0 as lat/lon are not shown.
 
@@ -79,6 +77,7 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | type                               | explosion                                         | Type of the event (explosion, circle, pointer, bar, downloaded, arc)                                                                                 |
 | ttl                                | 15000 (explosion), 5000 (arc), Infinity otherwise | How long the item should be visible on the map                                                                                                       |
 | fade_duration                      | -                                                 | Fade period at the end of object lifetime                                                                                                            |
+| draw_delay                         | -                                                 | Delay the drawing of this object in ms. Can be useful to add random delays, or to precisely control objects display time                             |
 | opacity                            | 100                                               | Object opacity (0-100). This can be further modified with global opacity slider and per layer opacity sliders                                        |
 | layer_id                           | -                                                 | Assigns this object to a specific layer (number id). All layers can be controlled in settings, by subtracting opacity from all objects in the layer  |
 | layer_name                         | -                                                 | If defined, sets a name for this layer in the settings dialog.                                                                                       |
@@ -180,7 +179,7 @@ sources:
           counter=$$(shuf -i 1-30 -n 1);
           echo "{\"lat\": $$lat, \"lon\": $$lon, \"pop\": \"$$pop\", \"country\": \"$$country\", \"counter\": $$counter}";
         done
-                
+
 enrichment_tables:
   globe_access:
     type: "file"
@@ -198,7 +197,7 @@ transforms:
     inputs: ["random_json"]
     source: |
       . = parse_json!(.message)
-      
+
 sinks:
   websocket_sink_5007:
     inputs: ["parse_message"]
