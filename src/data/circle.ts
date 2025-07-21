@@ -13,19 +13,19 @@ export interface CircleCustomizationData {
   /**
    * Radius of the circle in kilometers.
    */
-  circle_radius: number | null;
+  circle_radius?: number;
   /**
    * Color of the circle.
    */
-  circle_color: THREE.Color | null;
+  circle_color?: THREE.Color;
   /**
    * Thickness of the circle outline. Relative scale.
    */
-  circle_outline_thickness: number | null;
+  circle_outline_thickness?: number;
   /**
    * Color of the circle outline.
    */
-  circle_outline_color: THREE.Color | null;
+  circle_outline_color?: THREE.Color;
 }
 
 /**
@@ -56,16 +56,16 @@ export class CircleData
     super(data);
   }
 
-  public get circle_radius(): number | null {
+  public get circle_radius(): number | undefined {
     return this.additional_data.circle_radius;
   }
-  public get circle_color(): THREE.Color | null {
+  public get circle_color(): THREE.Color | undefined {
     return this.additional_data.circle_color;
   }
-  public get circle_outline_thickness(): number | null {
+  public get circle_outline_thickness(): number | undefined {
     return this.additional_data.circle_outline_thickness;
   }
-  public get circle_outline_color(): THREE.Color | null {
+  public get circle_outline_color(): THREE.Color | undefined {
     return this.additional_data.circle_outline_color;
   }
 

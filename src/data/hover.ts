@@ -6,7 +6,7 @@ export interface HoverTextData {
    * Text to display when hovering over an object.
    * If object also has a label defined, then this only appears on click.
    */
-  readonly hover_text: string | null;
+  readonly hover_text?: string;
 }
 
 /**

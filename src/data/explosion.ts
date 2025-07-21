@@ -36,27 +36,27 @@ export interface ExplosionCustomizationData {
   /**
    * Initial explosion color. Color used while the explosion is expanding.
    */
-  explosion_initial_color: THREE.Color | null;
+  explosion_initial_color?: THREE.Color;
   /**
    * How long the explosion should take to settle down in milliseconds.
    */
-  explosion_initial_radius_interval: number | null;
+  explosion_initial_radius_interval?: number;
   /**
    * Radius of the explosion at its highest in kilometers.
    */
-  explosion_initial_radius_size: number | null;
+  explosion_initial_radius_size?: number;
   /**
    * Fallback explosion color. Color used after explosion settles down.
    */
-  explosion_fallback_color: THREE.Color | null;
+  explosion_fallback_color?: THREE.Color;
   /**
    * How long the explosion should stay settled down in milliseconds.
    */
-  explosion_fallback_radius_interval: number | null;
+  explosion_fallback_radius_interval?: number;
   /**
    * Radius of the explosion when settled down in kilometers.
    */
-  explosion_fallback_radius_size: number | null;
+  explosion_fallback_radius_size?: number;
 }
 
 /**
@@ -173,25 +173,22 @@ export class ExplosionData
     });
   }
 
-  public get hover_text(): string | null {
-    return this.additional_data.hover_text;
-  }
-  public get explosion_initial_color(): THREE.Color | null {
+  public get explosion_initial_color(): THREE.Color | undefined {
     return this.additional_data.explosion_initial_color;
   }
-  public get explosion_initial_radius_interval(): number | null {
+  public get explosion_initial_radius_interval(): number | undefined {
     return this.additional_data.explosion_initial_radius_interval;
   }
-  public get explosion_initial_radius_size(): number | null {
+  public get explosion_initial_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
   }
-  public get explosion_fallback_color(): THREE.Color | null {
+  public get explosion_fallback_color(): THREE.Color | undefined {
     return this.additional_data.explosion_fallback_color;
   }
-  public get explosion_fallback_radius_interval(): number | null {
+  public get explosion_fallback_radius_interval(): number | undefined {
     return this.additional_data.explosion_initial_radius_interval;
   }
-  public get explosion_fallback_radius_size(): number | null {
+  public get explosion_fallback_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
   }
 

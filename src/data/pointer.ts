@@ -13,19 +13,19 @@ export interface PointerCustomizationData {
   /**
    * Color of the pointer background (the main part of the pointer)
    */
-  pointer_background_color: THREE.Color | null;
+  pointer_background_color?: THREE.Color;
   /**
    * Color of the pointer outline (border)
    */
-  pointer_border_color: THREE.Color | null;
+  pointer_border_color?: THREE.Color;
   /**
    * Relative scale of the pointer
    */
-  pointer_scale: number | null;
+  pointer_scale?: number;
   /**
    * Color of the pointer glyph (circle in the middle)
    */
-  pointer_glyph_color: THREE.Color | null;
+  pointer_glyph_color?: THREE.Color;
 }
 
 /**
@@ -62,16 +62,16 @@ export class PointerData
     );
   }
 
-  public get pointer_background_color(): THREE.Color | null {
+  public get pointer_background_color(): THREE.Color | undefined {
     return this.additional_data.pointer_background_color;
   }
-  public get pointer_border_color(): THREE.Color | null {
+  public get pointer_border_color(): THREE.Color | undefined {
     return this.additional_data.pointer_border_color;
   }
-  public get pointer_scale(): number | null {
+  public get pointer_scale(): number | undefined {
     return this.additional_data.pointer_scale;
   }
-  public get pointer_glyph_color(): THREE.Color | null {
+  public get pointer_glyph_color(): THREE.Color | undefined {
     return this.additional_data.pointer_glyph_color;
   }
 

@@ -8,7 +8,7 @@ export class AnalysisModeData implements PointData {
   lon: number;
   total_lifetime: number;
   startTime: number;
-  counter: number | null;
+  counter?: number;
 
   public get fade_duration(): number {
     return 0;

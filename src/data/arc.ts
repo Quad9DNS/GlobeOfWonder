@@ -26,28 +26,28 @@ export interface ArcCustomizationData {
   /**
    * Color of the arc.
    */
-  arc_color: THREE.Color | null;
+  arc_color?: THREE.Color;
   /**
    * Type of the arc line. It can either be completely solid or dashed with different gap sizes.
    */
-  arc_line_type: ArcLineType | null;
+  arc_line_type?: ArcLineType;
   /**
    * Whether the arc should be animated.
    * If set to true, arc will move from start to end position.
    * Only useful if {@link arc_line_type} is not solid.
    */
-  arc_animated: boolean | null;
+  arc_animated?: boolean;
   /**
    * Defines how long the arc should take to draw when appearing initially.
    * Drawing starts from start point and moves to end point.
    * Removing the arc takes same time to complete and removes from start to end also.
    */
-  arc_draw_duration: number | null;
+  arc_draw_duration?: number;
   /**
    * Height of arc in kilometers at its highest point.
    * If not set, it will be equal to half of the haversine distance between the points.
    */
-  arc_max_height: number | null;
+  arc_max_height?: number;
 }
 
 /**
@@ -84,19 +84,19 @@ export class ArcData
   public get point2_lon(): number {
     return this.additional_data.point2_lon;
   }
-  public get arc_color(): THREE.Color | null {
+  public get arc_color(): THREE.Color | undefined {
     return this.additional_data.arc_color;
   }
-  public get arc_line_type(): ArcLineType | null {
+  public get arc_line_type(): ArcLineType | undefined {
     return this.additional_data.arc_line_type;
   }
-  public get arc_animated(): boolean | null {
+  public get arc_animated(): boolean | undefined {
     return this.additional_data.arc_animated;
   }
-  public get arc_draw_duration(): number | null {
+  public get arc_draw_duration(): number | undefined {
     return this.additional_data.arc_draw_duration;
   }
-  public get arc_max_height(): number | null {
+  public get arc_max_height(): number | undefined {
     return this.additional_data.arc_max_height;
   }
 

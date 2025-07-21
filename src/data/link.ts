@@ -5,11 +5,11 @@ export interface LinkData {
   /**
    * Link to open when object is clicked (or when its hover window is clicked if `hover_text` is defined)
    */
-  readonly link_url: string | null;
+  readonly link_url?: string;
   /**
    * Whether to open the link in a new window
    */
-  readonly new_window: boolean | null;
+  readonly new_window?: boolean;
 }
 
 /**

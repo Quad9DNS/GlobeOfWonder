@@ -98,15 +98,15 @@ const FLOAT_KEYS = [
 export type PositionData = {
   lat: number;
   lon: number;
-  always_faces_viewer: boolean | null;
+  always_faces_viewer?: boolean;
 };
 export type LifetimeData = {
-  ttl: number | null;
-  fade_duration: number | null;
+  ttl?: number;
+  fade_duration?: number;
 };
 export type CounterData = {
-  counter?: number | null;
-  counter_include?: boolean | null;
+  counter?: number;
+  counter_include?: boolean;
 };
 type TypeData = {
   type:

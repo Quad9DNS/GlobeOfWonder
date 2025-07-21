@@ -25,7 +25,7 @@ export abstract class CommonData<T>
   total_lifetime: number;
   fade_duration: number;
   always_faces_viewer: boolean;
-  counter: number | null;
+  counter?: number;
 
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
@@ -56,62 +56,62 @@ export abstract class CommonData<T>
     ScaleData &
     HoverTextData;
 
-  public get display_text(): string | null {
+  public get display_text(): string | undefined {
     return this.additional_data.display_text;
   }
-  public get display_text_interval(): number | null {
+  public get display_text_interval(): number | undefined {
     return this.additional_data.display_text_interval;
   }
-  public get display_text_font(): string | null {
+  public get display_text_font(): string | undefined {
     return this.additional_data.display_text_font;
   }
-  public get display_text_font_size(): number | null {
+  public get display_text_font_size(): number | undefined {
     return this.additional_data.display_text_font_size;
   }
-  public get display_text_font_style(): string | null {
+  public get display_text_font_style(): string | undefined {
     return this.additional_data.display_text_font_style;
   }
-  public get display_text_color(): THREE.Color | null {
+  public get display_text_color(): THREE.Color | undefined {
     return this.additional_data.display_text_color;
   }
-  public get display_text_outline_color(): THREE.Color | null {
+  public get display_text_outline_color(): THREE.Color | undefined {
     return this.additional_data.display_text_outline_color;
   }
-  public get display_text_always_faces_viewer(): boolean | null {
+  public get display_text_always_faces_viewer(): boolean | undefined {
     return this.additional_data.display_text_always_faces_viewer;
   }
-  public get display_text_hover_only(): boolean | null {
+  public get display_text_hover_only(): boolean | undefined {
     return this.additional_data.display_text_hover_only;
   }
-  public get link_url(): string | null {
+  public get link_url(): string | undefined {
     return this.additional_data.link_url;
   }
-  public get new_window(): boolean | null {
+  public get new_window(): boolean | undefined {
     return this.additional_data.new_window;
   }
-  public get opacity(): number | null {
+  public get opacity(): number | undefined {
     return this.additional_data.opacity;
   }
-  public get layer_id(): number | null {
+  public get layer_id(): number | undefined {
     return this.additional_data.layer_id;
   }
-  public get layer_name(): string | null {
+  public get layer_name(): string | undefined {
     return this.additional_data.layer_name;
   }
-  public get ignore_zoom(): boolean | null {
+  public get ignore_zoom(): boolean | undefined {
     return this.additional_data.ignore_zoom;
   }
-  public get hover_text(): string | null {
+  public get hover_text(): string | undefined {
     return this.additional_data.hover_text;
   }
 
   constructor({
     lat,
     lon,
-    ttl = null,
-    fade_duration = null,
-    always_faces_viewer = null,
-    counter = null,
+    ttl = undefined,
+    fade_duration = undefined,
+    always_faces_viewer = undefined,
+    counter = undefined,
     ...additional_data
   }: T &
     PositionData &

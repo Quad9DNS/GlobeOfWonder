@@ -7,39 +7,39 @@ export interface LabelsData {
   /**
    * Text to display in the label.
    */
-  readonly display_text: string | null;
+  readonly display_text?: string;
   /**
    * Duration for the label to be visible. By default it is visible for as long as the object is.
    */
-  readonly display_text_interval: number | null;
+  readonly display_text_interval?: number;
   /**
    * Font to use for the label.
    */
-  readonly display_text_font: string | null;
+  readonly display_text_font?: string;
   /**
    * Font size to use for the label in pixels. Due to scaling it may not be entirely accurate.
    */
-  readonly display_text_font_size: number | null;
+  readonly display_text_font_size?: number;
   /**
    * Font style to use for the label ("bold", "italic", or combination - "bold italic")
    */
-  readonly display_text_font_style: string | null;
+  readonly display_text_font_style?: string;
   /**
    * Color to use for the label.
    */
-  readonly display_text_color: THREE.Color | null;
+  readonly display_text_color?: THREE.Color;
   /**
    * Text outline color to use for the label.
    */
-  readonly display_text_outline_color: THREE.Color | null;
+  readonly display_text_outline_color?: THREE.Color;
   /**
    * Whether the label should always turn to face the camera.
    */
-  readonly display_text_always_faces_viewer: boolean | null;
+  readonly display_text_always_faces_viewer?: boolean;
   /**
    * Whether the label should be visible only when mouse is hovered above the object.
    */
-  readonly display_text_hover_only: boolean | null;
+  readonly display_text_hover_only?: boolean;
 
   /**
    * Defines label lifetime.

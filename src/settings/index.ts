@@ -699,7 +699,7 @@ export function registerNewLayer(
   fields: SettingsFields,
   settings: Settings,
   layerId: number,
-  layerName: string | null,
+  layerName?: string,
 ) {
   if (settings.layers[layerId]) {
     if (layerName && settings.layers[layerId].name == layerId.toString()) {
