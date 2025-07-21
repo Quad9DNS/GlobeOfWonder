@@ -94,6 +94,7 @@ const FLOAT_KEYS = [
   "arc_draw_duration",
   "arc_max_height",
   "fade_duration",
+  "draw_delay",
 ];
 
 export type PositionData = {
