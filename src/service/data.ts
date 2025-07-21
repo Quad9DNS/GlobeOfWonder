@@ -70,6 +70,7 @@ const NON_FILTER_KEYS = {
     "point2_lat",
     "arc_color",
     "arc_line_type",
+    "arc_line_thickness",
     "arc_animated",
     "arc_draw_duration",
     "arc_max_height",
@@ -92,6 +93,7 @@ const FLOAT_KEYS = [
   "downloaded_object_scale",
   "arc_draw_duration",
   "arc_max_height",
+  "arc_line_thickness",
   "fade_duration",
 ];
 
