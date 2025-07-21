@@ -33,7 +33,7 @@ Once a JSON websocket stream is successfully ingested, any fields in the JSON wi
 
 There are values that can be added to the URL for auto-connection and first-view behaviors: websocketUsername (string of username), websocketPassword (string of password, unencrypted), and autoconnect (true/false), startupZoom (how far to zoom the map) and startupLat/startupLon.
 
-The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates. 
+The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates.
 
 There is a slight randomized delay built in to events being placed on the map to "smooth" events across time. This was due to websocket buffers emptying quickly, which caused bursty behaviors and unpleasing rendering. This probably should be made into an optional smoothing mechanism but is currently hard-coded.
 
@@ -99,7 +99,6 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | link_url                           | -                                                 | Link to open when an event is clicked, or when the hover window is clicked if available.                                                             |
 | new_window                         | true                                              | Whether to open the link in a new window or current window                                                                                           |
 | hover_text                         | -                                                 | Text to display in a dialog when hovering over an object (or clicking if the object also has `display_text` defined).                                |
-| enabledBoundariesLayers            | -                                                 | Comma-separated list (or single) two-digit national code; will show internal state/province/canton/etc. boundaries                                   |
 | explosion_initial_color            | #ff2000 (dark mode) or #5edc20 (light mode)       | Initial color of the "explosion" event.                                                                                                              |
 | explosion_initial_radius_interval  | 1350                                              | Duration in milliseconds until "explosion" settles into stable size.                                                                                 |
 | explosion_initial_radius_size      | 63.71                                             | Radius of "explosion" in kilometers at its highest point when counter is 1.                                                                          |
@@ -181,7 +180,7 @@ sources:
           counter=$$(shuf -i 1-30 -n 1);
           echo "{\"lat\": $$lat, \"lon\": $$lon, \"pop\": \"$$pop\", \"country\": \"$$country\", \"counter\": $$counter}";
         done
-                
+
 enrichment_tables:
   globe_access:
     type: "file"
@@ -199,7 +198,7 @@ transforms:
     inputs: ["random_json"]
     source: |
       . = parse_json!(.message)
-      
+
 sinks:
   websocket_sink_5007:
     inputs: ["parse_message"]
