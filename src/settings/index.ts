@@ -190,6 +190,9 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor bgColor: string = "#000000";
 
+  @SettingsField()
+  accessor enableSettingsDialog: boolean = true;
+
   services: ServiceState[] = [];
 
   setFilter(key: string, newValue: string): void {
@@ -357,7 +360,9 @@ export function setupSettingsDialog(
     "position: absolute; top: 10px; right: 10px; zIndex: 20px; padding: 10px;",
   );
   settingsContainer.className = "two-col-grid";
-  const logo = document.createElement("input");
+  const logo = settings.enableSettingsDialog
+    ? document.createElement("input")
+    : document.createElement("img");
   logo.setAttribute("type", "image");
   logo.id = "quad9logo";
   logo.src = settings.lightMode ? Quad9LogoDark : Quad9LogoLight;
@@ -400,9 +405,11 @@ export function setupSettingsDialog(
   });
   dialog.close();
 
-  fields.openSettingsButton.addEventListener("click", (_event: Event) => {
-    dialog.showModal();
-  });
+  if (settings.enableSettingsDialog) {
+    fields.openSettingsButton.addEventListener("click", (_event: Event) => {
+      dialog.showModal();
+    });
+  }
 
   const applyButton =
     fields.dialogContainer.querySelector<HTMLElement>("#applybutton")!;
