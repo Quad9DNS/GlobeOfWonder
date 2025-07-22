@@ -27,11 +27,11 @@ jobs:
       - name: Build project in test mode
         env:
           VITE_SHOW_APP_VERSION: true
-          VITE_COUNTRIES_GEOJSON_URL: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/country-polygons/ne_110m_admin_0_countries.geojson"
-          VITE_COUNTRIES_STATES_GEOJSON_URL: "https://raw.githubusercontent.com/Quad9DNS/globeofwonder/refs/heads/main/public/assets/data/states/"
-          VITE_GLOBE_MAP_URL_DARK: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-night.jpg"
-          VITE_GLOBE_MAP_URL_LIGHT: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-day.jpg"
-          VITE_GLOBE_BUMP_MAP_URL: "https://raw.githubusercontent.com/vasturiano/three-globe/refs/heads/master/example/img/earth-topology.jpg"
+          VITE_COUNTRIES_GEOJSON_URL: "https://raw.githubusercontent.com/Quad9DNS/GlobeOfWonder/refs/heads/main/public/assets/data/countries.geojson"
+          VITE_COUNTRIES_STATES_GEOJSON_URL: "https://raw.githubusercontent.com/Quad9DNS/GlobeOfWonder/refs/heads/main/public/assets/data/states/"
+          VITE_GLOBE_MAP_URL_DARK: "https://raw.githubusercontent.com/Quad9DNS/GlobeOfWonder/refs/heads/main/public/assets/img/earth-night.jpg"
+          VITE_GLOBE_MAP_URL_LIGHT: "https://raw.githubusercontent.com/Quad9DNS/GlobeOfWonder/refs/heads/main/public/assets/img/earth-day.jpg"
+          VITE_GLOBE_BUMP_MAP_URL: "https://raw.githubusercontent.com/Quad9DNS/GlobeOfWonder/refs/heads/main/public/assets/img/earth-topology.png"
         run: npm run build && rm -rf ./dist/assets/img && rm -rf ./dist/assets/data
 
       - name: Upload testing build files

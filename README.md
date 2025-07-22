@@ -9,7 +9,7 @@ The Globe Of Wonder (GoW) is a WebGL-based spinning or static globe that shows e
 The GoW supports several object types which can be positioned on the map:
 * **Markers:** Markers can be permanent, or can have a "time to live", and can be displayed as a result of websocket objects, or they can be ingested on startup from a JSON file specified by a URL (with a reload interval.) The types of markers are: "Explosions" (spheres that appear and gradually disappear, with varying scales) were the first markers created, followed by circles, pointers, bars (rising away from the planet surface,) and user-specified PNG downloads. Markers can have labels, hover labels, and click-through URLs specified.
 * **Heatmap:** Based on the number of events placed at nearby lat/lon pairs, a heatmap can be generated on the surface of the globe
-* **Analysis mode:** Instead of static bars with fixed heights as markers provide, an analysis mode can be enabled which adds subsequent events in a user-specifiable radius and creates bars that raise away from the surface of the globe with varying heights which may also shrink with customizable decay windows.
+* **Analysis mode:** Instead of static bars with fixed heights as markers provide, an analysis mode can be enabled which adds subsequent events in a user-specifiable radius and creates bars that raise away from the surface of the globe with varying heights which may also shrink with customizable decay windows. This is subtly different from bar markers which are static, as analysis bars rise (additive of "counter" object) if the lat/lon is within three digits of precision of being the same, and fall based on customizable global decay settings.
 * **Arcs** If an event has a pair of lat/lon points, arcs between the two points can be displayed with a variety of animations, line formats/colors, and labels.
 
 Each event can have a counter which indicates a higher weight for that JSON object than a single event. This allows aggregation and saves transmission bandwidth.
@@ -61,6 +61,7 @@ To also fix the issues which can be fixed automatically, run: `npm run lint:fix`
 <p align="center">
  <img src="gow2.png" alt="GlobeOfWonder-ExampleScreenshot1">
  <img src="gow3.png" alt="GlobeOfWonder-ExampleScreenshot2">
+ <img src="gow4.png" alt="GlobeOfWonder-ExampleScreenshot3">
  <img src="GoW-example3-2025-03-25.png" alt="GlobeOfWonder-ExampleScreenshot3">
  <img src="gow-pref1.png" alt="GlobeOfWonder-OptionsMenu">
    <img src="gow-pref2.png" alt="GlobeOfWonder-OptionsMenu2">
@@ -97,7 +98,6 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | link_url                           | -                                                 | Link to open when an event is clicked, or when the hover window is clicked if available.                                                             |
 | new_window                         | true                                              | Whether to open the link in a new window or current window                                                                                           |
 | hover_text                         | -                                                 | Text to display in a dialog when hovering over an object (or clicking if the object also has `display_text` defined).                                |
-| enabledBoundariesLayers            | -                                                 | Comma-separated list (or single) two-digit national code; will show internal state/province/canton/etc. boundaries                                   |
 | explosion_initial_color            | #ff2000 (dark mode) or #5edc20 (light mode)       | Initial color of the "explosion" event.                                                                                                              |
 | explosion_initial_radius_interval  | 1350                                              | Duration in milliseconds until "explosion" settles into stable size.                                                                                 |
 | explosion_initial_radius_size      | 63.71                                             | Radius of "explosion" in kilometers at its highest point when counter is 1.                                                                          |
