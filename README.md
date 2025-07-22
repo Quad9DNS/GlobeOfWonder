@@ -33,8 +33,6 @@ Once a JSON websocket stream is successfully ingested, any fields in the JSON wi
 
 There are values that can be added to the URL for auto-connection and first-view behaviors: websocketUsername (string of username), websocketPassword (string of password, unencrypted), and autoconnect (true/false), startupZoom (how far to zoom the map) and startupLat/startupLon.
 
-The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates.
-
 Events with 0,0 as lat/lon are not shown.
 
 If the websocket disconnects, there will be a 5 second delay, and then a re-connection will be attempted.

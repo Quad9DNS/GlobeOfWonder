@@ -4,18 +4,10 @@ import { clamp, lerp } from "three/src/math/MathUtils.js";
 import { HoverTextData } from "./hover";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import {
-  DEFAULT_CRITICAL_COLOR,
-  KM_TO_LATITUDE,
-  KM_TO_LONGITUDE,
-  QUAD9_COLOR,
-  UNIT_KMS,
-} from "../globe/common";
+import { DEFAULT_CRITICAL_COLOR, QUAD9_COLOR, UNIT_KMS } from "../globe/common";
 import { CommonData } from "./common";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
 import { Settings } from "../settings";
-
-const RANDOM_OFFSET_MAX_KM = 20;
 
 const DEFAULT_INFLATION_LIFETIME_PERCENTAGE = 0.02;
 const DEFAULT_DEFLATION_LIFETIME_PERCENTAGE = 0.07;
@@ -189,20 +181,6 @@ export class ExplosionData
   }
   public get explosion_fallback_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
-  }
-
-  /**
-   * Randomizes the location of the explosion up to 20km in lat and lon
-   */
-  randomizeLocation(): ExplosionData {
-    // Add random offset of up to 20km in lat and lon
-    this.lat +=
-      Math.random() * 2 * RANDOM_OFFSET_MAX_KM * KM_TO_LATITUDE -
-      RANDOM_OFFSET_MAX_KM * KM_TO_LATITUDE;
-    this.lon +=
-      Math.random() * 2 * RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE -
-      RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE;
-    return this;
   }
 
   labelExpired(): boolean {

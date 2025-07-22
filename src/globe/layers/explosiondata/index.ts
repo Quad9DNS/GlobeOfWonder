@@ -52,10 +52,9 @@ export class ExplosionDataLayerGroup
   }
 
   takeNewPoint(point: PointData): void {
-    // Since explosions are randomized, it makes no sense to replace them if same lat/lon is found
+    // Since explosions are generally randomized and short lived, it makes no sense to replace them if same lat/lon is found
     // Instead, sort by time left, for quicker filtering
-    const explosion = (point as ExplosionData).randomizeLocation();
-    binarySearchReplace(this.data, explosion, compareTimeLeft, {
+    binarySearchReplace(this.data, point, compareTimeLeft, {
       noReplace: true,
     });
   }
