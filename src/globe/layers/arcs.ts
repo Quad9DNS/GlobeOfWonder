@@ -48,6 +48,10 @@ export class ArcsLayer
       .arcEndLng((obj) => (obj as ArcData).point2_lon)
       .arcColor((obj: object) => {
         const arc = obj as ArcData;
+        if (!arc.visible()) {
+          return "rgba(0,0,0,0)";
+        }
+
         const duration = arc.arc_draw_duration ?? 200;
         const factor = arc.lifetime / duration;
         const revFactor = (arc.total_lifetime - arc.lifetime) / duration;
@@ -58,13 +62,13 @@ export class ArcsLayer
                 "#" + ((obj as ArcData).arc_color ?? QUAD9_COLOR).getHexString()
               );
             } else {
-              return "#000000";
+              return "rgba(0,0,0,0)";
             }
           };
         } else if (duration && revFactor < 1) {
           return (t: number) => {
             if (t < 1 - revFactor) {
-              return "#000000";
+              return "rgba(0,0,0,0)";
             } else {
               return (
                 "#" + ((obj as ArcData).arc_color ?? QUAD9_COLOR).getHexString()

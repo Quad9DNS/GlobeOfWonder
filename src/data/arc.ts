@@ -124,20 +124,14 @@ export class ArcData
         ttl: this.total_lifetime - (this.arc_draw_duration ?? 200),
         fade_duration: this.fade_duration,
         always_faces_viewer: this.always_faces_viewer,
+        draw_delay: this.lifetime < 0 ? -this.lifetime : null,
         ...this.additional_data,
       },
     );
   }
 
   clone(): ArcData {
-    const new_data = new ArcData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-      ...this.additional_data,
-    });
+    const new_data = new ArcData(this.cloneData());
     return new_data;
   }
 }
@@ -177,14 +171,11 @@ export class ArcLabel
   }
 
   clone(): ArcLabel {
-    const new_data = new ArcLabel(this.defaultHeight, this.startTime, {
-      ...this.additional_data,
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-    });
+    const new_data = new ArcLabel(
+      this.defaultHeight,
+      this.startTime,
+      this.cloneData(),
+    );
     return new_data;
   }
 }

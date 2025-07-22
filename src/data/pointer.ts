@@ -84,14 +84,7 @@ export class PointerData
   }
 
   clone(): PointerData {
-    const new_data = new PointerData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-      ...this.additional_data,
-    });
+    const new_data = new PointerData(this.cloneData());
     return new_data;
   }
 
