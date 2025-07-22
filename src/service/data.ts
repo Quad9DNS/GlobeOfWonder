@@ -187,11 +187,8 @@ export type ArcServiceData = ArcTypeData &
   FilterData &
   ArcCustomizationData;
 
-type CommandTypeData = {
-  type: ViewCommandTypeData["type"] | null;
-};
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return ["view_command"].includes(data.type);
+  return ["view_command", "settings_command"].includes(data.type);
 }
 type ViewCommandTypeData = {
   type: "view_command";
@@ -204,6 +201,15 @@ export type ViewCommandData = {
 };
 export type ViewCommandServiceData = ViewCommandTypeData & ViewCommandData;
 
+type SettingsCommandTypeData = {
+  type: "settings_command";
+};
+export type SettingsCommandData = {
+  settings: Record<string, string>;
+};
+export type SettingsCommandServiceData = SettingsCommandTypeData &
+  SettingsCommandData;
+
 export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
@@ -211,7 +217,9 @@ export type ServiceEventData =
   | BarServiceData
   | DownloadedServiceData
   | ArcServiceData;
-export type ServiceCommandData = ViewCommandServiceData;
+export type ServiceCommandData =
+  | ViewCommandServiceData
+  | SettingsCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -233,12 +241,7 @@ export function processServiceData(
   const incomingEvent = parseServiceData(data);
   if (incomingEvent) {
     if (isCommandData(incomingEvent)) {
-      buildAndPublishCommand(
-        incomingEvent.type,
-        incomingEvent,
-        settings,
-        appState,
-      );
+      buildAndPublishCommand(incomingEvent, settings, appState);
     } else {
       if (!serviceState.filtersConfigured) {
         const keys = [];
@@ -410,12 +413,11 @@ function buildAndPublishEvent(
 }
 
 function buildAndPublishCommand(
-  type: CommandTypeData["type"],
   data: ServiceCommandData,
   settings: Settings,
   state: AppState,
 ) {
-  switch (type) {
+  switch (data.type) {
     case "view_command":
       if (settings.enableViewCommands) {
         state.newCameraPositionsQueue.push(
@@ -429,5 +431,9 @@ function buildAndPublishCommand(
         );
       }
       break;
+    case "settings_command":
+      if (settings.enableSettingsCommands) {
+        settings.loadParameters(data.settings);
+      }
   }
 }

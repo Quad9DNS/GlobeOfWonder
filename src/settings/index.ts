@@ -111,6 +111,8 @@ export class Settings extends EventTarget {
 
   @SettingsField()
   accessor enableViewCommands: boolean = true;
+  @SettingsField()
+  accessor enableSettingsCommands: boolean = true;
 
   @SettingsField()
   accessor analysisModeResolution: number = 3;
@@ -264,43 +266,52 @@ export class Settings extends EventTarget {
   }
 
   loadUrlSearchParameters(parameters: URLSearchParams) {
-    const validProperties = this.getValidProperties();
+    const parsed: Record<string, string> = {};
     parameters.forEach((value, key, _parent) => {
-      if (validProperties.includes(key)) {
-        const field = this[key as keyof typeof this];
+      parsed[key] = value;
+    });
+    this.loadParameters(parsed);
+  }
+
+  loadParameters(parameters: Record<string, string>) {
+    const validProperties = this.getValidProperties();
+    for (const param in parameters) {
+      if (validProperties.includes(param)) {
+        const field = this[param as keyof typeof this];
+        const value = parameters[param];
         switch (typeof field) {
           case "string":
-            (this[key as keyof typeof this] as string) = value;
+            (this[param as keyof typeof this] as string) = value;
             break;
           case "number":
-            (this[key as keyof typeof this] as number) = parseFloat(value);
+            (this[param as keyof typeof this] as number) = parseFloat(value);
             break;
           case "boolean":
-            (this[key as keyof typeof this] as boolean) = value === "true";
+            (this[param as keyof typeof this] as boolean) = value === "true";
             break;
           case "bigint":
           case "symbol":
           case "undefined":
           case "object":
           case "function":
-            console.warn("Failed setting URL property: " + key);
+            console.warn("Failed setting a settings property: " + param);
             break;
         }
-      } else if (key.includes("Filter")) {
-        const filterKey = key.replace("Filter", "");
-        this.setFilter(filterKey, value);
+      } else if (param.includes("Filter")) {
+        const filterKey = param.replace("Filter", "");
+        this.setFilter(filterKey, parameters[param]);
         for (const service of this.services) {
           service.filterKeys.push(filterKey);
         }
-      } else if (key.includes("LayerOpacity")) {
-        const layerId = key.replace("LayerOpacity[", "").replace("]", "");
+      } else if (param.includes("LayerOpacity")) {
+        const layerId = param.replace("LayerOpacity[", "").replace("]", "");
         this.layers[parseInt(layerId)] = {
           name: layerId,
-          opacity: parseFloat(value),
+          opacity: parseFloat(parameters[param]),
         };
         this.dispatchChangedEvent("LayerOpacity[" + layerId + "]");
       }
-    });
+    }
   }
 
   toUrlSearchParameters(): URLSearchParams {
@@ -466,6 +477,7 @@ export function setupSettingsDialog(
     ["#enabledownloadedobjects", "boolean", "enableDownloadedObjects"],
     ["#enablebars", "boolean", "enableBars"],
     ["#enableviewcommands", "boolean", "enableViewCommands"],
+    ["#enablesettingscommands", "boolean", "enableSettingsCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
     ["#showhelp", "boolean", "showHelp"],
@@ -874,6 +886,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <h3 class="grid-item-2cols" style="margin: auto;">Data source commands</h3>
         <label for="enableviewcommands">Enable view commands:</label>
         <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
+        <label for="enablesettingscommands">Enable settings commands:</label>
+        <input type="checkbox" id="enablesettingscommands" name="enablesettingscommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
         <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Configuration for opacity of different objects, grouped into layers by their layer ID.</p>
         <div id="layersArea" class="grid-item-2cols two-col-grid">

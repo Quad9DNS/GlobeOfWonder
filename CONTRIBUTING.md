@@ -450,11 +450,6 @@ export type ViewCommandData = {
 // Define `view_command` data as a combination of its type and specific data
 export type ViewCommandServiceData = ViewCommandTypeData & ViewCommandData;
 
-// Add the view command type data to the common CommandTypeData
-type CommandTypeData = {
-  type: /*...*/ | ViewCommandTypeData["type"] | null;
-};
-
 // Add the ViewCommandServiceData to general ServiceCommandData type
 export type ServiceCommandData =
   //...
@@ -483,12 +478,11 @@ If there are some other adjustments that need to be made to the keys or validati
 Finally, we need to ensure our command gets processed, by adding a case for it in `buildAndPublishCommand` in [src/service/data.ts](./src/service/data.ts):
 ```typescript
 function buildAndPublishCommand(
-  type: CommandTypeData["type"],
   data: ServiceCommandData,
   settings: Settings,
   state: AppState,
 ) {
-  switch (type) {
+  switch (data.type) {
     case "view_command":
       if (settings.enableViewCommands) {
         state.newCameraPositionsQueue.push(
