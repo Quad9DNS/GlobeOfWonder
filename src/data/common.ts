@@ -3,12 +3,13 @@ import { LayerData, PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 export const VEC3_ZERO = new THREE.Vector3(0, 0, 0);
 
 type SharedData<T> = T &
   PositionData &
+  CounterData &
   LifetimeData &
   LabelsData &
   LinkData &
@@ -34,6 +35,8 @@ export abstract class CommonData<T>
   total_lifetime: number;
   fade_duration: number;
   always_faces_viewer: boolean;
+  counter?: number;
+  counter_include?: boolean;
 
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
@@ -64,52 +67,52 @@ export abstract class CommonData<T>
     ScaleData &
     HoverTextData;
 
-  public get display_text(): string | null {
+  public get display_text(): string | undefined {
     return this.additional_data.display_text;
   }
-  public get display_text_interval(): number | null {
+  public get display_text_interval(): number | undefined {
     return this.additional_data.display_text_interval;
   }
-  public get display_text_font(): string | null {
+  public get display_text_font(): string | undefined {
     return this.additional_data.display_text_font;
   }
-  public get display_text_font_size(): number | null {
+  public get display_text_font_size(): number | undefined {
     return this.additional_data.display_text_font_size;
   }
-  public get display_text_font_style(): string | null {
+  public get display_text_font_style(): string | undefined {
     return this.additional_data.display_text_font_style;
   }
-  public get display_text_color(): THREE.Color | null {
+  public get display_text_color(): THREE.Color | undefined {
     return this.additional_data.display_text_color;
   }
-  public get display_text_outline_color(): THREE.Color | null {
+  public get display_text_outline_color(): THREE.Color | undefined {
     return this.additional_data.display_text_outline_color;
   }
-  public get display_text_always_faces_viewer(): boolean | null {
+  public get display_text_always_faces_viewer(): boolean | undefined {
     return this.additional_data.display_text_always_faces_viewer;
   }
-  public get display_text_hover_only(): boolean | null {
+  public get display_text_hover_only(): boolean | undefined {
     return this.additional_data.display_text_hover_only;
   }
-  public get link_url(): string | null {
+  public get link_url(): string | undefined {
     return this.additional_data.link_url;
   }
-  public get new_window(): boolean | null {
+  public get new_window(): boolean | undefined {
     return this.additional_data.new_window;
   }
-  public get opacity(): number | null {
+  public get opacity(): number | undefined {
     return this.additional_data.opacity;
   }
-  public get layer_id(): number | null {
+  public get layer_id(): number | undefined {
     return this.additional_data.layer_id;
   }
-  public get layer_name(): string | null {
+  public get layer_name(): string | undefined {
     return this.additional_data.layer_name;
   }
-  public get ignore_zoom(): boolean | null {
+  public get ignore_zoom(): boolean | undefined {
     return this.additional_data.ignore_zoom;
   }
-  public get hover_text(): string | null {
+  public get hover_text(): string | undefined {
     return this.additional_data.hover_text;
   }
 
@@ -128,6 +131,8 @@ export abstract class CommonData<T>
 
     this.total_lifetime = additional_data.ttl ?? Infinity;
     this.fade_duration = additional_data.fade_duration ?? 0;
+    this.counter = additional_data.counter;
+    this.counter_include = additional_data.counter_include;
 
     if (additional_data.draw_delay) {
       this.startTime += additional_data.draw_delay;
@@ -199,9 +204,11 @@ export abstract class CommonData<T>
       lat: this.lat,
       lon: this.lon,
       ttl: this.total_lifetime,
-      draw_delay: this.lifetime < 0 ? -this.lifetime : null,
+      draw_delay: this.lifetime < 0 ? -this.lifetime : undefined,
       fade_duration: this.fade_duration,
       always_faces_viewer: this.always_faces_viewer,
+      counter: this.counter,
+      counter_include: this.counter_include,
     };
   }
 

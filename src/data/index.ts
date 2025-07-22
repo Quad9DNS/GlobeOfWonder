@@ -28,6 +28,17 @@ export interface PointData {
   always_faces_viewer: boolean;
 
   /**
+   * Number of actual events represented by this point.
+   */
+  counter?: number;
+
+  /**
+   * Whether this event is included in event counter (and other layers that might depend on it, like analysis)
+   * Defaults to true
+   */
+  counter_include?: boolean;
+
+  /**
    * Whether the object should be displayed. It can change throughout the object lifetime.
    *
    * @returns true if object should be visible, false otherwise
@@ -112,16 +123,16 @@ export interface LayerData {
   /**
    * Opacity specific to this object. Number between 0 and 100. Null is equivalent to 100.
    */
-  opacity: number | null;
+  opacity?: number;
   /**
    * Id of the opacity layer this object belongs to.
    * Objects are grouped per layer id and their opacity can be controlled as a group via settings.
    */
-  layer_id: number | null;
+  layer_id?: number;
   /**
    * Optional name of the layer this object belongs to - it sets the name in the settings UI.
    */
-  layer_name: string | null;
+  layer_name?: string;
 }
 
 /**
@@ -132,7 +143,7 @@ export interface ScaleData {
    * Whether the object ignores zoom.
    * If set to true, the object will stay roughly the same size on the screen, regardless of the zoom level.
    */
-  ignore_zoom: boolean | null;
+  ignore_zoom?: boolean;
 }
 
 /**

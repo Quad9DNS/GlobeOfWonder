@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { clamp, lerp } from "three/src/math/MathUtils.js";
+import { clamp } from "three/src/math/MathUtils.js";
 import { ExplosionCustomizationData, ExplosionData } from "../data/explosion";
 import { LabelsData } from "../data/label";
 import { LinkData } from "../data/link";
@@ -102,16 +102,16 @@ const FLOAT_KEYS = [
 export type PositionData = {
   lat: number;
   lon: number;
-  always_faces_viewer: boolean | null;
+  always_faces_viewer?: boolean;
 };
 export type LifetimeData = {
-  ttl: number | null;
-  fade_duration: number | null;
-  draw_delay: number | null;
+  ttl?: number;
+  fade_duration?: number;
+  draw_delay?: number;
 };
 export type CounterData = {
-  counter: number | null;
-  counter_include: boolean | null;
+  counter?: number;
+  counter_include?: boolean;
 };
 type TypeData = {
   type:
@@ -365,18 +365,7 @@ function buildAndPublishType(
     case "explosion":
     default:
       state.newPointsQueue.push(
-        new ExplosionData({
-          inflation_factor:
-            (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
-              ? 1.0
-              : lerp(
-                  1,
-                  settings.maximumScale,
-                  clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
-                    settings.maximumScaleCounter,
-                ),
-          ...(data as ExplosionServiceData),
-        }),
+        ExplosionData.withSettings(data as ExplosionServiceData, settings),
       );
       break;
   }

@@ -5,7 +5,7 @@ import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { UNIT_KMS } from "../globe/common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize bar
@@ -14,7 +14,7 @@ export interface BarCustomizationData {
   /**
    * Diameter of the bar in kilometers.
    */
-  bar_diameter: number | null;
+  bar_diameter?: number;
   /**
    * Height of the bar in kilometers.
    */
@@ -22,11 +22,11 @@ export interface BarCustomizationData {
   /**
    * Color of the bar at the bottom. Bar is displayed as a gradient.
    */
-  bar_bottom_color: THREE.Color | null;
+  bar_bottom_color?: THREE.Color;
   /**
    * Color of the bar at the top. Bar is displayed as a gradient.
    */
-  bar_top_color: THREE.Color | null;
+  bar_top_color?: THREE.Color;
 }
 
 /**
@@ -46,6 +46,7 @@ export class BarData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       BarCustomizationData &
       LabelsData &
@@ -58,16 +59,16 @@ export class BarData
     this._labelOffset = new THREE.Vector3(0.0, 0.0, this.bar_height / UNIT_KMS);
   }
 
-  public get bar_diameter(): number | null {
+  public get bar_diameter(): number | undefined {
     return this.additional_data.bar_diameter;
   }
   public get bar_height(): number {
     return this.additional_data.bar_height;
   }
-  public get bar_bottom_color(): THREE.Color | null {
+  public get bar_bottom_color(): THREE.Color | undefined {
     return this.additional_data.bar_bottom_color;
   }
-  public get bar_top_color(): THREE.Color | null {
+  public get bar_top_color(): THREE.Color | undefined {
     return this.additional_data.bar_top_color;
   }
 
@@ -77,8 +78,7 @@ export class BarData
   }
 
   clone(): BarData {
-    const new_data = new BarData(this.cloneData());
-    return new_data;
+    return new BarData(this.cloneData());
   }
 
   faceCamera(): boolean {

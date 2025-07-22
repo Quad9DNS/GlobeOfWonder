@@ -235,8 +235,8 @@ Many layers will require new data types to be defined to be able to work. To mak
 ```typescript
 // We define any keys that are not shared between all objects in `CustomizationData` interface
 export interface SatelliteCustomizationData {
-  satellite_altitude: number | null;
-  satellite_speed_factor: number | null;
+  satellite_altitude?: number;
+  satellite_speed_factor?: number;
 }
 
 export class SatelliteData
@@ -271,11 +271,11 @@ export class SatelliteData
   }
 
   // We need to manually provide accessors for our `CustomizationData` interface, using `additional_data` field
-  public get satellite_altitude(): number | null {
+  public get satellite_altitude(): number | undefined {
     return this.additional_data.satellite_altitude;
   }
 
-  public get satellite_speed_factor(): number | null {
+  public get satellite_speed_factor(): number | undefined {
     return this.additional_data.satellite_speed_factor;
   }
 

@@ -3,7 +3,7 @@ import { CommonData } from "./common";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize downloaded objects (images).
@@ -16,7 +16,7 @@ export interface DownloadedCustomizationData {
   /**
    * Relative scale for the image.
    */
-  downloaded_object_scale: number | null;
+  downloaded_object_scale?: number;
 }
 
 /**
@@ -39,6 +39,7 @@ export class DownloadedData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       DownloadedCustomizationData &
       LabelsData &
@@ -53,7 +54,7 @@ export class DownloadedData
   public get downloaded_object_url(): string {
     return this.additional_data.downloaded_object_url;
   }
-  public get downloaded_object_scale(): number | null {
+  public get downloaded_object_scale(): number | undefined {
     return this.additional_data.downloaded_object_scale;
   }
 
@@ -62,8 +63,7 @@ export class DownloadedData
   }
 
   clone(): DownloadedData {
-    const new_data = new DownloadedData(this.cloneData());
-    return new_data;
+    return new DownloadedData(this.cloneData());
   }
 
   labelScale(): number {

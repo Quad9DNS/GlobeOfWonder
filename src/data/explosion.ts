@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { LayerData, PointData, ScaleData } from ".";
-import { lerp } from "three/src/math/MathUtils.js";
+import { clamp, lerp } from "three/src/math/MathUtils.js";
 import { HoverTextData } from "./hover";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
@@ -12,7 +12,8 @@ import {
   UNIT_KMS,
 } from "../globe/common";
 import { CommonData } from "./common";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { Settings } from "../settings";
 
 const RANDOM_OFFSET_MAX_KM = 20;
 
@@ -34,27 +35,27 @@ export interface ExplosionCustomizationData {
   /**
    * Initial explosion color. Color used while the explosion is expanding.
    */
-  explosion_initial_color: THREE.Color | null;
+  explosion_initial_color?: THREE.Color;
   /**
    * How long the explosion should take to settle down in milliseconds.
    */
-  explosion_initial_radius_interval: number | null;
+  explosion_initial_radius_interval?: number;
   /**
    * Radius of the explosion at its highest in kilometers.
    */
-  explosion_initial_radius_size: number | null;
+  explosion_initial_radius_size?: number;
   /**
    * Fallback explosion color. Color used after explosion settles down.
    */
-  explosion_fallback_color: THREE.Color | null;
+  explosion_fallback_color?: THREE.Color;
   /**
    * How long the explosion should stay settled down in milliseconds.
    */
-  explosion_fallback_radius_interval: number | null;
+  explosion_fallback_radius_interval?: number;
   /**
    * Radius of the explosion when settled down in kilometers.
    */
-  explosion_fallback_radius_size: number | null;
+  explosion_fallback_radius_size?: number;
 }
 
 /**
@@ -100,17 +101,17 @@ export class ExplosionData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       ExplosionCustomizationData &
       HoverTextData &
       LabelsData &
       LinkData &
       LayerData &
-      ScaleData & { inflation_factor: number | null },
+      ScaleData & { inflation_factor?: number },
   ) {
     super(data);
-    this.inflation_factor = data.inflation_factor ?? 1.0;
-
+    this.inflation_factor = data.inflation_factor ?? 1;
     this.total_lifetime = data.explosion_fallback_radius_interval
       ? data.explosion_fallback_radius_interval +
         (data.explosion_initial_radius_interval ??
@@ -145,25 +146,48 @@ export class ExplosionData
       : 1;
   }
 
-  public get hover_text(): string | null {
-    return this.additional_data.hover_text;
+  public static withSettings(
+    data: PositionData &
+      CounterData &
+      LifetimeData &
+      ExplosionCustomizationData &
+      HoverTextData &
+      LabelsData &
+      LinkData &
+      LayerData &
+      ScaleData,
+    settings: Settings,
+  ) {
+    return new ExplosionData({
+      ...data,
+      inflation_factor:
+        (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
+          ? 1.0
+          : lerp(
+              1,
+              settings.maximumScale,
+              clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
+                settings.maximumScaleCounter,
+            ),
+    });
   }
-  public get explosion_initial_color(): THREE.Color | null {
+
+  public get explosion_initial_color(): THREE.Color | undefined {
     return this.additional_data.explosion_initial_color;
   }
-  public get explosion_initial_radius_interval(): number | null {
+  public get explosion_initial_radius_interval(): number | undefined {
     return this.additional_data.explosion_initial_radius_interval;
   }
-  public get explosion_initial_radius_size(): number | null {
+  public get explosion_initial_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
   }
-  public get explosion_fallback_color(): THREE.Color | null {
+  public get explosion_fallback_color(): THREE.Color | undefined {
     return this.additional_data.explosion_fallback_color;
   }
-  public get explosion_fallback_radius_interval(): number | null {
+  public get explosion_fallback_radius_interval(): number | undefined {
     return this.additional_data.explosion_initial_radius_interval;
   }
-  public get explosion_fallback_radius_size(): number | null {
+  public get explosion_fallback_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
   }
 
@@ -290,11 +314,10 @@ export class ExplosionData
   }
 
   clone(): ExplosionData {
-    const new_data = new ExplosionData({
+    return new ExplosionData({
       ...this.cloneData(),
       inflation_factor: this.inflation_factor,
     });
-    return new_data;
   }
 
   scaleZ(): boolean {

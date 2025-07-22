@@ -5,7 +5,7 @@ import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { geoDistance, geoMidPoint, UNIT_KMS } from "../globe/common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 export type ArcLineType = "solid" | "dashed_large" | "dashed_small" | "dots";
 
@@ -26,32 +26,32 @@ export interface ArcCustomizationData {
   /**
    * Color of the arc.
    */
-  arc_color: THREE.Color | null;
+  arc_color?: THREE.Color;
   /**
    * Type of the arc line. It can either be completely solid or dashed with different gap sizes.
    */
-  arc_line_type: ArcLineType | null;
+  arc_line_type?: ArcLineType;
   /**
    * Thickness of the arc line in kilometers. By default, if not defined, the thickness is 1 pixel.
    */
-  arc_line_thickness: number | null;
+  arc_line_thickness?: number;
   /**
    * Whether the arc should be animated.
    * If set to true, arc will move from start to end position.
    * Only useful if {@link arc_line_type} is not solid.
    */
-  arc_animated: boolean | null;
+  arc_animated?: boolean;
   /**
    * Defines how long the arc should take to draw when appearing initially.
    * Drawing starts from start point and moves to end point.
    * Removing the arc takes same time to complete and removes from start to end also.
    */
-  arc_draw_duration: number | null;
+  arc_draw_duration?: number;
   /**
    * Height of arc in kilometers at its highest point.
    * If not set, it will be equal to half of the haversine distance between the points.
    */
-  arc_max_height: number | null;
+  arc_max_height?: number;
 }
 
 /**
@@ -71,6 +71,7 @@ export class ArcData
 
   constructor(
     data: ArcCustomizationData &
+      CounterData &
       PositionData &
       LifetimeData &
       LabelsData &
@@ -87,22 +88,22 @@ export class ArcData
   public get point2_lon(): number {
     return this.additional_data.point2_lon;
   }
-  public get arc_color(): THREE.Color | null {
+  public get arc_color(): THREE.Color | undefined {
     return this.additional_data.arc_color;
   }
-  public get arc_line_type(): ArcLineType | null {
+  public get arc_line_type(): ArcLineType | undefined {
     return this.additional_data.arc_line_type;
   }
-  public get arc_line_thickness(): number | null {
+  public get arc_line_thickness(): number | undefined {
     return this.additional_data.arc_line_thickness;
   }
-  public get arc_animated(): boolean | null {
+  public get arc_animated(): boolean | undefined {
     return this.additional_data.arc_animated;
   }
-  public get arc_draw_duration(): number | null {
+  public get arc_draw_duration(): number | undefined {
     return this.additional_data.arc_draw_duration;
   }
-  public get arc_max_height(): number | null {
+  public get arc_max_height(): number | undefined {
     return this.additional_data.arc_max_height;
   }
 
@@ -126,20 +127,16 @@ export class ArcData
       height,
       this.startTime + (this.arc_draw_duration ?? 200) / 2,
       {
+        ...this.cloneData(),
         lat: latMid,
         lon: lonMid,
         ttl: this.total_lifetime - (this.arc_draw_duration ?? 200),
-        fade_duration: this.fade_duration,
-        always_faces_viewer: this.always_faces_viewer,
-        draw_delay: this.lifetime < 0 ? -this.lifetime : null,
-        ...this.additional_data,
       },
     );
   }
 
   clone(): ArcData {
-    const new_data = new ArcData(this.cloneData());
-    return new_data;
+    return new ArcData(this.cloneData());
   }
 }
 
@@ -157,6 +154,7 @@ export class ArcLabel
     defaultHeight: number,
     startTime: number,
     data: PositionData &
+      CounterData &
       LifetimeData &
       ArcCustomizationData &
       LabelsData &
@@ -178,11 +176,6 @@ export class ArcLabel
   }
 
   clone(): ArcLabel {
-    const new_data = new ArcLabel(
-      this.defaultHeight,
-      this.startTime,
-      this.cloneData(),
-    );
-    return new_data;
+    return new ArcLabel(this.defaultHeight, this.startTime, this.cloneData());
   }
 }

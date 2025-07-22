@@ -4,7 +4,7 @@ import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { HoverTextData } from "./hover";
-import { LifetimeData, PositionData } from "../service/data";
+import { CounterData, LifetimeData, PositionData } from "../service/data";
 
 /**
  * Additional data that can be used to customize pointers
@@ -13,19 +13,19 @@ export interface PointerCustomizationData {
   /**
    * Color of the pointer background (the main part of the pointer)
    */
-  pointer_background_color: THREE.Color | null;
+  pointer_background_color?: THREE.Color;
   /**
    * Color of the pointer outline (border)
    */
-  pointer_border_color: THREE.Color | null;
+  pointer_border_color?: THREE.Color;
   /**
    * Relative scale of the pointer
    */
-  pointer_scale: number | null;
+  pointer_scale?: number;
   /**
    * Color of the pointer glyph (circle in the middle)
    */
-  pointer_glyph_color: THREE.Color | null;
+  pointer_glyph_color?: THREE.Color;
 }
 
 /**
@@ -45,6 +45,7 @@ export class PointerData
 
   constructor(
     data: PositionData &
+      CounterData &
       LifetimeData &
       PointerCustomizationData &
       LabelsData &
@@ -61,16 +62,16 @@ export class PointerData
     );
   }
 
-  public get pointer_background_color(): THREE.Color | null {
+  public get pointer_background_color(): THREE.Color | undefined {
     return this.additional_data.pointer_background_color;
   }
-  public get pointer_border_color(): THREE.Color | null {
+  public get pointer_border_color(): THREE.Color | undefined {
     return this.additional_data.pointer_border_color;
   }
-  public get pointer_scale(): number | null {
+  public get pointer_scale(): number | undefined {
     return this.additional_data.pointer_scale;
   }
-  public get pointer_glyph_color(): THREE.Color | null {
+  public get pointer_glyph_color(): THREE.Color | undefined {
     return this.additional_data.pointer_glyph_color;
   }
 
@@ -84,8 +85,7 @@ export class PointerData
   }
 
   clone(): PointerData {
-    const new_data = new PointerData(this.cloneData());
-    return new_data;
+    return new PointerData(this.cloneData());
   }
 
   labelScale(): number {
