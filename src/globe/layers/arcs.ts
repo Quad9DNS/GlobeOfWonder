@@ -115,6 +115,14 @@ export class ArcsLayer
             return 0;
         }
       })
+      .arcStroke((obj) => {
+        const arc = obj as ArcData;
+        if (arc.arc_line_thickness) {
+          return arc.arc_line_thickness / UNIT_KMS;
+        } else {
+          return null;
+        }
+      })
       .arcDashAnimateTime((obj: object) => {
         const arc = obj as ArcData;
         if (arc.arc_animated) {
