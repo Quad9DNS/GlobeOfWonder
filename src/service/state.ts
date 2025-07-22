@@ -1,5 +1,5 @@
 import { PointData } from "../data";
-import { CameraPosition } from "../data/camera";
+import { CameraPosition, normalize } from "../data/camera";
 import { Settings } from "../settings";
 
 /**
@@ -31,11 +31,14 @@ export class AppState {
  */
 export function createState(settings: Settings) {
   const state = new AppState();
-  state.newCameraPositionsQueue.push({
-    lat: settings.startupLat,
-    lon: settings.startupLon,
-    zoom: settings.startupZoom,
-  });
+  state.newCameraPositionsQueue.push(
+    normalize({
+      lat: settings.startupLat,
+      lon: settings.startupLon,
+      zoom: settings.startupZoom,
+      instant_move: true,
+    }),
+  );
   return state;
 }
 

@@ -20,6 +20,7 @@ import {
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
 import { LayerData, ScaleData } from "../data";
+import { normalize } from "../data/camera";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -97,6 +98,10 @@ const FLOAT_KEYS = [
   "arc_line_width",
   "fade_duration",
   "draw_delay",
+  "view_lat",
+  "view_lon",
+  "view_zoom",
+  "view_speed",
 ];
 
 export type PositionData = {
@@ -113,7 +118,7 @@ export type CounterData = {
   counter?: number;
   counter_include?: boolean;
 };
-type TypeData = {
+type EventTypeData = {
   type:
     | ExplosionTypeData["type"]
     | CircleTypeData["type"]
@@ -131,8 +136,8 @@ export type SharedServiceData = PositionData &
   LayerData &
   ScaleData &
   HoverTextData;
-export type CommonServiceData = SharedServiceData & TypeData;
-export type FilterData = Record<string, string> & TypeData;
+export type CommonServiceData = SharedServiceData & EventTypeData;
+export type FilterData = Record<string, string> & EventTypeData;
 
 type ExplosionTypeData = {
   type: "explosion";
@@ -182,13 +187,32 @@ export type ArcServiceData = ArcTypeData &
   FilterData &
   ArcCustomizationData;
 
-export type ServiceData =
+type CommandTypeData = {
+  type: ViewCommandTypeData["type"] | null;
+};
+function isCommandData(data: ServiceData): data is ServiceCommandData {
+  return ["view_command"].includes(data.type);
+}
+type ViewCommandTypeData = {
+  type: "view_command";
+};
+export type ViewCommandData = {
+  view_lat: number;
+  view_lon: number;
+  view_zoom?: number;
+  view_speed?: number;
+};
+export type ViewCommandServiceData = ViewCommandTypeData & ViewCommandData;
+
+export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
   | PointerServiceData
   | BarServiceData
   | DownloadedServiceData
   | ArcServiceData;
+export type ServiceCommandData = ViewCommandServiceData;
+export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
  * Expects incoming data as a string and tries to parse it as JSON and publish it in the state.
@@ -208,50 +232,64 @@ export function processServiceData(
 ): void {
   const incomingEvent = parseServiceData(data);
   if (incomingEvent) {
-    if (!serviceState.filtersConfigured) {
-      const keys = [];
-      for (const key in incomingEvent as FilterData) {
-        if (
-          COMMON_NON_FILTER_KEYS.includes(key) ||
-          (NON_FILTER_KEYS[incomingEvent.type ?? "explosion"] ?? []).includes(
-            key,
-          )
-        ) {
-          continue;
-        }
-        keys.push(key);
-      }
-      serviceState.updateFilters(keys);
-      updateFilters(settingsFields, settings);
-      serviceState.filtersConfigured = true;
-    }
-
-    if (incomingEvent.layer_id) {
-      registerNewLayer(
-        settingsFields,
+    if (isCommandData(incomingEvent)) {
+      buildAndPublishCommand(
+        incomingEvent.type,
+        incomingEvent,
         settings,
-        incomingEvent.layer_id,
-        incomingEvent.layer_name,
+        appState,
+      );
+    } else {
+      if (!serviceState.filtersConfigured) {
+        const keys = [];
+        for (const key in incomingEvent as FilterData) {
+          if (
+            COMMON_NON_FILTER_KEYS.includes(key) ||
+            (NON_FILTER_KEYS[incomingEvent.type ?? "explosion"] ?? []).includes(
+              key,
+            )
+          ) {
+            continue;
+          }
+          keys.push(key);
+        }
+        serviceState.updateFilters(keys);
+        updateFilters(settingsFields, settings);
+        serviceState.filtersConfigured = true;
+      }
+
+      if (incomingEvent.layer_id) {
+        registerNewLayer(
+          settingsFields,
+          settings,
+          incomingEvent.layer_id,
+          incomingEvent.layer_name,
+        );
+      }
+
+      // run filters
+      if (!filterServiceEventData(incomingEvent, settings)) {
+        return;
+      }
+      if (incomingEvent.counter_include ?? true) {
+        appState.newEventsQueue.push(incomingEvent.counter ?? 1);
+      }
+
+      // Ignore invalid 0-0 data
+      if (
+        (incomingEvent.lat == 0.0 && incomingEvent.lon == 0.0) ||
+        isNaN(incomingEvent.lat) ||
+        isNaN(incomingEvent.lon)
+      ) {
+        return;
+      }
+      buildAndPublishEvent(
+        incomingEvent.type,
+        incomingEvent,
+        settings,
+        appState,
       );
     }
-
-    // run filters
-    if (!filterServiceData(incomingEvent, settings)) {
-      return;
-    }
-    if (incomingEvent.counter_include ?? true) {
-      appState.newEventsQueue.push(incomingEvent.counter ?? 1);
-    }
-
-    // Ignore invalid 0-0 data
-    if (
-      (incomingEvent.lat == 0.0 && incomingEvent.lon == 0.0) ||
-      isNaN(incomingEvent.lat) ||
-      isNaN(incomingEvent.lon)
-    ) {
-      return;
-    }
-    buildAndPublishType(incomingEvent.type, incomingEvent, settings, appState);
   } else {
     console.warn("Incoming data didn't match expected format: " + data);
   }
@@ -321,7 +359,7 @@ function parseServiceData(data: string): ServiceData | null {
   return parsed;
 }
 
-function filterServiceData(data: FilterData, settings: Settings): boolean {
+function filterServiceEventData(data: FilterData, settings: Settings): boolean {
   for (const key in data) {
     if (
       COMMON_NON_FILTER_KEYS.includes(key) ||
@@ -338,9 +376,9 @@ function filterServiceData(data: FilterData, settings: Settings): boolean {
   return true;
 }
 
-function buildAndPublishType(
-  type: TypeData["type"],
-  data: ServiceData,
+function buildAndPublishEvent(
+  type: EventTypeData["type"],
+  data: ServiceEventData,
   settings: Settings,
   state: AppState,
 ) {
@@ -366,6 +404,27 @@ function buildAndPublishType(
     default:
       state.newPointsQueue.push(
         ExplosionData.withSettings(data as ExplosionServiceData, settings),
+      );
+      break;
+  }
+}
+
+function buildAndPublishCommand(
+  type: CommandTypeData["type"],
+  data: ServiceCommandData,
+  _settings: Settings,
+  state: AppState,
+) {
+  switch (type) {
+    case "view_command":
+      state.newCameraPositionsQueue.push(
+        normalize({
+          lat: data.view_lat,
+          lon: data.view_lon,
+          zoom: data.view_zoom,
+          camera_movement_speed: data.view_speed,
+          instant_move: false,
+        }),
       );
       break;
   }
