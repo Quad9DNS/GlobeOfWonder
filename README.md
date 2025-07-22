@@ -68,7 +68,9 @@ To also fix the issues which can be fixed automatically, run: `npm run lint:fix`
 ## Websocket data
 
 Data that is expected from websocket (or file downloads) is defined in [service/data.ts (ServiceData)](./src/service/data.ts#L132).
+The data can either represent events to be displayed on the globe, or commands that can affect the app.
 
+Available event data:
 | Key                                | Default value                                     | Description                                                                                                                                          |
 |------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | lat                                | - (required)                                      | Latitude of the event                                                                                                                                |
@@ -124,6 +126,15 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | arc_animated                       | false                                             | If set to true, the arc will be constantly moving from start to end point. Has no effect on solid line type.                                         |
 | arc_draw_duration                  | 200                                               | Duration of arc drawing in milliseconds. The arc will be drawn from start to end and will also be removed from start to end in this duration.        |
 | arc_max_height                     | -                                                 | Arc height at its maximum in kilometers. If not defined, it will be roughly the half of haversine distance between the 2 points.                     |
+
+Available command data:
+| Key                                | Default value                                     | Description                                                                                                                                          |
+|------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type                               | - (required)                                      | Type of the command (view_command)                                                                                                                   |
+| view_lat                           | - (required - view_command only)                  | Latitude of the new view position                                                                                                                    |
+| view_lon                           | - (required - view_command only)                  | Longitude of the new view position                                                                                                                   |
+| view_zoom                          | -                                                 | Zoom level of the new view position (-10, 10). Zoom level is not changed if undefined                                                                |
+| view_speed                         | 1                                                 | Relative view movement speed. Can be set to < 1 (but > 0) for slower view movement, or > 1 for faster movement                                       |
 
 ## Configuration
 
