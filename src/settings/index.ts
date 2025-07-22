@@ -110,6 +110,9 @@ export class Settings extends EventTarget {
   accessor enableArcs: boolean = true;
 
   @SettingsField()
+  accessor enableViewCommands: boolean = true;
+
+  @SettingsField()
   accessor analysisModeResolution: number = 3;
   @SettingsField()
   accessor analysisModeDecay: number = 60;
@@ -462,6 +465,7 @@ export function setupSettingsDialog(
     ["#enablearcs", "boolean", "enableArcs"],
     ["#enabledownloadedobjects", "boolean", "enableDownloadedObjects"],
     ["#enablebars", "boolean", "enableBars"],
+    ["#enableviewcommands", "boolean", "enableViewCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
     ["#showhelp", "boolean", "showHelp"],
@@ -867,6 +871,9 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="text" id="datadownloadurl" name="datadownloadurl" />
         <label for="datadownloadinterval">Data download interval (ms):</label>
         <input type="number" min="0" step="1" id="datadownloadinterval" name="datadownloadinterval" />
+        <h3 class="grid-item-2cols" style="margin: auto;">Data source commands</h3>
+        <label for="enableviewcommands">Enable view commands:</label>
+        <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
         <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Configuration for opacity of different objects, grouped into layers by their layer ID.</p>
         <div id="layersArea" class="grid-item-2cols two-col-grid">

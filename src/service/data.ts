@@ -412,20 +412,22 @@ function buildAndPublishEvent(
 function buildAndPublishCommand(
   type: CommandTypeData["type"],
   data: ServiceCommandData,
-  _settings: Settings,
+  settings: Settings,
   state: AppState,
 ) {
   switch (type) {
     case "view_command":
-      state.newCameraPositionsQueue.push(
-        normalize({
-          lat: data.view_lat,
-          lon: data.view_lon,
-          zoom: data.view_zoom,
-          camera_movement_speed: data.view_speed,
-          instant_move: false,
-        }),
-      );
+      if (settings.enableViewCommands) {
+        state.newCameraPositionsQueue.push(
+          normalize({
+            lat: data.view_lat,
+            lon: data.view_lon,
+            zoom: data.view_zoom,
+            camera_movement_speed: data.view_speed,
+            instant_move: false,
+          }),
+        );
+      }
       break;
   }
 }
