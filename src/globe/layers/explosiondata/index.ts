@@ -26,12 +26,13 @@ import {
  */
 export class ExplosionDataLayerGroup
   implements
-  GlobeLayerPreUpdateHook,
-  GlobeLayerNewDataHook,
-  GlobeLayerDataUpdateHook,
-  RegistryHook,
-  GlobeLayerFrameUpdateHook,
-  CustomObjectProvider {
+    GlobeLayerPreUpdateHook,
+    GlobeLayerNewDataHook,
+    GlobeLayerDataUpdateHook,
+    RegistryHook,
+    GlobeLayerFrameUpdateHook,
+    CustomObjectProvider
+{
   readonly layerName: string = "ExplosionDataGroup";
   private data: ExplosionData[] = [];
   private subLayers: ExplosionDataLayer[] = [];

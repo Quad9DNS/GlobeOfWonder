@@ -56,13 +56,14 @@ export interface ExplosionCustomizationData {
 export class ExplosionData
   extends CommonData<ExplosionCustomizationData>
   implements
-  ExplosionCustomizationData,
-  PointData,
-  HoverTextData,
-  LabelsData,
-  LinkData,
-  ScaleData,
-  HoverTextData {
+    ExplosionCustomizationData,
+    PointData,
+    HoverTextData,
+    LabelsData,
+    LinkData,
+    ScaleData,
+    HoverTextData
+{
   /**
    * How much the point should inflate at the start, before starting to deflate
    * Not recommended to go over 2
@@ -105,21 +106,21 @@ export class ExplosionData
     this.inflation_factor = data.inflation_factor ?? 1;
     this.total_lifetime = data.explosion_fallback_radius_interval
       ? data.explosion_fallback_radius_interval +
-      (data.explosion_initial_radius_interval ??
-        data.explosion_fallback_radius_interval *
-        (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
-          DEFAULT_DEFLATION_LIFETIME_PERCENTAGE))
+        (data.explosion_initial_radius_interval ??
+          data.explosion_fallback_radius_interval *
+            (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
+              DEFAULT_DEFLATION_LIFETIME_PERCENTAGE))
       : DEFAULT_TOTAL_POINT_LIFETIME;
 
     this.label_expiry_fraction =
       (data.display_text_interval ??
         (DEFAULT_LABEL_LIFETIME / DEFAULT_TOTAL_POINT_LIFETIME) *
-        this.total_lifetime) / this.total_lifetime;
+          this.total_lifetime) / this.total_lifetime;
 
     const initial_lifetime_fraction = data.explosion_initial_radius_interval
       ? data.explosion_initial_radius_interval / this.total_lifetime
       : DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
-      DEFAULT_DEFLATION_LIFETIME_PERCENTAGE;
+        DEFAULT_DEFLATION_LIFETIME_PERCENTAGE;
     this.inflation_fraction =
       (initial_lifetime_fraction * DEFAULT_INFLATION_LIFETIME_PERCENTAGE) /
       (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
@@ -155,11 +156,11 @@ export class ExplosionData
         (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
           ? 1.0
           : lerp(
-            1,
-            settings.maximumScale,
-            clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
-            settings.maximumScaleCounter,
-          ),
+              1,
+              settings.maximumScale,
+              clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
+                settings.maximumScaleCounter,
+            ),
     });
   }
 
@@ -263,7 +264,7 @@ export class ExplosionData
     } else if (
       this.lifetime_fraction >
       this.deflation_fraction +
-      (this.inflation_factor > 1 ? this.inflation_fraction : 0.0)
+        (this.inflation_factor > 1 ? this.inflation_fraction : 0.0)
     ) {
       // Fixed size after initial deflation, until the second half of lifetime
       return 0.5 * this.inflation_factor * this.fallback_radius;
