@@ -63,8 +63,7 @@ export class DownloadedData
   }
 
   clone(): DownloadedData {
-    const new_data = new DownloadedData(this.cloneData());
-    return new_data;
+    return new DownloadedData(this.cloneData());
   }
 
   labelScale(): number {

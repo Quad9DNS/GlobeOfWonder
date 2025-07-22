@@ -85,8 +85,7 @@ export class PointerData
   }
 
   clone(): PointerData {
-    const new_data = new PointerData(this.cloneData());
-    return new_data;
+    return new PointerData(this.cloneData());
   }
 
   labelScale(): number {

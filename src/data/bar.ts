@@ -78,8 +78,7 @@ export class BarData
   }
 
   clone(): BarData {
-    const new_data = new BarData(this.cloneData());
-    return new_data;
+    return new BarData(this.cloneData());
   }
 
   faceCamera(): boolean {

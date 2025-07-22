@@ -136,8 +136,7 @@ export class ArcData
   }
 
   clone(): ArcData {
-    const new_data = new ArcData(this.cloneData());
-    return new_data;
+    return new ArcData(this.cloneData());
   }
 }
 
@@ -177,11 +176,6 @@ export class ArcLabel
   }
 
   clone(): ArcLabel {
-    const new_data = new ArcLabel(
-      this.defaultHeight,
-      this.startTime,
-      this.cloneData(),
-    );
-    return new_data;
+    return new ArcLabel(this.defaultHeight, this.startTime, this.cloneData());
   }
 }

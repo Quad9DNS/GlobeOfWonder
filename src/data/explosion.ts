@@ -314,11 +314,10 @@ export class ExplosionData
   }
 
   clone(): ExplosionData {
-    const new_data = new ExplosionData({
+    return new ExplosionData({
       ...this.cloneData(),
       inflation_factor: this.inflation_factor,
     });
-    return new_data;
   }
 
   scaleZ(): boolean {

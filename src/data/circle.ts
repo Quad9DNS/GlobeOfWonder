@@ -74,7 +74,6 @@ export class CircleData
   }
 
   clone(): CircleData {
-    const new_data = new CircleData(this.cloneData());
-    return new_data;
+    return new CircleData(this.cloneData());
   }
 }
