@@ -3,7 +3,12 @@ import { LayerData, PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { CommonData } from "./common";
-import { geoDistance, geoMidPoint, UNIT_KMS } from "../globe/common";
+import {
+  DEFAULT_GLOBE_RADIUS,
+  geoDistance,
+  geoMidPoint,
+  UNIT_KMS,
+} from "../globe/common";
 import { HoverTextData } from "./hover";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
 
@@ -121,7 +126,8 @@ export class ArcData
     // 0.5 refers to `arcAltitudeAutoScale` default value
     const height =
       (geoDistance(this.lat, this.lon, this.point2_lat, this.point2_lon) / 2) *
-      0.5;
+      0.5 *
+      DEFAULT_GLOBE_RADIUS;
 
     return new ArcLabel(
       height,
@@ -170,9 +176,14 @@ export class ArcLabel
   }
 
   heightOffset(): number {
-    return this.additional_data.arc_max_height
+    const arc_height = this.additional_data.arc_max_height
       ? (this.additional_data.arc_max_height + 5) / UNIT_KMS
       : this.defaultHeight + 1 / UNIT_KMS;
+    // Account for line radius, to have the label sit exactly on the line
+    // Taking only half of width to get radius
+    return (
+      arc_height + (this.additional_data.arc_line_width ?? 0) / UNIT_KMS / 2
+    );
   }
 
   clone(): ArcLabel {

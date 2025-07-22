@@ -9,6 +9,7 @@ import {
   RegistryHook,
 } from "../layer";
 import { PointData } from "../../data";
+import { DEFAULT_GLOBE_RADIUS } from "../common";
 
 /**
  * Globe layer that draws all objects that need custom implementation (not provided by three-globe).
@@ -74,7 +75,11 @@ export class CustomObjectLayerGroup
         group.visible = false;
         Object.assign(
           group.position,
-          globe.getCoords(p.lat, p.lon, p.heightOffset()),
+          globe.getCoords(
+            p.lat,
+            p.lon,
+            p.heightOffset() / DEFAULT_GLOBE_RADIUS,
+          ),
         );
 
         if (p.faceCamera()) {
