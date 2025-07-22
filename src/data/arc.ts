@@ -32,6 +32,10 @@ export interface ArcCustomizationData {
    */
   arc_line_type?: ArcLineType;
   /**
+   * Thickness of the arc line in kilometers. By default, if not defined, the thickness is 1 pixel.
+   */
+  arc_line_thickness?: number;
+  /**
    * Whether the arc should be animated.
    * If set to true, arc will move from start to end position.
    * Only useful if {@link arc_line_type} is not solid.
@@ -90,6 +94,9 @@ export class ArcData
   public get arc_line_type(): ArcLineType | undefined {
     return this.additional_data.arc_line_type;
   }
+  public get arc_line_thickness(): number | undefined {
+    return this.additional_data.arc_line_thickness;
+  }
   public get arc_animated(): boolean | undefined {
     return this.additional_data.arc_animated;
   }
@@ -120,29 +127,16 @@ export class ArcData
       height,
       this.startTime + (this.arc_draw_duration ?? 200) / 2,
       {
+        ...this.cloneData(),
         lat: latMid,
         lon: lonMid,
         ttl: this.total_lifetime - (this.arc_draw_duration ?? 200),
-        fade_duration: this.fade_duration,
-        always_faces_viewer: this.always_faces_viewer,
-        counter: this.counter,
-        counter_include: this.counter_include,
-        ...this.additional_data,
       },
     );
   }
 
   clone(): ArcData {
-    const new_data = new ArcData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-      ...this.additional_data,
-    });
+    const new_data = new ArcData(this.cloneData());
     return new_data;
   }
 }
@@ -183,16 +177,11 @@ export class ArcLabel
   }
 
   clone(): ArcLabel {
-    const new_data = new ArcLabel(this.defaultHeight, this.startTime, {
-      ...this.additional_data,
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-    });
+    const new_data = new ArcLabel(
+      this.defaultHeight,
+      this.startTime,
+      this.cloneData(),
+    );
     return new_data;
   }
 }

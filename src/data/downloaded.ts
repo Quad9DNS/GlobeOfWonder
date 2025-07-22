@@ -63,16 +63,7 @@ export class DownloadedData
   }
 
   clone(): DownloadedData {
-    const new_data = new DownloadedData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      ...this.additional_data,
-    });
+    const new_data = new DownloadedData(this.cloneData());
     return new_data;
   }
 

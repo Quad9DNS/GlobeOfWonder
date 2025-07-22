@@ -145,8 +145,7 @@ export class SatellitesLayer
       this.globe.getCoords(
         object.lat,
         object.lon,
-        // heightOffset returns a value in world units, but getCoords works with globe radius units
-        object.heightOffset() / DEFAULT_GLOBE_RADIUS,
+        object.heightOffset(),
       ),
     );
   }

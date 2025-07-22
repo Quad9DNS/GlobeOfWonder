@@ -15,7 +15,6 @@ import { CommonData } from "./common";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
 import { Settings } from "../settings";
 
-const MAX_SPAWN_DELAY_MS = 5000;
 const RANDOM_OFFSET_MAX_KM = 20;
 
 const DEFAULT_INFLATION_LIFETIME_PERCENTAGE = 0.02;
@@ -109,7 +108,7 @@ export class ExplosionData
       LabelsData &
       LinkData &
       LayerData &
-      ScaleData & { inflation_factor?: number | null },
+      ScaleData & { inflation_factor?: number },
   ) {
     super(data);
     this.inflation_factor = data.inflation_factor ?? 1;
@@ -203,16 +202,6 @@ export class ExplosionData
     this.lon +=
       Math.random() * 2 * RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE -
       RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE;
-    return this;
-  }
-
-  /**
-   * Randomizes the startTime of the explosion up to 5 seconds in the future, to prevent explosion spikes.
-   */
-  randomizeSpawnTime(): ExplosionData {
-    const addition = Math.random() * MAX_SPAWN_DELAY_MS;
-    this.startTime += addition;
-    this.lifetime -= addition;
     return this;
   }
 
@@ -326,15 +315,8 @@ export class ExplosionData
 
   clone(): ExplosionData {
     const new_data = new ExplosionData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
+      ...this.cloneData(),
       inflation_factor: this.inflation_factor,
-      always_faces_viewer: this.always_faces_viewer,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      ...this.additional_data,
     });
     return new_data;
   }

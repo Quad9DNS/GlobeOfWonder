@@ -74,16 +74,7 @@ export class CircleData
   }
 
   clone(): CircleData {
-    const new_data = new CircleData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      always_faces_viewer: this.always_faces_viewer,
-      ...this.additional_data,
-    });
+    const new_data = new CircleData(this.cloneData());
     return new_data;
   }
 }

@@ -26,6 +26,7 @@ const COMMON_NON_FILTER_KEYS = [
   "lon",
   "ttl",
   "fade_duration",
+  "draw_delay",
   "opacity",
   "counter",
   "counter_include",
@@ -70,6 +71,7 @@ const NON_FILTER_KEYS = {
     "point2_lat",
     "arc_color",
     "arc_line_type",
+    "arc_line_thickness",
     "arc_animated",
     "arc_draw_duration",
     "arc_max_height",
@@ -92,7 +94,9 @@ const FLOAT_KEYS = [
   "downloaded_object_scale",
   "arc_draw_duration",
   "arc_max_height",
+  "arc_line_thickness",
   "fade_duration",
+  "draw_delay",
 ];
 
 export type PositionData = {
@@ -103,6 +107,7 @@ export type PositionData = {
 export type LifetimeData = {
   ttl?: number;
   fade_duration?: number;
+  draw_delay?: number;
 };
 export type CounterData = {
   counter?: number;

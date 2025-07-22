@@ -33,9 +33,7 @@ Once a JSON websocket stream is successfully ingested, any fields in the JSON wi
 
 There are values that can be added to the URL for auto-connection and first-view behaviors: websocketUsername (string of username), websocketPassword (string of password, unencrypted), and autoconnect (true/false), startupZoom (how far to zoom the map) and startupLat/startupLon.
 
-The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates. 
-
-There is a slight randomized delay built in to events being placed on the map to "smooth" events across time. This was due to websocket buffers emptying quickly, which caused bursty behaviors and unpleasing rendering. This probably should be made into an optional smoothing mechanism but is currently hard-coded.
+The "explosion" event type has 20km randomization of placement, in order to effectively show activity in areas which have many events that happen with the same lat/lon coordinates.
 
 Events with 0,0 as lat/lon are not shown.
 
@@ -80,6 +78,7 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | type                               | explosion                                         | Type of the event (explosion, circle, pointer, bar, downloaded, arc)                                                                                 |
 | ttl                                | 15000 (explosion), 5000 (arc), Infinity otherwise | How long the item should be visible on the map                                                                                                       |
 | fade_duration                      | -                                                 | Fade period at the end of object lifetime                                                                                                            |
+| draw_delay                         | -                                                 | Delay the drawing of this object in ms. Can be useful to add random delays, or to precisely control objects display time                             |
 | opacity                            | 100                                               | Object opacity (0-100). This can be further modified with global opacity slider and per layer opacity sliders                                        |
 | layer_id                           | -                                                 | Assigns this object to a specific layer (number id). All layers can be controlled in settings, by subtracting opacity from all objects in the layer  |
 | layer_name                         | -                                                 | If defined, sets a name for this layer in the settings dialog.                                                                                       |
@@ -99,7 +98,6 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | link_url                           | -                                                 | Link to open when an event is clicked, or when the hover window is clicked if available.                                                             |
 | new_window                         | true                                              | Whether to open the link in a new window or current window                                                                                           |
 | hover_text                         | -                                                 | Text to display in a dialog when hovering over an object (or clicking if the object also has `display_text` defined).                                |
-| enabledBoundariesLayers            | -                                                 | Comma-separated list (or single) two-digit national code; will show internal state/province/canton/etc. boundaries                                   |
 | explosion_initial_color            | #ff2000 (dark mode) or #5edc20 (light mode)       | Initial color of the "explosion" event.                                                                                                              |
 | explosion_initial_radius_interval  | 1350                                              | Duration in milliseconds until "explosion" settles into stable size.                                                                                 |
 | explosion_initial_radius_size      | 63.71                                             | Radius of "explosion" in kilometers at its highest point when counter is 1.                                                                          |
@@ -124,6 +122,7 @@ Data that is expected from websocket (or file downloads) is defined in [service/
 | point2_lon                         | - (required - arc type only)                      | Longitude of the arc end point. lat/lon are used as the start point.                                                                                 |
 | arc_color                          | #dc205e                                           | Color of the arc.                                                                                                                                    |
 | arc_line_type                      | solid                                             | Type of arc line. Supported type: solid, dashed_small, dashed_large, dots                                                                            |
+| arc_line_thickness                 | -                                                 | Thickness of arc line in kilometers. Defaults to 1 pixel thickness.                                                                                  |
 | arc_animated                       | false                                             | If set to true, the arc will be constantly moving from start to end point. Has no effect on solid line type.                                         |
 | arc_draw_duration                  | 200                                               | Duration of arc drawing in milliseconds. The arc will be drawn from start to end and will also be removed from start to end in this duration.        |
 | arc_max_height                     | -                                                 | Arc height at its maximum in kilometers. If not defined, it will be roughly the half of haversine distance between the 2 points.                     |
@@ -181,7 +180,7 @@ sources:
           counter=$$(shuf -i 1-30 -n 1);
           echo "{\"lat\": $$lat, \"lon\": $$lon, \"pop\": \"$$pop\", \"country\": \"$$country\", \"counter\": $$counter}";
         done
-                
+
 enrichment_tables:
   globe_access:
     type: "file"
@@ -199,7 +198,7 @@ transforms:
     inputs: ["random_json"]
     source: |
       . = parse_json!(.message)
-      
+
 sinks:
   websocket_sink_5007:
     inputs: ["parse_message"]

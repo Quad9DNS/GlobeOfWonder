@@ -78,16 +78,7 @@ export class BarData
   }
 
   clone(): BarData {
-    const new_data = new BarData({
-      lat: this.lat,
-      lon: this.lon,
-      ttl: this.total_lifetime,
-      fade_duration: this.fade_duration,
-      always_faces_viewer: this.always_faces_viewer,
-      counter: this.counter,
-      counter_include: this.counter_include,
-      ...this.additional_data,
-    });
+    const new_data = new BarData(this.cloneData());
     return new_data;
   }
 
