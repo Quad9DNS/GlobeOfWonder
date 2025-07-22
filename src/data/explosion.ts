@@ -4,18 +4,10 @@ import { clamp, lerp } from "three/src/math/MathUtils.js";
 import { HoverTextData } from "./hover";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import {
-  DEFAULT_CRITICAL_COLOR,
-  KM_TO_LATITUDE,
-  KM_TO_LONGITUDE,
-  QUAD9_COLOR,
-  UNIT_KMS,
-} from "../globe/common";
+import { DEFAULT_CRITICAL_COLOR, QUAD9_COLOR, UNIT_KMS } from "../globe/common";
 import { CommonData } from "./common";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
 import { Settings } from "../settings";
-
-const RANDOM_OFFSET_MAX_KM = 20;
 
 const DEFAULT_INFLATION_LIFETIME_PERCENTAGE = 0.02;
 const DEFAULT_DEFLATION_LIFETIME_PERCENTAGE = 0.07;
@@ -64,14 +56,13 @@ export interface ExplosionCustomizationData {
 export class ExplosionData
   extends CommonData<ExplosionCustomizationData>
   implements
-    ExplosionCustomizationData,
-    PointData,
-    HoverTextData,
-    LabelsData,
-    LinkData,
-    ScaleData,
-    HoverTextData
-{
+  ExplosionCustomizationData,
+  PointData,
+  HoverTextData,
+  LabelsData,
+  LinkData,
+  ScaleData,
+  HoverTextData {
   /**
    * How much the point should inflate at the start, before starting to deflate
    * Not recommended to go over 2
@@ -114,21 +105,21 @@ export class ExplosionData
     this.inflation_factor = data.inflation_factor ?? 1;
     this.total_lifetime = data.explosion_fallback_radius_interval
       ? data.explosion_fallback_radius_interval +
-        (data.explosion_initial_radius_interval ??
-          data.explosion_fallback_radius_interval *
-            (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
-              DEFAULT_DEFLATION_LIFETIME_PERCENTAGE))
+      (data.explosion_initial_radius_interval ??
+        data.explosion_fallback_radius_interval *
+        (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
+          DEFAULT_DEFLATION_LIFETIME_PERCENTAGE))
       : DEFAULT_TOTAL_POINT_LIFETIME;
 
     this.label_expiry_fraction =
       (data.display_text_interval ??
         (DEFAULT_LABEL_LIFETIME / DEFAULT_TOTAL_POINT_LIFETIME) *
-          this.total_lifetime) / this.total_lifetime;
+        this.total_lifetime) / this.total_lifetime;
 
     const initial_lifetime_fraction = data.explosion_initial_radius_interval
       ? data.explosion_initial_radius_interval / this.total_lifetime
       : DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
-        DEFAULT_DEFLATION_LIFETIME_PERCENTAGE;
+      DEFAULT_DEFLATION_LIFETIME_PERCENTAGE;
     this.inflation_fraction =
       (initial_lifetime_fraction * DEFAULT_INFLATION_LIFETIME_PERCENTAGE) /
       (DEFAULT_INFLATION_LIFETIME_PERCENTAGE +
@@ -164,11 +155,11 @@ export class ExplosionData
         (data.counter ?? 1) == 1 || settings.enableCounterScaling == false
           ? 1.0
           : lerp(
-              1,
-              settings.maximumScale,
-              clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
-                settings.maximumScaleCounter,
-            ),
+            1,
+            settings.maximumScale,
+            clamp(data.counter ?? 1, 1, settings.maximumScaleCounter) /
+            settings.maximumScaleCounter,
+          ),
     });
   }
 
@@ -189,20 +180,6 @@ export class ExplosionData
   }
   public get explosion_fallback_radius_size(): number | undefined {
     return this.additional_data.explosion_initial_radius_size;
-  }
-
-  /**
-   * Randomizes the location of the explosion up to 20km in lat and lon
-   */
-  randomizeLocation(): ExplosionData {
-    // Add random offset of up to 20km in lat and lon
-    this.lat +=
-      Math.random() * 2 * RANDOM_OFFSET_MAX_KM * KM_TO_LATITUDE -
-      RANDOM_OFFSET_MAX_KM * KM_TO_LATITUDE;
-    this.lon +=
-      Math.random() * 2 * RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE -
-      RANDOM_OFFSET_MAX_KM * KM_TO_LONGITUDE;
-    return this;
   }
 
   labelExpired(): boolean {
@@ -286,7 +263,7 @@ export class ExplosionData
     } else if (
       this.lifetime_fraction >
       this.deflation_fraction +
-        (this.inflation_factor > 1 ? this.inflation_fraction : 0.0)
+      (this.inflation_factor > 1 ? this.inflation_fraction : 0.0)
     ) {
       // Fixed size after initial deflation, until the second half of lifetime
       return 0.5 * this.inflation_factor * this.fallback_radius;
