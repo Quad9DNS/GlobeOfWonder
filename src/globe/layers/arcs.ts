@@ -117,8 +117,8 @@ export class ArcsLayer
       })
       .arcStroke((obj) => {
         const arc = obj as ArcData;
-        if (arc.arc_line_thickness) {
-          return arc.arc_line_thickness / UNIT_KMS;
+        if (arc.arc_line_width) {
+          return arc.arc_line_width / UNIT_KMS;
         } else {
           return null;
         }

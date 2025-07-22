@@ -34,7 +34,7 @@ export interface ArcCustomizationData {
   /**
    * Thickness of the arc line in kilometers. By default, if not defined, the thickness is 1 pixel.
    */
-  arc_line_thickness?: number;
+  arc_line_width?: number;
   /**
    * Whether the arc should be animated.
    * If set to true, arc will move from start to end position.
@@ -94,8 +94,8 @@ export class ArcData
   public get arc_line_type(): ArcLineType | undefined {
     return this.additional_data.arc_line_type;
   }
-  public get arc_line_thickness(): number | undefined {
-    return this.additional_data.arc_line_thickness;
+  public get arc_line_width(): number | undefined {
+    return this.additional_data.arc_line_width;
   }
   public get arc_animated(): boolean | undefined {
     return this.additional_data.arc_animated;
