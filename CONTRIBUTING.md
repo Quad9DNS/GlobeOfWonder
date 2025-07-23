@@ -9,6 +9,7 @@ First, thank you for contributing! The goal of this document is to provide every
     - [New three globe layer](#new-three-globe-layer)
     - [New scene layer](#scene-modifying-layer)
   - [New data types](#new-data-types)
+  - [New commands](#new-commands)
   - [New settings](#new-settings)
   - [New data source](#new-data-source)
 - [Testing](#testing)
@@ -322,14 +323,14 @@ export type SatelliteServiceData = SatelliteTypeData &
   FilterData &
   SatelliteCustomizationData;
 
-export type ServiceData =
+export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
   | PointerServiceData
   | BarServiceData
   | DownloadedServiceData
   | ArcServiceData
-  | SatelliteServiceData; // Add our type to main `ServiceData` type
+  | SatelliteServiceData; // Add our type to main `ServiceEventData` type
 ```
 
 We also need to specify which parts of our objects are not usable for filtering (any keys found in incoming JSON data is usable for filtering except keys listed here and in common non filter keys):
@@ -349,9 +350,9 @@ const FLOAT_KEYS = [
 ];
 ```
 
-And add our type to `TypeData`:
+And add our type to `EventTypeData`:
 ```typescript
-type TypeData = {
+type EventTypeData = {
   type:
   | ExplosionTypeData["type"]
   | CircleTypeData["type"]
@@ -366,11 +367,11 @@ type TypeData = {
 
 If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/servicce/data.ts](./src/service/data.ts).
 
-Finally, we need to ensure our type gets added to the `newPointsQueue`, by adding a case for it in `buildAndPublishType` in [src/service/data.ts](./src/service/data.ts):
+Finally, we need to ensure our type gets added to the `newPointsQueue`, by adding a case for it in `buildAndPublishEvent` in [src/service/data.ts](./src/service/data.ts):
 ```typescript
-function buildAndPublishType(
-  type: TypeData["type"],
-  data: ServiceData,
+function buildAndPublishEvent(
+  type: EventTypeData["type"],
+  data: ServiceEventData,
   settings: Settings,
   state: AppState,
 ) {
@@ -426,9 +427,101 @@ Checklist:
 - [ ] Add new keys to NON_FILTER_KEYS in [src/service/data.ts](./src/service/data.ts), if needed
 - [ ] Add new keys to FLOAT_KEYS in [src/service/data.ts](./src/service/data.ts), if needed
 - [ ] Add validation to `parseServiceData` in [src/service/data.ts](./src/service/data.ts), if needed
-- [ ] Publish the new data type in `buildAndPublishType` in [src/service/data.ts](./src/service/data.ts)
+- [ ] Publish the new data type in `buildAndPublishEvent` in [src/service/data.ts](./src/service/data.ts)
 - [ ] Add new properties descriptions to the [README](./README.md)
 - [ ] Optionally expose the type for debugging in [src/main.ts](./src/main.ts)
+
+### New commands
+
+Besides adding new data types representing events on the globe, it is possible to add new commands that can be issued via data sources.
+
+Unlike event data, commands only require "type" field. Everything else is command specific. For example, when adding the `view_command` type, we had to define the following:
+```typescript
+type ViewCommandTypeData = {
+  type: "view_command";
+};
+// Define `view_command` specific data
+export type ViewCommandData = {
+  view_lat: number;
+  view_lon: number;
+  view_zoom?: number;
+  view_speed?: number;
+};
+// Define `view_command` data as a combination of its type and specific data
+export type ViewCommandServiceData = ViewCommandTypeData & ViewCommandData;
+
+// Add the ViewCommandServiceData to general ServiceCommandData type
+export type ServiceCommandData =
+  //...
+  | ViewCommandServiceData;
+export type ServiceData = ServiceEventData | ServiceCommandData;
+
+// Add the `view_command` type to the `isCommandData` check
+function isCommandData(data: ServiceData): data is ServiceCommandData {
+  return [/*...,*/"view_command"].includes(data.type);
+}
+```
+
+To ensure correct typing, we need to add our numerical keys in `FLOAT_KEYS`:
+```typescript
+const FLOAT_KEYS = [
+  ...,
+  "view_lat",
+  "view_lon",
+  "view_zoom",
+  "view_speed"
+];
+```
+
+If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/servicce/data.ts](./src/service/data.ts).
+
+Finally, we need to ensure our command gets processed, by adding a case for it in `buildAndPublishCommand` in [src/service/data.ts](./src/service/data.ts):
+```typescript
+function buildAndPublishCommand(
+  data: ServiceCommandData,
+  settings: Settings,
+  state: AppState,
+) {
+  switch (data.type) {
+    case "view_command":
+      if (settings.enableViewCommands) {
+        state.newCameraPositionsQueue.push(
+          normalize({
+            lat: data.view_lat,
+            lon: data.view_lon,
+            zoom: data.view_zoom,
+            camera_movement_speed: data.view_speed,
+            instant_move: false,
+          }),
+        );
+      }
+      break;
+    ...
+  }
+}
+```
+
+Now we can test it by creating a JSON file to be downloaded and make it available by storing it in the `public/assets/data` directory:
+```json
+[
+  {
+    "type": "view_command",
+    "view_lat": 0,
+    "view_lon": -150,
+    "view_zoom": -5,
+    "view_speed": 0.1
+  }
+]
+```
+
+We can then directly add it to URL query params: `http://localhost:5173/?dataDownloadUrl=assets%2Fdata%2Fcamera.json`, or define it in the settings to test it out.
+
+Checklist:
+- [ ] Add type data to [src/service/data.ts](./src/service/data.ts)
+- [ ] Add new keys to FLOAT_KEYS in [src/service/data.ts](./src/service/data.ts), if needed
+- [ ] Add validation to `parseServiceData` in [src/service/data.ts](./src/service/data.ts), if needed
+- [ ] Publish the new data type in `buildAndPublishCommand` in [src/service/data.ts](./src/service/data.ts)
+- [ ] Add new properties descriptions to the [README](./README.md)
 
 ### New settings
 
