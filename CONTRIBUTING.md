@@ -365,7 +365,7 @@ type EventTypeData = {
 };
 ```
 
-If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/servicce/data.ts](./src/service/data.ts).
+If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/service/data.ts](./src/service/data.ts).
 
 Finally, we need to ensure our type gets added to the `newPointsQueue`, by adding a case for it in `buildAndPublishEvent` in [src/service/data.ts](./src/service/data.ts):
 ```typescript
@@ -473,7 +473,7 @@ const FLOAT_KEYS = [
 ];
 ```
 
-If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/servicce/data.ts](./src/service/data.ts).
+If there are some other adjustments that need to be made to the keys or validation that needs to be performed, check out `parseServiceData` function in [src/service/data.ts](./src/service/data.ts).
 
 Finally, we need to ensure our command gets processed, by adding a case for it in `buildAndPublishCommand` in [src/service/data.ts](./src/service/data.ts):
 ```typescript
