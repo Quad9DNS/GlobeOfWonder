@@ -98,6 +98,7 @@ export class DateTimeElement extends HTMLElement {
     setInterval(() => {
       this.updateDate(new Date(), settings.timeZone);
     }, 1000);
+    this.hidden = !settings.showDateAndTime;
 
     settings.addChangedListener((event: CustomEvent<SettingsChangedEvent>) => {
       if (event.detail.field_changed == "showDateAndTime") {
