@@ -65,7 +65,7 @@ To also fix the issues which can be fixed automatically, run: `npm run lint:fix`
    <img src="gow-pref2.png" alt="GlobeOfWonder-OptionsMenu2">
 </p>
 
-## Websocket data
+## Websocket/Flatfile JSON data primitives
 
 Data that is expected from websocket (or file downloads) is defined in [service/data.ts (ServiceData)](./src/service/data.ts#L132).
 The data can either represent events to be displayed on the globe, or commands that can affect the app.
