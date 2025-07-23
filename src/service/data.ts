@@ -323,7 +323,7 @@ function parseServiceData(data: string): ServiceData | null {
         k == "display_text_always_faces_viewer" ||
         k == "display_text_hover_only"
       ) {
-        return Boolean(v);
+        return Boolean(v) && v != "false";
       } else {
         return v;
       }
