@@ -55,7 +55,7 @@ export class OrbitControlsLayer
     const zoomFactor = clamp(
       (cameraDistance - MIN_CAMERA_DISTANCE) /
         (MAX_CAMERA_DISTANCE - MIN_CAMERA_DISTANCE),
-      0.01,
+      0.001,
       1.0,
     );
     this.controls.rotateSpeed = zoomFactor * 1.5;
