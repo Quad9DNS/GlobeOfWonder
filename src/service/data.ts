@@ -190,6 +190,9 @@ export type ArcServiceData = ArcTypeData &
 function isCommandData(data: ServiceData): data is ServiceCommandData {
   return ["view_command", "settings_command"].includes(data.type);
 }
+type CommonCommandData = {
+  command_delay?: number;
+};
 type ViewCommandTypeData = {
   type: "view_command";
 };
@@ -199,7 +202,9 @@ export type ViewCommandData = {
   view_zoom?: number;
   view_speed?: number;
 };
-export type ViewCommandServiceData = ViewCommandTypeData & ViewCommandData;
+export type ViewCommandServiceData = CommonCommandData &
+  ViewCommandTypeData &
+  ViewCommandData;
 
 type SettingsCommandTypeData = {
   type: "settings_command";
@@ -207,7 +212,8 @@ type SettingsCommandTypeData = {
 export type SettingsCommandData = {
   settings: Record<string, string>;
 };
-export type SettingsCommandServiceData = SettingsCommandTypeData &
+export type SettingsCommandServiceData = CommonCommandData &
+  SettingsCommandTypeData &
   SettingsCommandData;
 
 export type ServiceEventData =
@@ -241,7 +247,13 @@ export function processServiceData(
   const incomingEvent = parseServiceData(data);
   if (incomingEvent) {
     if (isCommandData(incomingEvent)) {
-      buildAndPublishCommand(incomingEvent, settings, appState);
+      if (incomingEvent.command_delay) {
+        setTimeout(() => {
+          buildAndPublishCommand(incomingEvent, settings, appState);
+        }, incomingEvent.command_delay);
+      } else {
+        buildAndPublishCommand(incomingEvent, settings, appState);
+      }
     } else {
       if (!serviceState.filtersConfigured) {
         const keys = [];

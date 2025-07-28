@@ -46,11 +46,11 @@ export class NewCameraPositionsLayer
   }
 
   updateFrame(globe: ThreeGlobe, _settings: Settings): void {
-    if (this.nextPosition) {
-      const newFrameTime = Date.now();
-      const frameDeltaMs = newFrameTime - this.lastFrameTime;
-      this.lastFrameTime = newFrameTime;
+    const newFrameTime = Date.now();
+    const frameDeltaMs = newFrameTime - this.lastFrameTime;
+    this.lastFrameTime = newFrameTime;
 
+    if (this.nextPosition) {
       const {
         lat: currentLat,
         lng: currentLon,
