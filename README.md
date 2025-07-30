@@ -149,7 +149,6 @@ There are some environment variables which can be used to control the app in bui
 | VITE_GLOBE_MAP_URL_DARK               | earth-night.jpg in assets                    | Globe map image URL for dark mode                                                                                    |
 | VITE_GLOBE_MAP_URL_LIGHT              | earth-day.jpg in assets                      | Globe map image URL for light mode                                                                                   |
 | VITE_GLOBE_BUMP_MAP_URL               | earth-topology.jpg in assets                 | Globe bump map image URL                                                                                             |
-| VITE_GLOBE_BUMP_MAP_URL               | earth-topology.jpg in assets                 | Globe bump map image URL                                                                                             |
 | VITE_AUTORECONNECT_INTERVAL_MS        | 5000                                         | Automatically reconnect to websocket on disconnection in given interval                                              |
 | VITE_DATA_DOWNLOAD_URL                | https://view.quad9.net/assets/data/pops.json | Automatically download events data from this url. May be empty to disable download.                                  |
 | VITE_DATA_DOWNLOAD_INTERVAL_MS        | 600000                                       | Automatically download events data from the defined URL every X milliseconds. May be 0 to disable periodic download. |
