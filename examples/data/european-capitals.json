@@ -1,0 +1,394 @@
+[
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 52.5200,
+		"lon": 13.4050,
+		"display_text": "Berlin",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 48.8566,
+		"lon": 2.3522,
+		"display_text": "Paris",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 51.5074,
+		"lon": -0.1278,
+		"display_text": "London",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 41.9028,
+		"lon": 12.4964,
+		"display_text": "Rome",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 40.4168,
+		"lon": -3.7038,
+		"display_text": "Madrid",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 38.7223,
+		"lon": -9.1393,
+		"display_text": "Lisbon",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 52.3676,
+		"lon": 4.9041,
+		"display_text": "Amsterdam",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 50.8503,
+		"lon": 4.3517,
+		"display_text": "Brussels",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 46.9480,
+		"lon": 7.4474,
+		"display_text": "Bern",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 48.2082,
+		"lon": 16.3738,
+		"display_text": "Vienna",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 55.6761,
+		"lon": 12.5683,
+		"display_text": "Copenhagen",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 59.9139,
+		"lon": 10.7522,
+		"display_text": "Oslo",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 59.3293,
+		"lon": 18.0686,
+		"display_text": "Stockholm",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 60.1699,
+		"lon": 24.9384,
+		"display_text": "Helsinki",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 64.1466,
+		"lon": -21.9426,
+		"display_text": "Reykjavik",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 53.3498,
+		"lon": -6.2603,
+		"display_text": "Dublin",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 49.611622,
+		"lon": 6.131935,
+		"display_text": "Luxembourg",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 47.1569,
+		"lon": 9.5215,
+		"display_text": "Vaduz",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 43.7384,
+		"lon": 7.4246,
+		"display_text": "Monaco",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 42.50779,
+		"lon": 1.52109,
+		"display_text": "Andorra la Vella",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 43.9424,
+		"lon": 12.4578,
+		"display_text": "San Marino",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 41.9000,
+		"lon": 12.4833,
+		"display_text": "Vatican City",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 37.9838,
+		"lon": 23.7275,
+		"display_text": "Athens",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 41.99646,
+		"lon": 21.43141,
+		"display_text": "Skopje",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 41.3275,
+		"lon": 19.8187,
+		"display_text": "Tirana",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 42.6977,
+		"lon": 23.3219,
+		"display_text": "Sofia",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 44.4268,
+		"lon": 26.1025,
+		"display_text": "Bucharest",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 47.4979,
+		"lon": 19.0402,
+		"display_text": "Budapest",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 50.0755,
+		"lon": 14.4378,
+		"display_text": "Prague",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 48.1486,
+		"lon": 17.1077,
+		"display_text": "Bratislava",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 46.0569,
+		"lon": 14.5058,
+		"display_text": "Ljubljana",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 45.8150,
+		"lon": 15.9819,
+		"display_text": "Zagreb",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 43.8563,
+		"lon": 18.4131,
+		"display_text": "Sarajevo",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 44.7866,
+		"lon": 20.4489,
+		"display_text": "Belgrade",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 42.4304,
+		"lon": 19.2594,
+		"display_text": "Podgorica",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 42.5063,
+		"lon": 20.9953,
+		"display_text": "Pristina",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 52.2297,
+		"lon": 21.0122,
+		"display_text": "Warsaw",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 54.6872,
+		"lon": 25.2797,
+		"display_text": "Vilnius",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 56.9496,
+		"lon": 24.1052,
+		"display_text": "Riga",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 59.4370,
+		"lon": 24.7536,
+		"display_text": "Tallinn",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 55.9533,
+		"lon": -3.1883,
+		"display_text": "Edinburgh",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 51.4816,
+		"lon": -3.1791,
+		"display_text": "Cardiff",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 54.5973,
+		"lon": -5.9301,
+		"display_text": "Belfast",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 35.1264,
+		"lon": 33.4299,
+		"display_text": "Nicosia",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 35.8997,
+		"lon": 14.5147,
+		"display_text": "Valletta",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 47.0379,
+		"lon": 28.8416,
+		"display_text": "Chisinau",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 50.4501,
+		"lon": 30.5234,
+		"display_text": "Kyiv",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 53.9045,
+		"lon": 27.5615,
+		"display_text": "Minsk",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "pointer",
+		"pointer_scale": 0.3,
+		"lat": 55.7558,
+		"lon": 37.6176,
+		"display_text": "Moscow",
+		"display_text_hover_only": true
+	}
+]

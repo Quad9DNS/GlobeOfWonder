@@ -163,6 +163,8 @@ There are some environment variables which can be used to control the app in bui
 
 ## Common data sources
 
+### Websocket
+
 Quad9 has had great success using Vector (http://vector.dev) to create streaming data via the "websocket" sink. Authentication is a bit non-obvious, so here is a complete example "sink" for a Vector-based data source using random data as an input, with authenticated websocket. Upon loading the globe page, set the "Websocket url:" to be ws://your.host:5007 and username/password as indicated in the sample file.
 
 ```
@@ -241,5 +243,14 @@ Username,Password
 testuser,ABadPasswordChoice123
 ```
 
-### Credits
+### Data download
+
+The [examples](./examples/data) directory contains some JSON data files that can be directly consumed by the application. Pick a file that you are interested in, copy it over to [public/assets/data/](./public/assets/data) directory and point the `dataDownloadUrl` (or `VITE_DATA_DOWNLOAD_URL`) to it:
+```sh
+# For example, lets pick the file demonstrating all supported types
+cp examples/data/all-types.json public/assets/data/
+VITE_DATA_DOWNLOAD_URL=assets/data/all-types.json npm run dev
+```
+
+## Credits
 most development by Ensar Sarajčić <dev@ensarsarajcic.com>; ongoing feature development, original concept and code by John Todd <jtodd@quad9.net>

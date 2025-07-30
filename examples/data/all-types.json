@@ -1,0 +1,69 @@
+[
+	{
+		"type": "settings_command",
+		"settings": {
+			"autoRotateGlobe": "false"
+		}
+	},
+	{
+		"type": "view_command",
+		"view_lat": 45,
+		"view_lon": 15,
+		"view_zoom": 7,
+		"view_speed": 0.2,
+		"command_delay": 1000
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"circle_radius": 100
+	},
+	{
+		"type": "pointer",
+		"lat": 50,
+		"lon": 30,
+		"display_text": "Click here to go to\nthe Globe of Wonder GitHub page!",
+		"link_url": "https://github.com/Quad9DNS/globeofwonder"
+	},
+	{
+		"type": "pointer",
+		"lat": 55,
+		"lon": 35,
+		"display_text": "Test label on hover only",
+		"display_text_hover_only": true
+	},
+	{
+		"type": "explosion",
+		"lat": 30,
+		"lon": 15,
+		"ttl": 10000,
+		"counter": 20,
+		"draw_delay": 5000
+	},
+	{
+		"type": "bar",
+		"lat": 40,
+		"lon": -5,
+		"bar_height": 1000
+	},
+	{
+		"type": "arc",
+		"lat": 30,
+		"lon": 15,
+		"ttl": 10000,
+		"draw_delay": 5000,
+		"point2_lat": 50,
+		"point2_lon": 5,
+		"arc_draw_duration": 1000
+	},
+	{
+		"type": "downloaded",
+		"lat": 40,
+		"lon": 10,
+		"downloaded_object_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
+		"downloaded_object_scale": 2,
+		"hover_text": "Click here to open wikipedia",
+		"link_url": "https://wikipedia.org"
+	}
+]

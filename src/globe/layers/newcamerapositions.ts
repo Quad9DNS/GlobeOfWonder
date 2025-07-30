@@ -81,8 +81,6 @@ export class NewCameraPositionsLayer
         frameDeltaMs *
           DEFAULT_LON_MOVE_SPEED_PER_MS *
           (this.nextPosition.camera_movement_speed ?? 1),
-        // Longitude can wrap around, so take the shortest distance
-        Math.sign(this.nextPosition.lon) != Math.sign(currentLon),
       );
 
       const lerpedPos: CameraPosition = {
@@ -134,16 +132,11 @@ export class NewCameraPositionsLayer
     this.camera.lookAt(globe.position);
   }
 
-  private moveBy(
-    from: number,
-    to: number,
-    by: number,
-    inverse: boolean = false,
-  ): [number, boolean] {
+  private moveBy(from: number, to: number, by: number): [number, boolean] {
     if (Math.abs(to - from) < by) {
       return [to, true];
     } else {
-      return [from + Math.sign(to - from) * (inverse ? -1 : 1) * by, false];
+      return [from + Math.sign(to - from) * by, false];
     }
   }
 }
