@@ -146,8 +146,7 @@ export class Settings extends EventTarget {
   accessor startupLon: number = 0.0;
 
   @SettingsField()
-  accessor websocketUrl: string =
-    import.meta.env.VITE_WEBSOCKET_URL || "wss://view.quad9.net/websocket/5000";
+  accessor websocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL || "";
   @SettingsField()
   accessor websocketUsername: string = "";
   @SettingsField()
@@ -160,8 +159,7 @@ export class Settings extends EventTarget {
 
   @SettingsField()
   accessor dataDownloadUrl: string =
-    import.meta.env.VITE_DATA_DOWNLOAD_URL ||
-      "https://view.quad9.net/assets/data/pops.json";
+    import.meta.env.VITE_DATA_DOWNLOAD_URL || "";
   @SettingsField()
   accessor dataDownloadInterval: number =
     import.meta.env.VIEW_DATA_DOWNLOAD_INTERVAL_MS || 600000;

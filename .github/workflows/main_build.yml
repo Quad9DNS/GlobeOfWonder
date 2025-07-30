@@ -13,6 +13,7 @@ jobs:
     env:
       VITE_APP_VERSION: "${{ github.ref_name }}.${{ github.sha }}"
       VITE_WEBSOCKET_URL: "wss://view.quad9.net/websocket/5001"
+      VITE_DATA_DOWNLOAD_URL: "https://view.quad9.net/assets/data/pops.json"
 
     steps:
       - name: Checkout repo
