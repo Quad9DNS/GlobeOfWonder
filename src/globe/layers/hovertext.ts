@@ -6,22 +6,13 @@ import { registerDialogContainer } from "../../components";
 import { PointData } from "../../data";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isHoverTextData, HoverTextData } from "../../data/hover";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { isLinkData, LinkData } from "../../data/link";
 import { GlobeLayerAttachHook } from "../layer";
-import {
-  addClickListener,
-  addMouseEventListener,
-  MouseInteractionLayer,
-} from "./mouseevents";
+import { addMouseEventListener, MouseInteractionLayer } from "./mouseevents";
 
 /**
- * Globe layer for all objects that implement {@link HoverTextData} or {@link LinkData}.
+ * Globe layer for all objects that implement {@link HoverTextData}.
  *
- * If an object also has a label attached, then hover window is opened on click only.
- * If both hover text and link are provided, link is available when clicking on the opened hover window.
- *
- * Implements {@link MouseInteractionLayer} to provide hover and click functionality.
+ * Implements {@link MouseInteractionLayer} to provide hover.
  */
 export class HoverTextObjectsLayer
   implements
@@ -86,16 +77,6 @@ export class HoverTextObjectsLayer
             this.hoverWindowPosition.y.toString() + "px";
           this.hoverWindow.style.left =
             this.hoverWindowPosition.x.toString() + "px";
-        }
-      });
-    }
-    if (isLinkData(object) && object.link_url) {
-      addClickListener(parent, () => {
-        if (object.link_url) {
-          window.open(
-            object.link_url,
-            object.new_window === false ? "_self" : "_blank",
-          );
         }
       });
     }

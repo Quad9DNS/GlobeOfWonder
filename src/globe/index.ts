@@ -30,6 +30,7 @@ import { GlobalZoomLayer } from "./layers/globalzoom";
 import { AmbientLightLayer } from "./layers/ambientlight";
 import { OrbitControlsLayer } from "./layers/orbitcontrols";
 import { NewCameraPositionsLayer } from "./layers/newcamerapositions";
+import { LinkDataObjectsLayer } from "./layers/links";
 
 // Configures the registry
 // WARN: All the layers should be added here!
@@ -54,6 +55,7 @@ for (const layer of [
   new ArcsLayer(),
   new CustomObjectLayerGroup(),
   new HoverTextObjectsLayer(),
+  new LinkDataObjectsLayer(),
   new LabeledObjectsLayer(),
   new CirclesLayer(),
   new PointersLayer(),
