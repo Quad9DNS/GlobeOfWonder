@@ -80,13 +80,18 @@ export class OpacityLayer
       return;
     }
 
+    const newTransparentFlag = opacity < 100;
     parent.userData["doNotShow"] = false;
 
     parent.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
         if (child.material instanceof THREE.Material) {
-          if (!child.userData["ignoreTransparency"]) {
-            child.material.transparent = opacity < 100;
+          if (
+            !child.userData["ignoreTransparency"] &&
+            child.material.transparent != newTransparentFlag
+          ) {
+            child.material.transparent = newTransparentFlag;
+            child.material.needsUpdate = true;
           }
           child.material.opacity = opacity / 100;
         }
