@@ -55,7 +55,7 @@ const commonMaterial = new THREE.ShaderMaterial({
     uniform float opacity;
 
     void main() {
-      gl_FragColor = mix(vec4(startColor, opacity), vec4(endColor, opacity), colorInterpolationFactor) * vec4(lightColor * lightIntensity, 1.0);
+      gl_FragColor = vec4(mix(startColor, endColor, colorInterpolationFactor) * lightColor * lightIntensity, opacity);
     }
     `,
 });
