@@ -6,6 +6,15 @@ import { ServiceState } from "../service/state";
 const DEFAULT_DARK_BG = "#000000";
 const DEFAULT_LIGHT_BG = "#FFFFFF";
 
+const GLOBE_MAP_URL_DARK =
+  import.meta.env.VITE_GLOBE_MAP_URL_DARK || "assets/img/earth-night.jpg";
+const GLOBE_MAP_URL_LIGHT =
+  import.meta.env.VITE_GLOBE_MAP_URL_LIGHT || "assets/img/earth-day.jpg";
+const GLOBE_BUMP_MAP_URL =
+  import.meta.env.VITE_GLOBE_BUMP_MAP_URL || "assets/img/earth-topology.png";
+const COUNTRIES_GEOJSON_URL =
+  import.meta.env.VITE_COUNTRIES_GEOJSON_URL || "assets/data/countries.geojson";
+
 /**
  * UI elements related to settings
  */
@@ -187,11 +196,25 @@ export class Settings extends EventTarget {
     } else if (settings.bgColor == DEFAULT_LIGHT_BG && newValue == false) {
       settings.bgColor = DEFAULT_DARK_BG;
     }
+    if (settings.globeMapUrl == GLOBE_MAP_URL_DARK && newValue == true) {
+      settings.globeMapUrl = GLOBE_MAP_URL_LIGHT;
+    } else if (
+      settings.globeMapUrl == GLOBE_MAP_URL_LIGHT &&
+      newValue == false
+    ) {
+      settings.globeMapUrl = GLOBE_MAP_URL_DARK;
+    }
     return newValue;
   })
   accessor lightMode: boolean = false;
   @SettingsField()
-  accessor bgColor: string = "#000000";
+  accessor bgColor: string = DEFAULT_DARK_BG;
+  @SettingsField()
+  accessor globeMapUrl: string = GLOBE_MAP_URL_DARK;
+  @SettingsField()
+  accessor globeBumpMapUrl: string = GLOBE_BUMP_MAP_URL;
+  @SettingsField()
+  accessor countriesGeoJsonUrl: string = COUNTRIES_GEOJSON_URL;
 
   @SettingsField()
   accessor enableSettingsDialog: boolean = true;
@@ -482,6 +505,9 @@ export function setupSettingsDialog(
     ["#counterstitle", "string", "countersTitle"],
     ["#counterslabel", "string", "countersLabel"],
     ["#bgcolor", "string", "bgColor"],
+    ["#globemapurl", "string", "globeMapUrl"],
+    ["#globebumpmapurl", "string", "globeBumpMapUrl"],
+    ["#countriesgeojsonurl", "string", "countriesGeoJsonUrl"],
     ["#maxscale", "number", "maximumScale"],
     ["#maxscalecounter", "number", "maximumScaleCounter"],
     ["#timezone", "selectstring", "timeZone"],
@@ -848,6 +874,22 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="lightmode" name="lightmode" />
         <label for="bgcolor">Background color:</label>
         <input type="color" id="bgcolor" name="bgcolor" value="#000000" />
+        <label for="globemapurl">Globe map url:</label>
+        <input type="text" id="globemapurl" name="globemapurl" list="mapurls"/>
+        <datalist id="mapurls">
+          <option value="${GLOBE_MAP_URL_DARK}">Default dark</option>
+          <option value="${GLOBE_MAP_URL_LIGHT}">Default light</option>
+        </datalist>
+        <label for="globebumpmapurl">Globe bump map url:</label>
+        <input type="text" id="globebumpmapurl" name="globebumpmapurl" list="bumpmapurls"/>
+        <datalist id="bumpmapurls">
+          <option value="${GLOBE_BUMP_MAP_URL}">Default</option>
+        </datalist>
+        <label for="countriesgeojsonurl">Countries borders GeoJSON url:</label>
+        <input type="text" id="countriesgeojsonurl" name="countriesgeojsonurl" list="countriesurls"/>
+        <datalist id="countriesurls">
+          <option value="${COUNTRIES_GEOJSON_URL}">Default</option>
+        </datalist>
         <label for="showwebsocketui">Show websocket connection UI:</label>
         <input type="checkbox" id="showwebsocketui" name="showwebsocketui" />
         <label for="showwsstatus">Show websocket status:</label>

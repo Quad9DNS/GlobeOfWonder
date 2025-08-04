@@ -3,15 +3,6 @@ import ThreeGlobe from "three-globe";
 import { Settings, SettingsChangedEvent } from "../../settings";
 import { GlobeLayerAttachHook, GlobeLayerSettingsHook } from "../layer";
 
-const COUNTRIES_GEOJSON_URL =
-  import.meta.env.VITE_COUNTRIES_GEOJSON_URL || "assets/data/countries.geojson";
-const GLOBE_MAP_URL_DARK =
-  import.meta.env.VITE_GLOBE_MAP_URL_DARK || "assets/img/earth-night.jpg";
-const GLOBE_MAP_URL_LIGHT =
-  import.meta.env.VITE_GLOBE_MAP_URL_LIGHT || "assets/img/earth-day.jpg";
-const GLOBE_BUMP_MAP_URL =
-  import.meta.env.VITE_GLOBE_BUMP_MAP_URL || "assets/img/earth-topology.png";
-
 const ATMOSPHERE_COLOR_DARK = "lightskyblue";
 const ATMOSPHERE_SIZE_DARK = 0.25;
 const ATMOSPHERE_COLOR_LIGHT = "blue";
@@ -54,21 +45,12 @@ export class CoreMapLayer
   ): void {
     this.globe = globe;
     globe
-      .globeImageUrl(GLOBE_MAP_URL_DARK)
-      .bumpImageUrl(GLOBE_BUMP_MAP_URL)
       .atmosphereColor(ATMOSPHERE_COLOR_DARK)
       .atmosphereAltitude(ATMOSPHERE_SIZE_DARK)
       .polygonAltitude(0.005)
       .polygonCapMaterial(COUNTRY_BORDERS_MATERIAL)
       .polygonSideMaterial(COUNTRY_BORDERS_MATERIAL)
       .polygonStrokeColor(() => BORDER_COLOR_DARK);
-
-    fetch(COUNTRIES_GEOJSON_URL)
-      .then((res) => res.json())
-      .then((countries) => {
-        this.bordersData = countries.features;
-        this.updateCountryBorders(this.settings?.enableCountryBorders ?? true);
-      });
   }
 
   attachToSettings(settings: Settings): void {
@@ -76,8 +58,17 @@ export class CoreMapLayer
     this.updateColorScheme(settings);
     this.globe?.showAtmosphere(settings.enableAtmosphere);
     this.globe?.showGraticules(settings.enableGraticules);
+    this.globe?.bumpImageUrl(settings.globeBumpMapUrl);
+    this.globe?.globeImageUrl(settings.globeMapUrl);
     this.updateCountryBorders(settings.enableCountryBorders);
     this.updateCountryBordersType(settings.simpleCountryBorders);
+
+    fetch(settings.countriesGeoJsonUrl)
+      .then((res) => res.json())
+      .then((countries) => {
+        this.bordersData = countries.features;
+        this.updateCountryBorders(this.settings?.enableCountryBorders ?? true);
+      });
 
     settings.addChangedListener((event: CustomEvent<SettingsChangedEvent>) => {
       if (event.detail.field_changed == "lightMode") {
@@ -90,6 +81,19 @@ export class CoreMapLayer
         this.updateCountryBorders(settings.enableCountryBorders);
       } else if (event.detail.field_changed == "simpleCountryBorders") {
         this.updateCountryBordersType(settings.simpleCountryBorders);
+      } else if (event.detail.field_changed == "globeMapUrl") {
+        this.globe?.globeImageUrl(settings.globeMapUrl);
+      } else if (event.detail.field_changed == "globeBumpMapUrl") {
+        this.globe?.bumpImageUrl(settings.globeBumpMapUrl);
+      } else if (event.detail.field_changed == "countriesGeoJsonUrl") {
+        fetch(settings.countriesGeoJsonUrl)
+          .then((res) => res.json())
+          .then((countries) => {
+            this.bordersData = countries.features;
+            this.updateCountryBorders(
+              this.settings?.enableCountryBorders ?? true,
+            );
+          });
       }
     });
   }
@@ -97,13 +101,11 @@ export class CoreMapLayer
   private updateColorScheme(settings: Settings) {
     if (settings.lightMode) {
       this.globe
-        ?.globeImageUrl(GLOBE_MAP_URL_LIGHT)
         ?.atmosphereColor(ATMOSPHERE_COLOR_LIGHT)
         ?.atmosphereAltitude(ATMOSPHERE_SIZE_LIGHT)
         ?.polygonStrokeColor(() => BORDER_COLOR_LIGHT);
     } else {
       this.globe
-        ?.globeImageUrl(GLOBE_MAP_URL_DARK)
         ?.atmosphereColor(ATMOSPHERE_COLOR_DARK)
         ?.atmosphereAltitude(ATMOSPHERE_SIZE_DARK)
         ?.polygonStrokeColor(() => BORDER_COLOR_DARK);
