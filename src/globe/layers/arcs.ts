@@ -8,7 +8,7 @@ import {
   updateDataForFrame,
 } from "../../data";
 import { ArcData, ArcLabel } from "../../data/arc";
-import { QUAD9_COLOR, UNIT_KMS } from "../common";
+import { DEFAULT_GLOBE_RADIUS, QUAD9_COLOR, UNIT_KMS } from "../common";
 import { CustomObjectProvider } from "./customobject";
 import {
   GlobeLayerAttachHook,
@@ -84,7 +84,7 @@ export class ArcsLayer
       .arcAltitude((obj: object) => {
         const max_height = (obj as ArcData).arc_max_height;
         if (max_height) {
-          return max_height / UNIT_KMS;
+          return max_height / UNIT_KMS / DEFAULT_GLOBE_RADIUS;
         } else {
           return null;
         }
