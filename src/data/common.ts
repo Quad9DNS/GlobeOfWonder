@@ -171,7 +171,7 @@ export abstract class CommonData<T>
   }
   visible(): boolean {
     // Ensures that objects are not visible if startTime is in the future
-    return this.lifetime_fraction >= 0 && !this.expired();
+    return this.lifetime >= 0 && !this.expired();
   }
   update(currentTime: number): PointData | null {
     this.lifetime = currentTime - this.startTime;
