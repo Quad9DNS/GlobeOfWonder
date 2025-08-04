@@ -9,7 +9,6 @@ import { isHoverTextData, HoverTextData } from "../../data/hover";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isLinkData, LinkData } from "../../data/link";
 import { GlobeLayerAttachHook } from "../layer";
-import { isLabelsData } from "../../data/label";
 import {
   addClickListener,
   addMouseEventListener,
@@ -37,8 +36,6 @@ export class HoverTextObjectsLayer
   private hoverWindow: HTMLDivElement | null = null;
   private hoverWindowPosition = new THREE.Vector3();
   private hoverLabelText: HTMLParagraphElement | null = null;
-  private urlToOpen: string | null = null;
-  private openUrlInNewWindow: boolean = true;
 
   attachToGlobe(
     _globe: ThreeGlobe,
@@ -62,19 +59,6 @@ export class HoverTextObjectsLayer
   `;
     this.hoverWindow =
       hoverDialogContainer.querySelector<HTMLDivElement>("#hoverDialog");
-    const dialogArea =
-      hoverDialogContainer.querySelector<HTMLDivElement>("#hoverDialogArea")!;
-    dialogArea.addEventListener("click", (_event: Event) => {
-      if (this.urlToOpen) {
-        window.open(
-          this.urlToOpen,
-          this.openUrlInNewWindow ? "_blank" : "_self",
-        );
-      }
-      if (this.hoverWindow) {
-        this.hoverWindow.hidden = true;
-      }
-    });
     this.hoverLabelText =
       hoverDialogContainer.querySelector<HTMLParagraphElement>(
         "#hoverDialogText",
@@ -83,37 +67,29 @@ export class HoverTextObjectsLayer
 
   buildObject(parent: Object3D, object: PointData): void {
     if (isHoverTextData(object) && object.hover_text) {
-      addMouseEventListener(
-        isLabelsData(object) && object.display_text ? "click" : "hover",
-        parent,
-        () => {
-          this.hadMouseHits = true;
-          if (this.hoverLabelText) {
-            this.hoverLabelText.innerText = object.hover_text ?? "";
-          }
-          if (this.hoverWindow) {
-            parent.getWorldPosition(this.hoverWindowPosition);
-            this.hoverWindow.hidden = false;
-            this.hoverWindowPosition.project(this.cachedCamera!);
-            this.hoverWindowPosition.x =
-              (this.hoverWindowPosition.x * window.innerWidth) / 2 +
-              window.innerWidth / 2;
-            this.hoverWindowPosition.y =
-              -((this.hoverWindowPosition.y * window.innerHeight) / 2) +
-              window.innerHeight / 2;
-            this.hoverWindow.style.top =
-              this.hoverWindowPosition.y.toString() + "px";
-            this.hoverWindow.style.left =
-              this.hoverWindowPosition.x.toString() + "px";
-            if (isLinkData(object) && object.link_url) {
-              this.urlToOpen = object.link_url;
-              this.openUrlInNewWindow =
-                object.new_window == true || object.new_window == null;
-            }
-          }
-        },
-      );
-    } else if (isLinkData(object) && object.link_url) {
+      addMouseEventListener("hover", parent, () => {
+        this.hadMouseHits = true;
+        if (this.hoverLabelText) {
+          this.hoverLabelText.innerText = object.hover_text ?? "";
+        }
+        if (this.hoverWindow) {
+          parent.getWorldPosition(this.hoverWindowPosition);
+          this.hoverWindow.hidden = false;
+          this.hoverWindowPosition.project(this.cachedCamera!);
+          this.hoverWindowPosition.x =
+            (this.hoverWindowPosition.x * window.innerWidth) / 2 +
+            window.innerWidth / 2;
+          this.hoverWindowPosition.y =
+            -((this.hoverWindowPosition.y * window.innerHeight) / 2) +
+            window.innerHeight / 2;
+          this.hoverWindow.style.top =
+            this.hoverWindowPosition.y.toString() + "px";
+          this.hoverWindow.style.left =
+            this.hoverWindowPosition.x.toString() + "px";
+        }
+      });
+    }
+    if (isLinkData(object) && object.link_url) {
       addClickListener(parent, () => {
         if (object.link_url) {
           window.open(
