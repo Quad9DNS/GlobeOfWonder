@@ -1,4 +1,4 @@
-import { Camera, WebGLRenderer } from "three";
+import * as THREE from "three";
 import ThreeGlobe from "three-globe";
 import { Settings } from "../../settings";
 import {
@@ -9,7 +9,10 @@ import {
 } from "../../data";
 import { ArcData, ArcLabel } from "../../data/arc";
 import { DEFAULT_GLOBE_RADIUS, QUAD9_COLOR, UNIT_KMS } from "../common";
-import { CustomObjectProvider } from "./customobject";
+import {
+  CustomObjectLayerBuildHook,
+  CustomObjectProvider,
+} from "./customobject";
 import {
   GlobeLayerAttachHook,
   GlobeLayerDataUpdateHook,
@@ -29,17 +32,23 @@ export class ArcsLayer
     GlobeLayerNewDataHook,
     GlobeLayerDataUpdateHook,
     GlobeLayerFrameUpdateHook,
-    CustomObjectProvider
+    CustomObjectProvider,
+    CustomObjectLayerBuildHook
 {
   readonly layerName: string = "Arcs";
   private arcsData: ArcData[] = [];
   private arcLabels: ArcLabel[] = [];
 
+  private labelPos: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
+  private globePos: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
+
   attachToGlobe(
     globe: ThreeGlobe,
-    _camera: Camera,
-    _renderer: WebGLRenderer,
+    _camera: THREE.Camera,
+    _renderer: THREE.WebGLRenderer,
   ): void {
+    globe.getWorldPosition(this.globePos);
+
     globe
       .arcsData([])
       .arcStartLat((obj) => (obj as ArcData).lat)
@@ -132,6 +141,21 @@ export class ArcsLayer
         }
       })
       .arcsTransitionDuration(0);
+  }
+
+  buildObject(parent: THREE.Object3D, object: PointData): void {
+    if (!(object instanceof ArcLabel)) {
+      return;
+    }
+
+    // Just turn the label to face away from the globe
+    parent.getWorldPosition(this.labelPos);
+    parent.lookAt(
+      this.labelPos.addVectors(
+        this.globePos,
+        this.labelPos.sub(this.globePos).multiplyScalar(2),
+      ),
+    );
   }
 
   shouldTakePoint(point: PointData): boolean {
