@@ -3,8 +3,9 @@ import QuestionMark from "../question_mark.svg?url";
 import QuestionMarkDark from "../question_mark_dark.svg?url";
 import { Settings, SettingsChangedEvent } from "../settings";
 import { registerInfoDialog } from "./info_dialog";
-import { AppState } from "../service/state";
+import { AppState, CountEvent } from "../service/state";
 
+const UPDATE_PERIOD = 1000;
 const SECONDS_TO_MILLIS = 1000;
 const MINUTES_TO_SECONDS = 60;
 const MINUTES_TO_MILLIS = MINUTES_TO_SECONDS * SECONDS_TO_MILLIS;
@@ -39,7 +40,7 @@ class EventCounterData {
   }
 }
 
-const events: [Date, number][] = [];
+const events: CountEvent[] = [];
 let prevData = new EventCounterData();
 let lastData = new EventCounterData();
 let lastUpdate = 0;
@@ -78,7 +79,7 @@ export function setupEventCounters(
 
   setInterval(() => {
     updateCounters(state.newEventsQueue);
-  }, 1000);
+  }, UPDATE_PERIOD);
 
   settings.addChangedListener((event: CustomEvent<SettingsChangedEvent>) => {
     // Reset counters when a filter is changed
@@ -203,34 +204,35 @@ function addElements(
   };
 }
 
-function updateCounters(newEventsQueue: number[]) {
+function updateCounters(newEventsQueue: CountEvent[]) {
   const currentData = new EventCounterData();
 
-  const currentDate = new Date();
+  const currentTime = Date.now();
   lastUpdate = performance.now();
-  events.forEach(([date, count]) => {
-    currentData.total += count;
-    if (date.getTime() + 5 * MINUTES_TO_MILLIS > currentDate.getTime()) {
-      currentData.last5min += count;
+  events.forEach(({ startTime, count }) => {
+    if (startTime <= currentTime) {
+      currentData.total += count;
+      if (startTime + 5 * MINUTES_TO_MILLIS > currentTime) {
+        currentData.last5min += count;
 
-      if (date.getTime() + 1 * MINUTES_TO_MILLIS > currentDate.getTime()) {
-        currentData.last1min += count;
+        if (startTime + 1 * MINUTES_TO_MILLIS > currentTime) {
+          currentData.last1min += count;
 
-        if (date.getTime() + 10 * SECONDS_TO_MILLIS > currentDate.getTime()) {
-          currentData.last10s += count;
+          if (startTime + 10 * SECONDS_TO_MILLIS > currentTime) {
+            currentData.last10s += count;
+          }
         }
       }
     }
   });
 
-  const newSum = newEventsQueue
-    .splice(0, newEventsQueue.length)
-    .reduce((l: number, r: number, _index, _array) => l + r, 0);
-  if (newSum > 0) {
-    events.push([new Date(), newSum]);
+  newEventsQueue.splice(0, newEventsQueue.length).forEach((c: CountEvent) => {
+    events.push(c);
 
-    currentData.addToAll(newSum);
-  }
+    if (c.startTime <= currentTime) {
+      currentData.addToAll(c.count);
+    }
+  });
 
   prevData = lastData;
   lastData = currentData;
@@ -240,8 +242,8 @@ function updateCountersUI(
   timestamp: DOMHighResTimeStamp,
   elements: EventCounterElements,
 ) {
-  const delta = clamp(timestamp - lastUpdate, 0, 1000);
-  const factor = delta / 1000;
+  const delta = clamp(timestamp - lastUpdate, 0, UPDATE_PERIOD);
+  const factor = delta / UPDATE_PERIOD;
   const scaledValue = prevData.lerpTo(lastData, factor);
   for (const [element, value] of [
     [elements.total, scaledValue.total],

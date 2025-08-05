@@ -287,7 +287,10 @@ export function processServiceData(
         return;
       }
       if (incomingEvent.counter_include ?? true) {
-        appState.newEventsQueue.push(incomingEvent.counter ?? 1);
+        appState.newEventsQueue.push({
+          count: incomingEvent.counter ?? 1,
+          startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
+        });
       }
 
       // Ignore invalid 0-0 data

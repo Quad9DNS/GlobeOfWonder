@@ -13,7 +13,7 @@ export class AppState {
   /**
    * All new incoming data should be pushed into this queue (only counts). This is used to update event counter.
    */
-  newEventsQueue: number[] = [];
+  newEventsQueue: CountEvent[] = [];
   /**
    * If new camera positions are requested programatically, they need to be pushed into this queue.
    * Globe should periodically process this queue.
@@ -23,6 +23,15 @@ export class AppState {
    * Represents current globe zoom factor - to enable access to it to components other than the globe.
    */
   globeCurrentZoomFactor = 0;
+}
+
+/**
+ * Represents any event (not command) that was received.
+ * Used to update event counters. Time is used to ensure that count is synchronized with the display.
+ */
+export interface CountEvent {
+  startTime: number;
+  count: number;
 }
 
 /**
