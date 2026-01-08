@@ -1,5 +1,5 @@
 import { registerDialogContainer } from ".";
-import { mapAndFilter } from "../data";
+import { boxesEqual, mapAndFilter } from "../data";
 import { ExpirableObject } from "../data/expirable";
 import { IndicatorData } from "../data/indicator";
 import { TextboxData } from "../data/textbox";
@@ -64,6 +64,19 @@ export function setupOverlays(
             overlaysContainer,
             "textbox-test",
           );
+
+          if (textboxData.text == undefined) {
+            const index = indicators.findIndex(
+              (val) =>
+                val.data instanceof TextboxData &&
+                boxesEqual(val.data as TextboxData, textboxData),
+            );
+            if (index !== -1) {
+              indicators.splice(index, 1);
+              return;
+            }
+          }
+
           indicators.push(new IndicatorPair(textboxData, overlayContainer));
           const bottom = window.innerHeight - i.bottom;
           const right = window.innerWidth - i.right;
