@@ -1,4 +1,3 @@
-import { clamp } from "three/src/math/MathUtils.js";
 import { registerDialogContainer } from ".";
 import { mapAndFilter } from "../data";
 import { ExpirableObject } from "../data/expirable";
@@ -75,7 +74,7 @@ export function setupOverlays(
           overlayContainer.innerHTML = `
           <div id="textbox" style="pointer-events: auto; top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
           <div id="textboxArea" style="text-align: start; color: black;">
-          <p id="textboxText">${i.text || ""}</p>
+          <p id="textboxText"></p>
           </div>
           </div>
           `;
@@ -99,6 +98,25 @@ export function setupOverlays(
               root.style.borderWidth = `${i.border_thickness}px`;
             }
           }
+
+          const textElement =
+            overlayContainer.querySelector<HTMLElement>("#textboxText")!;
+          if (i.text != undefined) {
+            // TODO: support for bold, italic spans
+            textElement.textContent = i.text;
+          }
+          const font = i.text_font ?? "Quad9Sans";
+          const fontSize = i.text_font_size ?? 24;
+          let fontStyle = i.text_font_style ?? "";
+          if (fontStyle.includes("underline")) {
+            fontStyle = fontStyle.replace("underline", "");
+            textElement.style.textDecoration = "underline";
+          }
+          const fontSpec = `${fontStyle} ${fontSize}px ${font}`;
+          textElement.style.font = fontSpec;
+          if (i.text_opacity != undefined) {
+            textElement.style.opacity = `${i.text_opacity}%`;
+          }
           overlayContainer.hidden = !i.visible();
         }
       });
@@ -114,14 +132,14 @@ export function setupOverlays(
 
   function onWindowResize() {
     indicators.forEach((i: IndicatorPair) => {
-      if (i instanceof TextboxData) {
+      if (i.data instanceof TextboxData) {
+        console.log("Resizing item");
         const data = i.data as TextboxData;
         const root = i.element.children[0] as HTMLElement;
         const bottom = window.innerHeight - data.bottom;
         const right = window.innerWidth - data.right;
         root.style.bottom = `${bottom}px`;
         root.style.right = `${right}px`;
-        i.element.hidden = !i.data.visible();
       }
     });
   }

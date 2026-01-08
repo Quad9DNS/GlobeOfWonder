@@ -28,12 +28,11 @@ const labelGeometry = new THREE.PlaneGeometry(
  */
 export class LabeledObjectsLayer
   implements
-    GlobeLayerAttachHook,
-    GlobeLayerSettingsHook,
-    CustomObjectLayerBuildHook,
-    CustomObjectLayerFrameUpdateHook,
-    MouseInteractionLayer
-{
+  GlobeLayerAttachHook,
+  GlobeLayerSettingsHook,
+  CustomObjectLayerBuildHook,
+  CustomObjectLayerFrameUpdateHook,
+  MouseInteractionLayer {
   readonly layerName: string = "Labeled";
   private showLabels = true;
   private allowLabelHover = true;
@@ -156,7 +155,7 @@ function renderLabelToTexture(
   if (g) {
     const fontSize = label.display_text_font_size ?? 24;
     const text = (label.display_text ?? "").split("\n");
-    const font = label.display_text_font ?? "Courier";
+    const font = label.display_text_font ?? "Quad9Sans";
     const fontStyle = label.display_text_font_style ?? "";
     const fontSpec = fontStyle + " " + fontSize + "px " + font;
     g.font = fontSpec;

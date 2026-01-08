@@ -14,6 +14,11 @@ export interface TextboxCustomizationData {
   readonly border_thickness?: number;
   readonly border_opacity?: number;
   readonly text?: string;
+  readonly text_font?: string;
+  readonly text_font_style?: string;
+  readonly text_font_size?: string;
+  readonly text_color?: THREE.Color;
+  readonly text_opacity?: number;
 }
 
 export class TextboxData
@@ -40,6 +45,26 @@ export class TextboxData
 
   public get text(): string | undefined {
     return this.additional_data.text;
+  }
+
+  public get text_font(): string | undefined {
+    return this.additional_data.text_font;
+  }
+
+  public get text_font_style(): string | undefined {
+    return this.additional_data.text_font_style;
+  }
+
+  public get text_font_size(): string | undefined {
+    return this.additional_data.text_font_size;
+  }
+
+  public get text_color(): THREE.Color | undefined {
+    return this.additional_data.text_color;
+  }
+
+  public get text_opacity(): number | undefined {
+    return this.additional_data.text_opacity;
   }
 
   public get box_color(): THREE.Color | undefined {
