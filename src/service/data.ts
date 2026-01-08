@@ -19,8 +19,9 @@ import {
   DownloadedData,
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
-import { LayerData, ScaleData } from "../data";
+import { BoundingBoxData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
+import { TextboxCustomizationData, TextboxData } from "../data/textbox";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -120,13 +121,13 @@ export type CounterData = {
 };
 type EventTypeData = {
   type:
-    | ExplosionTypeData["type"]
-    | CircleTypeData["type"]
-    | PointerTypeData["type"]
-    | BarTypeData["type"]
-    | DownloadedTypeData["type"]
-    | ArcTypeData["type"]
-    | null;
+  | ExplosionTypeData["type"]
+  | CircleTypeData["type"]
+  | PointerTypeData["type"]
+  | BarTypeData["type"]
+  | DownloadedTypeData["type"]
+  | ArcTypeData["type"]
+  | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &
@@ -188,7 +189,9 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return ["view_command", "settings_command"].includes(data.type);
+  return ["view_command", "settings_command", "show_textbox_command"].includes(
+    data.type,
+  );
 }
 type CommonCommandData = {
   command_delay?: number;
@@ -216,6 +219,20 @@ export type SettingsCommandServiceData = CommonCommandData &
   SettingsCommandTypeData &
   SettingsCommandData;
 
+type ShowTextboxCommandTypeData = {
+  type: "show_textbox_command";
+};
+export type ShowTextboxCommandData = {
+  settings: Record<string, string>;
+};
+export type ShowTextboxCommandServiceData = CommonCommandData &
+  LifetimeData &
+  ShowTextboxCommandTypeData &
+  ShowTextboxCommandData &
+  BoundingBoxData &
+  LinkData &
+  TextboxCustomizationData;
+
 export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
@@ -225,7 +242,8 @@ export type ServiceEventData =
   | ArcServiceData;
 export type ServiceCommandData =
   | ViewCommandServiceData
-  | SettingsCommandServiceData;
+  | SettingsCommandServiceData
+  | ShowTextboxCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -450,5 +468,13 @@ function buildAndPublishCommand(
       if (settings.enableSettingsCommands) {
         settings.loadParameters(data.settings);
       }
+      break;
+    case "show_textbox_command":
+      if (settings.enableTextboxCommands) {
+        state.newNonEventIndicatorsQueue.push(
+          new TextboxData(data as ShowTextboxCommandServiceData),
+        );
+      }
+      break;
   }
 }

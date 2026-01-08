@@ -44,7 +44,7 @@ export type LayerConfig = {
 function SettingsField<T>(
   fieldMapper: ((instance: Settings, value: T) => T) | undefined = undefined,
 ) {
-  return function (
+  return function(
     target: ClassAccessorDecoratorTarget<Settings, T>,
     context: ClassAccessorDecoratorContext<Settings, T>,
   ): ClassAccessorDecoratorResult<Settings, T> {
@@ -122,6 +122,8 @@ export class Settings extends EventTarget {
   accessor enableViewCommands: boolean = true;
   @SettingsField()
   accessor enableSettingsCommands: boolean = true;
+  @SettingsField()
+  accessor enableTextboxCommands: boolean = true;
 
   @SettingsField()
   accessor analysisModeResolution: number = 3;
@@ -499,6 +501,7 @@ export function setupSettingsDialog(
     ["#enablebars", "boolean", "enableBars"],
     ["#enableviewcommands", "boolean", "enableViewCommands"],
     ["#enablesettingscommands", "boolean", "enableSettingsCommands"],
+    ["#enabletextboxcommands", "boolean", "enableTextboxCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
     ["#showhelp", "boolean", "showHelp"],
@@ -928,6 +931,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
         <label for="enablesettingscommands">Enable settings commands:</label>
         <input type="checkbox" id="enablesettingscommands" name="enablesettingscommands" />
+        <label for="enabletextboxcommands">Enable textbox commands:</label>
+        <input type="checkbox" id="enabletextboxcommands" name="enabletextboxcommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
         <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Configuration for opacity of different objects, grouped into layers by their layer ID.</p>
         <div id="layersArea" class="grid-item-2cols two-col-grid">

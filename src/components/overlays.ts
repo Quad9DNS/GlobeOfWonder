@@ -1,0 +1,108 @@
+import { registerDialogContainer } from ".";
+import { mapAndFilter } from "../data";
+import { ExpirableObject } from "../data/expirable";
+import { IndicatorData } from "../data/indicator";
+import { TextboxData } from "../data/textbox";
+import { AppState } from "../service/state";
+import { Settings } from "../settings";
+
+class IndicatorPair implements ExpirableObject {
+  data: IndicatorData;
+  element: HTMLElement;
+
+  constructor(data: IndicatorData, element: HTMLElement) {
+    this.data = data;
+    this.element = element;
+  }
+
+  update(currentTime: number): ExpirableObject | null {
+    const result = this.data.update(currentTime);
+    if (result == null) {
+      return null;
+    } else {
+      this.data = result;
+      return this;
+    }
+  }
+}
+
+/**
+ * Configures an overlay, periodically consuming data from newNonEventIndicatorsQueue to draw new overlays (indicators)
+ *
+ * @param appContainer Main app container element
+ * @param state shared app state with websocket data
+ * @param settings Settings container which is used to configure rendering
+ */
+export function setupOverlays(
+  appContainer: HTMLElement,
+  state: AppState,
+  _settings: Settings,
+) {
+  const overlaysContainer = document.createElement("div");
+  overlaysContainer.setAttribute("id", "overlays-container");
+  overlaysContainer.setAttribute(
+    "style",
+    "pointer-events: none; position: fixed; width: 100%; height: 100%; top: 0; left:0; right: 0; bottom: 0;",
+  );
+  appContainer.appendChild(overlaysContainer);
+
+  const indicators: IndicatorPair[] = [];
+
+  setInterval(() => {
+    mapAndFilter(indicators, {
+      removedElementCallback: (indicator: IndicatorPair) => {
+        indicator.element.remove();
+      },
+    });
+    state.newNonEventIndicatorsQueue
+      .splice(0, state.newNonEventIndicatorsQueue.length)
+      .forEach((i: IndicatorData) => {
+        if (i instanceof TextboxData) {
+          const textboxData = i as TextboxData;
+
+          const overlayContainer = registerDialogContainer(
+            overlaysContainer,
+            "textbox-test",
+          );
+          indicators.push(new IndicatorPair(textboxData, overlayContainer));
+          const bottom = window.innerHeight - i.bottom;
+          const right = window.innerWidth - i.right;
+          let boxColor = "transparent";
+          if (i.box_color) {
+            boxColor = "#" + i.box_color.getHexString();
+          }
+          overlayContainer.innerHTML = `
+          <div id="textbox" style="pointer-events: auto; top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; border-style: double; background-color: ${boxColor};">
+          <div id="textboxArea" style="text-align: start; color: black;">
+          <p id="textboxText">${i.text || ""}</p>
+          </div>
+          </div>
+          `;
+          overlayContainer.hidden = !i.visible();
+        }
+      });
+  }, 200);
+
+  function animate() {
+    indicators.forEach((i: IndicatorPair) => {
+      i.element.hidden = !i.data.visible();
+    });
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+
+  function onWindowResize() {
+    indicators.forEach((i: IndicatorPair) => {
+      if (i instanceof TextboxData) {
+        const data = i.data as TextboxData;
+        const root = i.element.children[0] as HTMLElement;
+        const bottom = window.innerHeight - data.bottom;
+        const right = window.innerWidth - data.right;
+        root.style.bottom = `${bottom}px`;
+        root.style.right = `${right}px`;
+        i.element.hidden = !i.data.visible();
+      }
+    });
+  }
+  window.addEventListener("resize", onWindowResize);
+}
