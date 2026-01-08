@@ -103,7 +103,9 @@ const FLOAT_KEYS = [
   "view_lon",
   "view_zoom",
   "view_speed",
+  "border_thickness",
 ];
+const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 
 export type PositionData = {
   lat: number;
@@ -337,9 +339,11 @@ function parseServiceData(data: string): ServiceData | null {
     (k: string, v: string) => {
       if (FLOAT_KEYS.indexOf(k) !== -1) {
         return parseFloat(v);
+      } else if (INTEGER_KEYS.indexOf(k) !== -1) {
+        return parseInt(v);
       } else if (k == "counter" || k == "ttl" || k == "layer_id") {
         return parseInt(v);
-      } else if (k == "opacity") {
+      } else if (k == "opacity" || k.includes("_opacity")) {
         return clamp(parseInt(v), 0, 100);
       } else if (k.includes("_color")) {
         if (v == null || v == "none" || v == "<null>") {

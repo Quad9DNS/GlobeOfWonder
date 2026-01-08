@@ -9,6 +9,10 @@ import { LinkData } from "./link";
  */
 export interface TextboxCustomizationData {
   readonly box_color?: THREE.Color;
+  readonly box_opacity?: number;
+  readonly border_color?: THREE.Color;
+  readonly border_thickness?: number;
+  readonly border_opacity?: number;
   readonly text?: string;
 }
 
@@ -40,6 +44,22 @@ export class TextboxData
 
   public get box_color(): THREE.Color | undefined {
     return this.additional_data.box_color;
+  }
+
+  public get box_opacity(): number | undefined {
+    return this.additional_data.box_opacity;
+  }
+
+  public get border_color(): THREE.Color | undefined {
+    return this.additional_data.border_color;
+  }
+
+  public get border_thickness(): number | undefined {
+    return this.additional_data.border_thickness;
+  }
+
+  public get border_opacity(): number | undefined {
+    return this.additional_data.border_opacity;
   }
 
   private additional_data: BoundingBoxData &

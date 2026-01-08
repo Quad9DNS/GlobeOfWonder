@@ -1,3 +1,4 @@
+import { clamp } from "three/src/math/MathUtils.js";
 import { registerDialogContainer } from ".";
 import { mapAndFilter } from "../data";
 import { ExpirableObject } from "../data/expirable";
@@ -72,12 +73,32 @@ export function setupOverlays(
             boxColor = "#" + i.box_color.getHexString();
           }
           overlayContainer.innerHTML = `
-          <div id="textbox" style="pointer-events: auto; top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; border-style: double; background-color: ${boxColor};">
+          <div id="textbox" style="pointer-events: auto; top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
           <div id="textboxArea" style="text-align: start; color: black;">
           <p id="textboxText">${i.text || ""}</p>
           </div>
           </div>
           `;
+
+          const root = overlayContainer.children[0] as HTMLElement;
+          if (i.box_opacity != undefined) {
+            root.style.opacity = `${i.box_opacity}%`;
+          }
+
+          if (i.border_color != undefined) {
+            root.style.borderStyle = "solid";
+            if (i.border_opacity != undefined) {
+              root.style.borderColor =
+                "#" +
+                i.border_color.getHexString() +
+                (i.border_opacity * 2.55).toString(16);
+            } else {
+              root.style.borderColor = "#" + i.border_color.getHexString();
+            }
+            if (i.border_thickness != undefined) {
+              root.style.borderWidth = `${i.border_thickness}px`;
+            }
+          }
           overlayContainer.hidden = !i.visible();
         }
       });
