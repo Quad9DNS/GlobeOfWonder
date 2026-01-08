@@ -10,13 +10,14 @@ import { LinkData } from "./link";
 export interface TextboxCustomizationData {
   readonly box_color?: THREE.Color;
   readonly box_opacity?: number;
+  readonly box_corner_radius?: number;
   readonly border_color?: THREE.Color;
   readonly border_thickness?: number;
   readonly border_opacity?: number;
   readonly text?: string;
   readonly text_font?: string;
   readonly text_font_style?: string;
-  readonly text_font_size?: string;
+  readonly text_font_size?: number;
   readonly text_color?: THREE.Color;
   readonly text_opacity?: number;
 }
@@ -55,7 +56,7 @@ export class TextboxData
     return this.additional_data.text_font_style;
   }
 
-  public get text_font_size(): string | undefined {
+  public get text_font_size(): number | undefined {
     return this.additional_data.text_font_size;
   }
 
@@ -73,6 +74,10 @@ export class TextboxData
 
   public get box_opacity(): number | undefined {
     return this.additional_data.box_opacity;
+  }
+
+  public get box_corner_radius(): number | undefined {
+    return this.additional_data.box_corner_radius;
   }
 
   public get border_color(): THREE.Color | undefined {

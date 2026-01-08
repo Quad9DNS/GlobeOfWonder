@@ -84,6 +84,10 @@ export function setupOverlays(
             root.style.opacity = `${i.box_opacity}%`;
           }
 
+          if (i.box_corner_radius != undefined) {
+            root.style.borderRadius = `${i.box_corner_radius}px`;
+          }
+
           if (i.border_color != undefined) {
             root.style.borderStyle = "solid";
             if (i.border_opacity != undefined) {
