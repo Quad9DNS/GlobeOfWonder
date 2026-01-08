@@ -104,6 +104,8 @@ const FLOAT_KEYS = [
   "view_zoom",
   "view_speed",
   "border_thickness",
+  "text_font_size",
+  "box_corner_radius",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 

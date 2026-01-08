@@ -23,10 +23,12 @@ export interface TextboxCustomizationData {
 }
 
 export class TextboxData
-  implements IndicatorData, BoundingBoxData, TextboxCustomizationData {
+  implements IndicatorData, BoundingBoxData, LinkData, TextboxCustomizationData {
   private startTime: number;
   private lifetime: number;
   total_lifetime: number;
+
+  in_visiblity_cone: boolean = true;
 
   public get left(): number {
     return this.additional_data.left;
@@ -92,6 +94,14 @@ export class TextboxData
     return this.additional_data.border_opacity;
   }
 
+  public get link_url(): string | undefined {
+    return this.additional_data.link_url;
+  }
+
+  public get new_window(): boolean | undefined {
+    return this.additional_data.new_window;
+  }
+
   private additional_data: BoundingBoxData &
     TextboxCustomizationData &
     LinkData;
@@ -99,7 +109,7 @@ export class TextboxData
   constructor({
     ttl,
     ...additional_data
-  }: LifetimeData & BoundingBoxData & TextboxCustomizationData) {
+  }: LifetimeData & BoundingBoxData & TextboxCustomizationData & LinkData) {
     this.startTime = Date.now();
     this.lifetime = 0;
     this.total_lifetime = ttl ?? Infinity;
@@ -107,7 +117,11 @@ export class TextboxData
   }
 
   visible(): boolean {
-    return this.lifetime >= 0 && this.lifetime <= this.total_lifetime;
+    return (
+      this.in_visiblity_cone &&
+      this.lifetime >= 0 &&
+      this.lifetime <= this.total_lifetime
+    );
   }
 
   update(currentTime: number): TextboxData | null {
@@ -118,4 +132,6 @@ export class TextboxData
       return this;
     }
   }
+
+  updateVisibility(camera_target);
 }

@@ -85,7 +85,7 @@ export function setupOverlays(
             boxColor = "#" + i.box_color.getHexString();
           }
           overlayContainer.innerHTML = `
-          <div id="textbox" style="pointer-events: auto; top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
+          <div id="textbox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
           <div id="textboxArea" style="text-align: start; color: black;">
           <p id="textboxText"></p>
           </div>
@@ -93,6 +93,18 @@ export function setupOverlays(
           `;
 
           const root = overlayContainer.children[0] as HTMLElement;
+
+          if (i.link_url != undefined) {
+            root.style.pointerEvents = "auto";
+            root.style.cursor = "pointer";
+            root.addEventListener("click", () => {
+              window.open(
+                i.link_url,
+                i.new_window === false ? "_self" : "_blank",
+              );
+            });
+          }
+
           if (i.box_opacity != undefined) {
             root.style.opacity = `${i.box_opacity}%`;
           }
