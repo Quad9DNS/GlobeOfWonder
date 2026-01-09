@@ -20,6 +20,7 @@ import {
   GlobeLayerNewDataHook,
   GlobeLayerPreUpdateHook,
 } from "../layer";
+import { ClearMapEvent, CountEvent } from "../../service/state";
 
 /**
  * Globe layer that draws {@link ArcData} objects
@@ -168,6 +169,21 @@ export class ArcsLayer
   takeNewPoint(point: PointData): void {
     binarySearchReplace(this.arcsData, point as ArcData, compare_arcs);
     binarySearchReplace(this.arcLabels, (point as ArcData).produceLabel());
+  }
+  handleClearEvent(event: ClearMapEvent): CountEvent[] {
+    const events = [];
+    if (event.types.length == 0 || event.types.includes("arc")) {
+      if (event.clearEvents) {
+        for (const arc of this.arcsData) {
+          events.push({
+            startTime: arc.startTime,
+            count: -(arc.counter ?? 1),
+          });
+        }
+      }
+      this.arcsData.length = 0;
+    }
+    return events;
   }
   updateData(globe: ThreeGlobe, settings: Settings): void {
     if (settings.enableArcs) {

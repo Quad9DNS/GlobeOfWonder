@@ -15,6 +15,10 @@ export class AppState {
    */
   newEventsQueue: CountEvent[] = [];
   /**
+   * All clear map events should be pushed into this queue. Globe is expected to react accordingly and push negative count events for rectifying event counter.
+   */
+  clearEventsQueue: ClearMapEvent[] = [];
+  /**
    * If new camera positions are requested programatically, they need to be pushed into this queue.
    * Globe should periodically process this queue.
    */
@@ -32,6 +36,15 @@ export class AppState {
 export interface CountEvent {
   startTime: number;
   count: number;
+}
+
+/**
+ * Represents clear map events that were received.
+ * Used to process clearing in the globe and also update events if needed.
+ */
+export interface ClearMapEvent {
+  types: string[];
+  clearEvents: boolean;
 }
 
 /**

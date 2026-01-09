@@ -62,6 +62,15 @@ setupDataDownloader(
   dataDownloaderServiceState,
   settings,
 );
+
+// TODO: find a better place for this
+settings.addEventListener(settings.clearMapEventType, () => {
+  state.clearEventsQueue.push({
+    clearEvents: true,
+    types: [],
+  });
+});
+
 setupEventCounters(appContainer, state, settings);
 setupEventCountKey(appContainer, state, settings);
 

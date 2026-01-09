@@ -16,6 +16,7 @@ import {
   GlobeLayerSettingsHook,
 } from "../layer";
 import { AnalysisModeData } from "../../data/analysismode";
+import { ClearMapEvent, CountEvent } from "../../service/state";
 
 /**
  * Globe layer that provides analysis mode implementation
@@ -126,6 +127,29 @@ export class AnalysisModeLayer
 
   shouldTakePoint(point: PointData): boolean {
     return point.counter_include ?? true;
+  }
+
+  handleClearEvent(event: ClearMapEvent): CountEvent[] {
+    // Clear all events
+    if (event.types.length == 0) {
+      this.data.length = 0;
+      return [];
+    }
+
+    // Only clear events matching this filter
+    let i = 0;
+    let newLength = 0;
+
+    while (i < this.data.length) {
+      const val = this.data[i];
+      if (!event.types.includes(val.eventName())) {
+        this.data[newLength++] = val;
+      }
+      i++;
+    }
+
+    this.data.length = newLength;
+    return [];
   }
 
   takeNewPoint(point: PointData): void {
