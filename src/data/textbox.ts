@@ -165,6 +165,11 @@ export class TextboxData
     this.lifetime = 0;
     this.total_lifetime = ttl ?? Infinity;
     this.additional_data = additional_data;
+
+    if (additional_data.draw_delay) {
+      this.startTime += additional_data.draw_delay;
+      this.lifetime -= additional_data.draw_delay;
+    }
   }
 
   visible(): boolean {
