@@ -41,7 +41,9 @@ export default abstract class CommonObjectProvider<T extends PointData>
       if (event.clearEvents) {
         for (const data of this.data) {
           events.push({
-            startTime: data.startTime ?? 0,
+            // Most events should have startTime - if they don't, startTime of 0 will probably work fine
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            startTime: (data as any).startTime ?? 0,
             count: -(data.counter ?? 1),
           });
         }
