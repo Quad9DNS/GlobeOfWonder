@@ -58,18 +58,16 @@ export function setupOverlays(
       .splice(0, state.newNonEventIndicatorsQueue.length)
       .forEach((i: IndicatorData) => {
         if (i instanceof TextboxData) {
-          const textboxData = i as TextboxData;
-
           const overlayContainer = registerDialogContainer(
             overlaysContainer,
             "textbox-test",
           );
 
-          if (textboxData.text == undefined) {
+          if (i.text == undefined) {
             const index = indicators.findIndex(
               (val) =>
                 val.data instanceof TextboxData &&
-                boxesEqual(val.data as TextboxData, textboxData),
+                boxesEqual(val.data as TextboxData, i),
             );
             if (index !== -1) {
               indicators.splice(index, 1);
@@ -77,7 +75,7 @@ export function setupOverlays(
             }
           }
 
-          indicators.push(new IndicatorPair(textboxData, overlayContainer));
+          indicators.push(new IndicatorPair(i, overlayContainer));
           const bottom = window.innerHeight - i.bottom;
           const right = window.innerWidth - i.right;
           let boxColor = "transparent";
@@ -86,9 +84,7 @@ export function setupOverlays(
           }
           overlayContainer.innerHTML = `
           <div id="textbox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
-          <div id="textboxArea" style="text-align: start; color: black;">
           <p id="textboxText"></p>
-          </div>
           </div>
           `;
 
@@ -130,10 +126,8 @@ export function setupOverlays(
 
           const textElement =
             overlayContainer.querySelector<HTMLElement>("#textboxText")!;
-          if (i.text != undefined) {
-            // TODO: support for bold, italic spans
-            textElement.textContent = i.text;
-          }
+          // TODO: support for bold, italic spans
+          textElement.textContent = i.text!;
           const font = i.text_font ?? "Quad9Sans";
           const fontSize = i.text_font_size ?? 24;
           let fontStyle = i.text_font_style ?? "";
@@ -146,6 +140,36 @@ export function setupOverlays(
           if (i.text_opacity != undefined) {
             textElement.style.opacity = `${i.text_opacity}%`;
           }
+
+          if (i.scroll_direction) {
+            textElement.style.display = "inline-block";
+            textElement.parentElement!.style.overflow = "hidden";
+            // This is just an approximation - we don't measure the text really
+            const speed = (i.text?.length ?? 50) / (i.scroll_speed ?? 3);
+            switch (i.scroll_direction) {
+              case "rtl":
+                textElement.style.paddingLeft = "100%";
+                textElement.style.whiteSpace = "nowrap";
+                textElement.style.animation = `scrollrl ${speed}s linear infinite`;
+                break;
+              case "ltr":
+                textElement.style.translate = "-100%";
+                textElement.style.paddingLeft = "100%";
+                textElement.style.whiteSpace = "nowrap";
+                textElement.style.animation = `scrolllr ${speed}s linear infinite`;
+                break;
+              case "btt":
+                textElement.style.paddingTop = "100%";
+                textElement.style.animation = `scrollbt ${speed}s linear infinite`;
+                break;
+              case "ttb":
+                textElement.style.translate = "0 -100%";
+                textElement.style.paddingTop = "100%";
+                textElement.style.animation = `scrolltb ${speed}s linear infinite`;
+                break;
+            }
+          }
+
           overlayContainer.hidden = !i.visible();
         }
       });

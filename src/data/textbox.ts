@@ -23,6 +23,8 @@ export interface TextboxCustomizationData {
   readonly text_font_size?: number;
   readonly text_color?: THREE.Color;
   readonly text_opacity?: number;
+  readonly scroll_direction?: string;
+  readonly scroll_speed?: number;
 }
 
 export interface TextboxPointerCustomizationData {
@@ -146,6 +148,14 @@ export class TextboxData
 
   public get text_pointer_opacity(): number | undefined {
     return this.additional_data.text_pointer_opacity;
+  }
+
+  public get scroll_direction(): string | undefined {
+    return this.additional_data.scroll_direction;
+  }
+
+  public get scroll_speed(): number | undefined {
+    return this.additional_data.scroll_speed;
   }
 
   private additional_data: BoundingBoxData &

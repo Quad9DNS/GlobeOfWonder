@@ -21,7 +21,9 @@ const zero = new THREE.Vector3();
  * Globe layer that draws {@link TextboxPointerData} objects.
  *
  * Adds the following hierarchy to the root THREE Object3D:
- * - THREE.Line
+ * - THREE.Object3D - just a dummy object that can be used to find the line in scene hierarchy
+ * Adds the following hierarchy to the root scene:
+ * - THREE.Line - the line from the globe to the textbox (on camera)
  */
 export class TextboxPointersLayer
   implements
