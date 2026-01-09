@@ -162,7 +162,6 @@ export function setupOverlays(
   function onWindowResize() {
     indicators.forEach((i: IndicatorPair) => {
       if (i.data instanceof TextboxData) {
-        console.log("Resizing item");
         const data = i.data as TextboxData;
         const root = i.element.children[0] as HTMLElement;
         const bottom = window.innerHeight - data.bottom;

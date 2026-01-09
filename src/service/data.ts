@@ -21,7 +21,12 @@ import {
 import { ArcCustomizationData, ArcData } from "../data/arc";
 import { BoundingBoxData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
-import { TextboxCustomizationData, TextboxData } from "../data/textbox";
+import {
+  TextboxCustomizationData,
+  TextboxData,
+  TextboxPointerData,
+  TextboxPointerCustomizationData,
+} from "../data/textbox";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -106,6 +111,12 @@ const FLOAT_KEYS = [
   "border_thickness",
   "text_font_size",
   "box_corner_radius",
+  "text_pointer_lat",
+  "text_pointer_lon",
+  "text_pointer_lat_offset_visibility",
+  "text_pointer_lon_offset_visibility",
+  "text_pointer_line_thickness",
+  "text_pointer_line_arrow_size",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 
@@ -235,7 +246,10 @@ export type ShowTextboxCommandServiceData = CommonCommandData &
   ShowTextboxCommandData &
   BoundingBoxData &
   LinkData &
-  TextboxCustomizationData;
+  TextboxCustomizationData &
+  TextboxPointerCustomizationData;
+export type ShowTextboxCommandPointerServiceData =
+  ShowTextboxCommandServiceData & SharedServiceData;
 
 export type ServiceEventData =
   | ExplosionServiceData
@@ -477,8 +491,15 @@ function buildAndPublishCommand(
       break;
     case "show_textbox_command":
       if (settings.enableTextboxCommands) {
-        state.newNonEventIndicatorsQueue.push(
-          new TextboxData(data as ShowTextboxCommandServiceData),
+        const textboxData = new TextboxData(
+          data as ShowTextboxCommandServiceData,
+        );
+        state.newNonEventIndicatorsQueue.push(textboxData);
+        state.newPointsQueue.push(
+          new TextboxPointerData(
+            data as ShowTextboxCommandPointerServiceData,
+            textboxData,
+          ),
         );
       }
       break;

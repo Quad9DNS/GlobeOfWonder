@@ -17,10 +17,9 @@ import { clamp } from "three/src/math/MathUtils.js";
 
 export class OrbitControlsLayer
   implements
-    GlobeLayerSceneAttachHook,
-    GlobeLayerAppStateHook,
-    GlobeLayerFrameUpdateHook
-{
+  GlobeLayerSceneAttachHook,
+  GlobeLayerAppStateHook,
+  GlobeLayerFrameUpdateHook {
   readonly layerName: string = "OrbitControls";
 
   private state!: AppState;
@@ -54,7 +53,7 @@ export class OrbitControlsLayer
     this.state.globeCurrentZoomFactor = MIN_CAMERA_DISTANCE / cameraDistance;
     const zoomFactor = clamp(
       (cameraDistance - MIN_CAMERA_DISTANCE) /
-        (MAX_CAMERA_DISTANCE - MIN_CAMERA_DISTANCE),
+      (MAX_CAMERA_DISTANCE - MIN_CAMERA_DISTANCE),
       0.001,
       1.0,
     );
