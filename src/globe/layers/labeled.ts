@@ -28,11 +28,12 @@ const labelGeometry = new THREE.PlaneGeometry(
  */
 export class LabeledObjectsLayer
   implements
-  GlobeLayerAttachHook,
-  GlobeLayerSettingsHook,
-  CustomObjectLayerBuildHook,
-  CustomObjectLayerFrameUpdateHook,
-  MouseInteractionLayer {
+    GlobeLayerAttachHook,
+    GlobeLayerSettingsHook,
+    CustomObjectLayerBuildHook,
+    CustomObjectLayerFrameUpdateHook,
+    MouseInteractionLayer
+{
   readonly layerName: string = "Labeled";
   private showLabels = true;
   private allowLabelHover = true;

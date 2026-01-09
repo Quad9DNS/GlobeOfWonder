@@ -9,7 +9,8 @@ import { AppState } from "../../service/state";
  * but this produces a better looking effect when the frame rate is low
  */
 export class RotationLayer
-  implements GlobeLayerAppStateHook, GlobeLayerFrameUpdateHook {
+  implements GlobeLayerAppStateHook, GlobeLayerFrameUpdateHook
+{
   readonly layerName: string = "Rotation";
 
   private state!: AppState;

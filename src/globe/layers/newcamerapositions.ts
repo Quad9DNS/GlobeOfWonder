@@ -23,9 +23,10 @@ const DEFAULT_LON_MOVE_SPEED_PER_MS = DEFAULT_LON_MOVE_SPEED_PER_S / 1000;
 
 export class NewCameraPositionsLayer
   implements
-  GlobeLayerSceneAttachHook,
-  GlobeLayerAppStateHook,
-  GlobeLayerFrameUpdateHook {
+    GlobeLayerSceneAttachHook,
+    GlobeLayerAppStateHook,
+    GlobeLayerFrameUpdateHook
+{
   readonly layerName: string = "NewCameraPositions";
 
   private nextPosition?: CameraPosition;
@@ -59,28 +60,28 @@ export class NewCameraPositionsLayer
 
       const [zoom, zoomDone] = this.nextPosition.zoom
         ? this.moveBy(
-          distanceToZoom(
-            this.camera.position.clone().sub(globe.position).length(),
-          ),
-          this.nextPosition.zoom,
-          frameDeltaMs *
-          DEFAULT_ZOOM_SPEED_PER_MS *
-          (this.nextPosition.camera_movement_speed ?? 1),
-        )
+            distanceToZoom(
+              this.camera.position.clone().sub(globe.position).length(),
+            ),
+            this.nextPosition.zoom,
+            frameDeltaMs *
+              DEFAULT_ZOOM_SPEED_PER_MS *
+              (this.nextPosition.camera_movement_speed ?? 1),
+          )
         : [undefined, true];
       const [lat, latDone] = this.moveBy(
         currentLat,
         this.nextPosition.lat,
         frameDeltaMs *
-        DEFAULT_LAT_MOVE_SPEED_PER_MS *
-        (this.nextPosition.camera_movement_speed ?? 1),
+          DEFAULT_LAT_MOVE_SPEED_PER_MS *
+          (this.nextPosition.camera_movement_speed ?? 1),
       );
       const [lon, lonDone] = this.moveBy(
         currentLon,
         this.nextPosition.lon,
         frameDeltaMs *
-        DEFAULT_LON_MOVE_SPEED_PER_MS *
-        (this.nextPosition.camera_movement_speed ?? 1),
+          DEFAULT_LON_MOVE_SPEED_PER_MS *
+          (this.nextPosition.camera_movement_speed ?? 1),
       );
 
       const lerpedPos: CameraPosition = {

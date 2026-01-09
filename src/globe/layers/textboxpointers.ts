@@ -27,10 +27,11 @@ const zero = new THREE.Vector3();
  */
 export class TextboxPointersLayer
   implements
-  GlobeLayerAttachHook,
-  GlobeLayerSceneAttachHook,
-  CustomObjectLayerBuildHook,
-  CustomObjectLayerFrameUpdateHook {
+    GlobeLayerAttachHook,
+    GlobeLayerSceneAttachHook,
+    CustomObjectLayerBuildHook,
+    CustomObjectLayerFrameUpdateHook
+{
   readonly layerName: string = "TextboxPointers";
   private cachedCamera!: THREE.Camera;
   private cachedGlobe!: ThreeGlobe;
