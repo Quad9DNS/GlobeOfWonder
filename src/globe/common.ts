@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import ThreeGlobe from "three-globe";
 import { degToRad, radToDeg } from "three/src/math/MathUtils.js";
 
 export const QUAD9_COLOR = new THREE.Color(0xdc205e);
@@ -54,4 +55,17 @@ export function geoMidPoint(
   const lonMid = radToDeg(lon1Rad + Math.atan2(by, Math.cos(lat1Rad) + bx));
 
   return [latMid, lonMid];
+}
+
+const convertedPosition = new THREE.Vector3();
+// Get GeoCoords of globe in world space
+// The `toGeoCoords` function of `ThreeGlobe` returns it in local space
+export function getGeoCoords(
+  globe: ThreeGlobe,
+  position: THREE.Vector3,
+): { lat: number; lng: number; altitude: number } {
+  convertedPosition.set(position.x, position.y, position.z);
+  convertedPosition.applyQuaternion(globe.quaternion.clone().invert());
+  // ThreeGlobe.toGeoCoords doesn't consider globe rotation, so we apply inverse rotation to the position
+  return globe.toGeoCoords(convertedPosition);
 }

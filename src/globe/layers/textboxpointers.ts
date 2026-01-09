@@ -9,6 +9,7 @@ import {
 import { GlobeLayerAttachHook, GlobeLayerSceneAttachHook } from "../layer";
 import CommonObjectProvider from "./utils/baseprovider";
 import { TextboxPointerData } from "../../data/textbox";
+import { getGeoCoords } from "../common";
 
 const lineMaterial = new THREE.MeshBasicMaterial({
   color: new THREE.Color("red"),
@@ -145,12 +146,12 @@ export class TextboxPointersLayer
     }
 
     const {
-      lat: _currentLat,
+      lat: currentLat,
       lng: currentLon,
       altitude: _altitude,
-    } = this.cachedGlobe.toGeoCoords(this.cachedCamera.position);
+    } = getGeoCoords(this.cachedGlobe, this.cachedCamera.position);
 
-    line.visible = object.updateVisibility(currentLon);
+    line.visible = object.updateVisibility(currentLon, currentLat);
     line.position.setFromMatrixPosition(dummy.matrixWorld);
   }
 }

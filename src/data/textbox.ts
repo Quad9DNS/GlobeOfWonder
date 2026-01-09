@@ -189,7 +189,7 @@ export class TextboxData
     }
   }
 
-  updateVisibility(camera_lon: number): boolean {
+  updateVisibility(camera_lon: number, camera_lat: number): boolean {
     if (
       this.text_pointer_lon != undefined &&
       this.text_pointer_lon_offset_visibility != undefined
@@ -210,7 +210,7 @@ export class TextboxData
       this.text_pointer_lat_offset_visibility != undefined
     ) {
       this.in_visiblity_cone =
-        Math.abs(this.text_pointer_lat - camera_lon) <
+        Math.abs(this.text_pointer_lat - camera_lat) <
         this.text_pointer_lat_offset_visibility;
     }
     return this.in_visiblity_cone;
@@ -274,8 +274,8 @@ export class TextboxPointerData
     return undefined;
   }
 
-  updateVisibility(camera_lon: number): boolean {
-    return this.linked_data.updateVisibility(camera_lon);
+  updateVisibility(camera_lon: number, camera_lat: number): boolean {
+    return this.linked_data.updateVisibility(camera_lon, camera_lat);
   }
 
   clone(): TextboxPointerData {
