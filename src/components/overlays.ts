@@ -1,3 +1,4 @@
+import { clamp } from "three/src/math/MathUtils.js";
 import { registerDialogContainer } from ".";
 import { boxesEqual, mapAndFilter } from "../data";
 import { ExpirableObject } from "../data/expirable";
@@ -145,7 +146,8 @@ export function setupOverlays(
             textElement.style.display = "inline-block";
             textElement.parentElement!.style.overflow = "hidden";
             // This is just an approximation - we don't measure the text really
-            const speed = (i.text?.length ?? 50) / (i.scroll_speed ?? 3);
+            const speed =
+              (i.text?.length ?? 50) / clamp(i.scroll_speed ?? 3, 1, 10);
             switch (i.scroll_direction) {
               case "rtl":
                 textElement.style.paddingLeft = "100%";

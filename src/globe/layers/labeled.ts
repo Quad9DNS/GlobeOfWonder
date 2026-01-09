@@ -155,7 +155,7 @@ function renderLabelToTexture(
   if (g) {
     const fontSize = label.display_text_font_size ?? 24;
     const text = (label.display_text ?? "").split("\n");
-    const font = label.display_text_font ?? "Quad9Sans";
+    const font = label.display_text_font ?? "Courier";
     const fontStyle = label.display_text_font_style ?? "";
     const fontSpec = fontStyle + " " + fontSize + "px " + font;
     g.font = fontSpec;

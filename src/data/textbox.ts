@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { BoundingBoxData, LayerData, PointData, ScaleData } from ".";
-import { CounterData, LifetimeData } from "../service/data";
+import { LifetimeData } from "../service/data";
 import { IndicatorData } from "./indicator";
 import { LinkData } from "./link";
 import { CommonData } from "./common";
