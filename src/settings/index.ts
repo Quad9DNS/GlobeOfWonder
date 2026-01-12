@@ -71,6 +71,12 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor enableAtmosphere: boolean = true;
   @SettingsField()
+  accessor dispersionRadius: number = 25;
+  @SettingsField()
+  accessor dispersionDistanceThreshold: number = 10;
+  @SettingsField()
+  accessor dispersionZoomThreshold: number = 150;
+  @SettingsField()
   accessor enableGraticules: boolean = false;
   @SettingsField()
   accessor showWebsocketStatus: boolean = false;
@@ -469,6 +475,9 @@ export function setupSettingsDialog(
     ["#autorotateglobe", "boolean", "autoRotateGlobe"],
     ["#enableatmosphere", "boolean", "enableAtmosphere"],
     ["#enablegraticules", "boolean", "enableGraticules"],
+    ["#dispersionradius", "number", "dispersionRadius"],
+    ["#dispersiondistancethreshold", "number", "dispersionDistanceThreshold"],
+    ["#dispersionzoomthreshold", "number", "dispersionZoomThreshold"],
     ["#showwebsocketui", "boolean", "showWebsocketUi"],
     ["#showwsstatus", "boolean", "showWebsocketStatus"],
     ["#showtime", "boolean", "showDateAndTime"],
@@ -824,6 +833,12 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enablegraticules" name="enablegraticules" />
         <label for="simplecountryborders">Simpler country borders:</label>
         <input type="checkbox" id="simplecountryborders" name="simplecountryborders" />
+        <label for="dispersionradius">Marker dispersion radius in km:</label>
+        <input type="number" min="0" id="dispersionradius" name="dispersionradius" />
+        <label for="dispersiondistancethreshold">Marker distance dispersion threshold in km:</label>
+        <input type="number" min="0" id="dispersiondistancethreshold" name="dispersiondistancethreshold" />
+        <label for="dispersionzoomthreshold">Zoom threshold for marker dispersion:</label>
+        <input type="number" min="100" max="750" id="dispersionzoomthreshold" name="dispersionzoomtancethreshold" />
         <h3 class="grid-item-2cols" style="margin: auto;">Layers</h3>
         <label for="enableheatmaps">Enable heatmaps (requires WebGPU):</label>
         <input type="checkbox" id="enableheatmaps" name="enableheatmaps" />
