@@ -21,6 +21,12 @@ import {
 import { ArcCustomizationData, ArcData } from "../data/arc";
 import { LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
+import {
+  delay,
+  playAudio,
+  prepareAudio,
+  waitForLoad,
+} from "../components/global_audio";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -490,13 +496,18 @@ function buildAndPublishCommand(
       break;
     case "play_sound_command":
       if (settings.enableAudioCommands) {
-        const audio = new Audio(data.downloaded_object_url);
-        audio.volume = clamp((data.volume ?? 5) / 10, 0, 1);
+        const audio = prepareAudio({
+          url: data.downloaded_object_url,
+          volume: data.volume,
+        });
+        let start = Promise.resolve();
         if (data.command_delay) {
-          setTimeout(() => audio.play(), data.command_delay);
-        } else {
-          audio.play();
+          start = start.then(() => delay(data.command_delay!));
         }
+        start
+          .then(() => waitForLoad(audio))
+          .then(() => playAudio(audio))
+          .catch((err) => console.error("Play sound failure: ", err));
       }
       break;
     case "play_soundset_command":
@@ -507,76 +518,43 @@ function buildAndPublishCommand(
           switch (item.type) {
             case "sound_link":
               {
-                const audio = new Audio(item.downloaded_object_url);
-                audio.volume = clamp((item.volume ?? 5) / 10, 0, 1);
-                readyPromises.push(
-                  new Promise<void>((resolve, reject) => {
-                    const loadListener = () => {
-                      resolve();
-                      audio.removeEventListener("canplaythrough", loadListener);
-                    };
-                    const errorListener = (_e: Event) => {
-                      reject(audio.error);
-                      audio.removeEventListener("error", errorListener);
-                    };
-                    audio.addEventListener("canplaythrough", loadListener);
-                    audio.addEventListener("error", errorListener);
-                  }),
-                );
-                promises.push(
-                  () =>
-                    new Promise<void>((resolve, reject) => {
-                      audio.play().catch((error) => reject(error));
-                      const listener = () => {
-                        resolve();
-                        audio.removeEventListener("ended", listener);
-                      };
-                      const errorListener = (_e: Event) => {
-                        reject(audio.error);
-                        audio.removeEventListener("error", errorListener);
-                      };
-                      audio.addEventListener("ended", listener);
-                      audio.addEventListener("error", errorListener);
-                    }),
-                );
+                const audio = prepareAudio({
+                  url: item.downloaded_object_url!,
+                  volume: item.volume,
+                });
+                readyPromises.push(waitForLoad(audio));
+                promises.push(() => playAudio(audio));
               }
               break;
             case "sound_pause":
-              promises.push(
-                () =>
-                  new Promise((resolve) =>
-                    setTimeout(resolve, item.sound_pause_milliseconds!),
-                  ),
-              );
+              promises.push(() => delay(item.sound_pause_milliseconds!));
               break;
           }
         }
 
-        const execute = () => {
-          let finalPromise = Promise.resolve();
-          for (const promise of readyPromises) {
-            finalPromise = finalPromise
-              .then(() => promise)
-              .catch((err) => {
-                return Promise.reject(err);
-              });
-          }
-
-          for (const promise of promises) {
-            finalPromise = finalPromise
-              .then(() => promise())
-              .catch((err) => {
-                return Promise.reject(err);
-              });
-          }
-
-          finalPromise.catch((err) => console.error("SoundSet failure: ", err));
-        };
+        let finalPromise = Promise.resolve();
         if (data.command_delay) {
-          setTimeout(execute, data.command_delay);
-        } else {
-          execute();
+          finalPromise = finalPromise.then(() => delay(data.command_delay!));
         }
+        for (const promise of readyPromises) {
+          finalPromise = finalPromise
+            .then(() => promise)
+            // Catch error so that other items can still be played
+            .catch((err) => {
+              console.error("Soundset item load failed: ", err);
+            });
+        }
+
+        for (const promise of promises) {
+          finalPromise = finalPromise
+            .then(() => promise())
+            // Catch error so that other items can still be played
+            .catch((err) => {
+              console.error("Soundset item play failed: ", err);
+            });
+        }
+
+        finalPromise.catch((err) => console.error("SoundSet failure: ", err));
       }
       break;
   }
