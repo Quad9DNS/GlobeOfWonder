@@ -491,9 +491,7 @@ function buildAndPublishCommand(
     case "play_sound_command":
       if (settings.enableAudioCommands) {
         const audio = new Audio(data.downloaded_object_url);
-        if (data.volume) {
-          audio.volume = clamp(data.volume / 10, 0, 1);
-        }
+        audio.volume = clamp((data.volume ?? 5) / 10, 0, 1);
         if (data.command_delay) {
           setTimeout(() => audio.play(), data.command_delay);
         } else {
@@ -504,22 +502,33 @@ function buildAndPublishCommand(
     case "play_soundset_command":
       if (settings.enableAudioCommands) {
         const promises: (() => Promise<void>)[] = [];
+        const readyPromises: Promise<void>[] = [];
         for (const item of data.soundset) {
           switch (item.type) {
             case "sound_link":
               {
                 const audio = new Audio(item.downloaded_object_url);
-                if (item.volume) {
-                  audio.volume = clamp(item.volume / 10, 0, 1);
-                }
+                audio.volume = clamp((item.volume ?? 5) / 10, 0, 1);
+                readyPromises.push(
+                  new Promise<void>((resolve, reject) => {
+                    const loadListener = () => {
+                      resolve();
+                      audio.removeEventListener("canplaythrough", loadListener);
+                    };
+                    const errorListener = (_e: Event) => {
+                      reject(audio.error);
+                      audio.removeEventListener("error", errorListener);
+                    };
+                    audio.addEventListener("canplaythrough", loadListener);
+                    audio.addEventListener("error", errorListener);
+                  }),
+                );
                 promises.push(
                   () =>
                     new Promise<void>((resolve, reject) => {
                       audio.play().catch((error) => reject(error));
                       const listener = () => {
-                        if (audio.error == null) {
-                          resolve();
-                        }
+                        resolve();
                         audio.removeEventListener("ended", listener);
                       };
                       const errorListener = (_e: Event) => {
@@ -545,6 +554,14 @@ function buildAndPublishCommand(
 
         const execute = () => {
           let finalPromise = Promise.resolve();
+          for (const promise of readyPromises) {
+            finalPromise = finalPromise
+              .then(() => promise)
+              .catch((err) => {
+                return Promise.reject(err);
+              });
+          }
+
           for (const promise of promises) {
             finalPromise = finalPromise
               .then(() => promise())
