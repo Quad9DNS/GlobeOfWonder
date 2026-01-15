@@ -195,7 +195,7 @@ function isCommandData(data: ServiceData): data is ServiceCommandData {
     "play_soundset_command",
   ].includes(data.type);
 }
-function autoHandleDelay(data: ServiceCommandData): bool {
+function autoHandleDelay(data: ServiceCommandData): boolean {
   return ["view_command", "settings_command"].includes(data.type);
 }
 type CommonCommandData = {
