@@ -188,6 +188,14 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
+  return [
+    "view_command",
+    "settings_command",
+    "play_sound_command",
+    "play_soundset_command",
+  ].includes(data.type);
+}
+function autoHandleDelay(data: ServiceCommandData): bool {
   return ["view_command", "settings_command"].includes(data.type);
 }
 type CommonCommandData = {
@@ -216,6 +224,33 @@ export type SettingsCommandServiceData = CommonCommandData &
   SettingsCommandTypeData &
   SettingsCommandData;
 
+type PlaySoundCommandTypeData = {
+  type: "play_sound_command";
+};
+export type PlaySoundCommandData = {
+  volume?: number;
+  downloaded_object_url: string;
+};
+export type PlaySoundCommandServiceData = CommonCommandData &
+  PlaySoundCommandTypeData &
+  PlaySoundCommandData;
+
+type PlaySoundSetCommandTypeData = {
+  type: "play_soundset_command";
+};
+export type PlaySoundSetCommandData = {
+  soundset: SoundSetSubcommandData[];
+};
+export type SoundSetSubcommandData = {
+  type: string;
+  volume?: number;
+  sound_pause_milliseconds?: number;
+  downloaded_object_url?: string;
+};
+export type PlaySoundSetCommandServiceData = CommonCommandData &
+  PlaySoundSetCommandTypeData &
+  PlaySoundSetCommandData;
+
 export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
@@ -225,7 +260,9 @@ export type ServiceEventData =
   | ArcServiceData;
 export type ServiceCommandData =
   | ViewCommandServiceData
-  | SettingsCommandServiceData;
+  | SettingsCommandServiceData
+  | PlaySoundCommandServiceData
+  | PlaySoundSetCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -247,7 +284,7 @@ export function processServiceData(
   const incomingEvent = parseServiceData(data);
   if (incomingEvent) {
     if (isCommandData(incomingEvent)) {
-      if (incomingEvent.command_delay) {
+      if (incomingEvent.command_delay && autoHandleDelay(incomingEvent)) {
         setTimeout(() => {
           buildAndPublishCommand(incomingEvent, settings, appState);
         }, incomingEvent.command_delay);
@@ -450,5 +487,80 @@ function buildAndPublishCommand(
       if (settings.enableSettingsCommands) {
         settings.loadParameters(data.settings);
       }
+      break;
+    case "play_sound_command":
+      if (settings.enableAudioCommands) {
+        const audio = new Audio(data.downloaded_object_url);
+        if (data.volume) {
+          audio.volume = clamp(data.volume / 10, 0, 1);
+        }
+        if (data.command_delay) {
+          setTimeout(() => audio.play(), data.command_delay);
+        } else {
+          audio.play();
+        }
+      }
+      break;
+    case "play_soundset_command":
+      if (settings.enableAudioCommands) {
+        const promises: (() => Promise<void>)[] = [];
+        for (const item of data.soundset) {
+          switch (item.type) {
+            case "sound_link":
+              {
+                const audio = new Audio(item.downloaded_object_url);
+                if (item.volume) {
+                  audio.volume = clamp(item.volume / 10, 0, 1);
+                }
+                promises.push(
+                  () =>
+                    new Promise<void>((resolve, reject) => {
+                      audio.play().catch((error) => reject(error));
+                      const listener = () => {
+                        if (audio.error == null) {
+                          resolve();
+                        }
+                        audio.removeEventListener("ended", listener);
+                      };
+                      const errorListener = (_e: Event) => {
+                        reject(audio.error);
+                        audio.removeEventListener("error", errorListener);
+                      };
+                      audio.addEventListener("ended", listener);
+                      audio.addEventListener("error", errorListener);
+                    }),
+                );
+              }
+              break;
+            case "sound_pause":
+              promises.push(
+                () =>
+                  new Promise((resolve) =>
+                    setTimeout(resolve, item.sound_pause_milliseconds!),
+                  ),
+              );
+              break;
+          }
+        }
+
+        const execute = () => {
+          let finalPromise = Promise.resolve();
+          for (const promise of promises) {
+            finalPromise = finalPromise
+              .then(() => promise())
+              .catch((err) => {
+                return Promise.reject(err);
+              });
+          }
+
+          finalPromise.catch((err) => console.error("SoundSet failure: ", err));
+        };
+        if (data.command_delay) {
+          setTimeout(execute, data.command_delay);
+        } else {
+          execute();
+        }
+      }
+      break;
   }
 }
