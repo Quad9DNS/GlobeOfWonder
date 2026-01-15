@@ -1,13 +1,9 @@
 import { clamp } from "three/src/math/MathUtils.js";
+import { SoundLink } from "../data/sound";
 
-export type AudioData = {
-  url: string;
-  volume?: number;
-};
-
-export function prepareAudio(audioData: AudioData): HTMLAudioElement {
-  const audio = new Audio(audioData.url);
-  audio.volume = clamp((audioData.volume ?? 5) / 10, 0, 1);
+export function prepareAudio(sound: SoundLink): HTMLAudioElement {
+  const audio = new Audio(sound.sound_url);
+  audio.volume = clamp((sound.sound_volume ?? 10) / 10, 0, 1);
   return audio;
 }
 
