@@ -130,13 +130,24 @@ Available event data:
 Available command data:
 | Key                                | Default value                                     | Description                                                                                                                                          |
 |------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type                               | - (required)                                      | Type of the command (view_command, settings_command)                                                                                                 |
+| type                               | - (required)                                      | Type of the command (view_command, settings_command, play_sound_command, play_soundset_command)                                                      |
 | command_delay                      | -                                                 | Delay the execution of this command in ms (similar to draw_delay). Can be useful to precisely control commands                                       |
 | view_lat                           | - (required - view_command only)                  | Latitude of the new view position                                                                                                                    |
 | view_lon                           | - (required - view_command only)                  | Longitude of the new view position                                                                                                                   |
 | view_zoom                          | -                                                 | Zoom level of the new view position (-10, 10). Zoom level is not changed if undefined                                                                |
 | view_speed                         | 1                                                 | Relative view movement speed. Can be set to < 1 (but > 0) for slower view movement, or > 1 for faster movement                                       |
 | settings                           | - (required - settings_command only)              | JSON object containing keys for settings that need to be changed. All keys are the same as in URL parameters and all are expected to be strings      |
+| downloaded_object_url              | - (required - play_sound_command only)            | URL of the sound to be played                                                                                                                        |
+| volume                             | 10                                                | Volume of the sound to be played                                                                                                                     |
+| soundset                           | - (required - play_soundset_command only)         | List of soundset objects to be played (either sound_link or sound_pause) - sounds are played sequentially. Any failure stops the whole sequence      |
+
+Available soundset object data:
+| Key                                | Default value                                     | Description                                                                                                                                          |
+|------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type                               | - (required)                                      | Type of the soundset object (sound_link, sound_pause)                                                                                                |
+| volume                             | 10                                                | Volume of the sound to be played (sound_link) only                                                                                                   |
+| downloaded_object_url              | - (required - sound_link only)                    | URL of the sound to be played                                                                                                                        |
+| sound_pause_milliseconds           | - (required - sound_pause only)                   | Duration to pause before the next sound object in the set                                                                                            |
 
 ## Configuration
 
