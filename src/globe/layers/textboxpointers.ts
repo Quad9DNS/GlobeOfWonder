@@ -6,7 +6,7 @@ import {
   CustomObjectLayerBuildHook,
   CustomObjectLayerFrameUpdateHook,
 } from "./customobject";
-import { GlobeLayerAttachHook, GlobeLayerSceneAttachHook } from "../layer";
+import { GlobeLayerAttachHook } from "../layer";
 import CommonObjectProvider from "./utils/baseprovider";
 import { TextboxPointerData } from "../../data/textbox";
 import { getGeoCoords } from "../common";
@@ -17,8 +17,6 @@ const lineMaterial = new LineMaterial({
   color: new THREE.Color("red"),
   linewidth: 1,
 });
-
-const zero = new THREE.Vector3();
 
 /**
  * Globe layer that draws {@link TextboxPointerData} objects.
@@ -31,14 +29,12 @@ const zero = new THREE.Vector3();
 export class TextboxPointersLayer
   implements
     GlobeLayerAttachHook,
-    GlobeLayerSceneAttachHook,
     CustomObjectLayerBuildHook,
     CustomObjectLayerFrameUpdateHook
 {
   readonly layerName: string = "TextboxPointers";
   private cachedCamera!: THREE.Camera;
   private cachedGlobe!: ThreeGlobe;
-  private cachedScene!: THREE.Scene;
 
   private pointerGlobePos = new THREE.Vector3();
   private pointerEndPos = new THREE.Vector3();
@@ -50,14 +46,6 @@ export class TextboxPointersLayer
   ): void {
     this.cachedGlobe = globe;
     this.cachedCamera = camera;
-  }
-
-  attachToScene(
-    scene: THREE.Scene,
-    _camera: THREE.Camera,
-    _renderer: THREE.WebGLRenderer,
-  ): void {
-    this.cachedScene = scene;
   }
 
   buildObject(parent: THREE.Object3D, object: PointData): void {
@@ -88,17 +76,19 @@ export class TextboxPointersLayer
       material.linewidth = object.text_pointer_thickness;
     }
 
-    parent.getWorldPosition(this.pointerGlobePos);
-    this.pointerEndPos
+    this.pointerGlobePos = parent.getWorldPosition(this.pointerGlobePos);
+    this.pointerEndPos = this.pointerEndPos
       .set(
         (left + right - window.innerWidth) / window.innerWidth,
         -(top + bottom - window.innerHeight) / window.innerHeight,
         0,
       )
-      .unproject(this.cachedCamera)
-      .sub(this.pointerGlobePos);
+      .unproject(this.cachedCamera);
 
-    const points = [zero, this.pointerEndPos];
+    const points = [
+      this.cachedCamera.worldToLocal(this.pointerEndPos),
+      this.cachedCamera.worldToLocal(this.pointerGlobePos),
+    ];
     const geometry = new LineGeometry().setFromPoints(points);
     const pointerLine = new Line2(geometry, material);
 
@@ -106,10 +96,9 @@ export class TextboxPointersLayer
     dummy.name = "dummy";
 
     pointerLine.name = dummy.uuid;
-    this.cachedScene.add(pointerLine);
-    pointerLine.position.setFromMatrixPosition(dummy.matrixWorld);
+    this.cachedCamera.add(pointerLine);
     parent.addEventListener("removed", () => {
-      this.cachedScene.remove(pointerLine);
+      this.cachedCamera.remove(pointerLine);
     });
     parent.add(dummy);
   }
@@ -125,21 +114,22 @@ export class TextboxPointersLayer
     const bottom = object.textbox.bottom;
 
     const dummy = parent.getObjectByName("dummy")!;
-    const line = this.cachedScene.getObjectByName(dummy.uuid)! as THREE.Line;
+    const line = this.cachedCamera.getObjectByName(dummy.uuid)! as THREE.Line;
 
     parent.getWorldPosition(this.pointerGlobePos);
-    // BUG: this seems to lag 1 frame behind the camera updates when `OrbitControls` are used
     this.pointerEndPos
       .set(
         (left + right - window.innerWidth) / window.innerWidth,
         -(top + bottom - window.innerHeight) / window.innerHeight,
         0,
       )
-      .unproject(this.cachedCamera)
-      .sub(this.pointerGlobePos);
+      .unproject(this.cachedCamera);
 
+    line.geometry.setFromPoints([
+      this.cachedCamera.worldToLocal(this.pointerEndPos),
+      this.cachedCamera.worldToLocal(this.pointerGlobePos),
+    ]);
     line.geometry.attributes.position.needsUpdate = true;
-    line.geometry.setFromPoints([zero, this.pointerEndPos]);
 
     const {
       lat: currentLat,
@@ -148,7 +138,6 @@ export class TextboxPointersLayer
     } = getGeoCoords(this.cachedGlobe, this.cachedCamera.position);
 
     line.visible = object.updateVisibility(currentLon, currentLat);
-    line.position.setFromMatrixPosition(dummy.matrixWorld);
   }
 }
 

@@ -109,6 +109,7 @@ export function setupGlobe(
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   camera.position.z = DEFAULT_CAMERA_DISTANCE;
+  scene.add(camera);
 
   registry.attachToGlobe(globe, camera, renderer);
   registry.attachToScene(scene, camera, renderer);
