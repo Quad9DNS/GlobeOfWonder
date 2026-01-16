@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { LayerData, PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import { CommonData } from "./common";
+import { CommonData, SharedData } from "./common";
 import {
   DEFAULT_GLOBE_RADIUS,
   geoDistance,
@@ -11,6 +11,7 @@ import {
 } from "../globe/common";
 import { HoverTextData } from "./hover";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundSet } from "./sound";
 
 export type ArcLineType = "solid" | "dashed_large" | "dashed_small" | "dots";
 
@@ -70,7 +71,9 @@ export class ArcData
     LinkData,
     LayerData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   declare public lifetime: number;
 
@@ -83,7 +86,9 @@ export class ArcData
       LinkData &
       LayerData &
       ScaleData &
-      HoverTextData,
+      HoverTextData &
+      SoundLink &
+      SoundSet,
   ) {
     super({ ...data, ttl: data.ttl ?? DEFAULT_ARC_LIFETIME });
   }
@@ -159,15 +164,7 @@ export class ArcLabel
   constructor(
     defaultHeight: number,
     startTime: number,
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      ArcCustomizationData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      HoverTextData &
-      ScaleData,
+    data: SharedData<ArcCustomizationData>,
   ) {
     super({ ...data, ttl: data.ttl ?? DEFAULT_ARC_LIFETIME });
     this.lifetime = this.startTime - startTime;

@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export interface SoundPause {
   readonly sound_pause_milliseconds: number;
 }
@@ -16,9 +18,9 @@ export interface SoundLink {
    */
   readonly sound_volume?: number;
 
-  preload(): void;
+  preloadSound(loader: THREE.AudioLoader): void;
 
-  getLoaderPromise(): Promise<AudioBuffer>;
+  getSoundLoaderPromise(): Promise<AudioBuffer>;
 }
 
 export interface SoundSet {
@@ -27,7 +29,9 @@ export interface SoundSet {
    */
   readonly sound_set?: SoundNodeObject[];
 
-  preloadAll(): void;
+  preloadSoundSet(loader: THREE.AudioLoader): void;
+
+  getSoundSetLoaderPromise(): Promise<AudioBuffer | SoundPause>[];
 }
 
 export type SoundSetObject = { sound_type: "sound_set" } & SoundSet;
@@ -39,6 +43,13 @@ export type AudioObjectData = SoundSetObject | SoundLinkObject;
  */
 export function isSoundLink(object: unknown): object is SoundLink {
   return (object as SoundLink).sound_url !== undefined;
+}
+
+/**
+ * Checks whether the object implements {@link SoundPause} interface
+ */
+export function isSoundPause(object: unknown): object is SoundPause {
+  return (object as SoundPause).sound_pause_milliseconds !== undefined;
 }
 
 /**

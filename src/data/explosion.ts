@@ -5,9 +5,10 @@ import { HoverTextData } from "./hover";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { DEFAULT_CRITICAL_COLOR, QUAD9_COLOR, UNIT_KMS } from "../globe/common";
-import { CommonData } from "./common";
+import { CommonData, SharedData } from "./common";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
 import { Settings } from "../settings";
+import { SoundLink, SoundSet } from "./sound";
 
 const DEFAULT_INFLATION_LIFETIME_PERCENTAGE = 0.02;
 const DEFAULT_DEFLATION_LIFETIME_PERCENTAGE = 0.07;
@@ -62,7 +63,9 @@ export class ExplosionData
     LabelsData,
     LinkData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   /**
    * How much the point should inflate at the start, before starting to deflate
@@ -92,15 +95,9 @@ export class ExplosionData
   fallback_radius: number;
 
   constructor(
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      ExplosionCustomizationData &
-      HoverTextData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData & { inflation_factor?: number },
+    data: SharedData<ExplosionCustomizationData> & {
+      inflation_factor?: number;
+    },
   ) {
     super(data);
     this.inflation_factor = data.inflation_factor ?? 1;
@@ -147,7 +144,9 @@ export class ExplosionData
       LabelsData &
       LinkData &
       LayerData &
-      ScaleData,
+      ScaleData &
+      SoundLink &
+      SoundSet,
     settings: Settings,
   ) {
     return new ExplosionData({

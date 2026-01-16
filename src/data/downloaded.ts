@@ -1,9 +1,9 @@
-import { LayerData, PointData, ScaleData } from ".";
-import { CommonData } from "./common";
+import { PointData, ScaleData } from ".";
+import { CommonData, SharedData } from "./common";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
-import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundSet } from "./sound";
 
 /**
  * Additional data that can be used to customize downloaded objects (images).
@@ -30,24 +30,16 @@ export class DownloadedData
     LabelsData,
     LinkData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   /**
    * Cached image data - should be set after downloading. The object should not be displayed before this is set.
    */
   public image_data: ImageBitmap | null = null;
 
-  constructor(
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      DownloadedCustomizationData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData &
-      HoverTextData,
-  ) {
+  constructor(data: SharedData<DownloadedCustomizationData>) {
     super(data);
   }
 

@@ -27,7 +27,7 @@ import {
   prepareAudio,
   waitForLoad,
 } from "../components/global_audio";
-import { AudioObjectData } from "../data/sound";
+import { AudioObjectData, SoundLink, SoundSet } from "../data/sound";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -142,7 +142,9 @@ export type SharedServiceData = PositionData &
   LinkData &
   LayerData &
   ScaleData &
-  HoverTextData;
+  HoverTextData &
+  SoundLink &
+  SoundSet;
 export type CommonServiceData = SharedServiceData & EventTypeData;
 export type FilterData = Record<string, string> & EventTypeData;
 
@@ -195,12 +197,9 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return [
-    "view_command",
-    "settings_command",
-    "play_sound_command",
-    "play_soundset_command",
-  ].includes(data.type);
+  return ["view_command", "settings_command", "play_sound_command"].includes(
+    data.type,
+  );
 }
 function autoHandleDelay(data: ServiceCommandData): boolean {
   return ["view_command", "settings_command"].includes(data.type);
@@ -494,7 +493,7 @@ function buildAndPublishCommand(
             {
               const promises: (() => Promise<void>)[] = [];
               const readyPromises: Promise<void>[] = [];
-              for (const item of data.sound_set) {
+              for (const item of data.sound_set!) {
                 switch (item.type) {
                   case "sound_link":
                     {
