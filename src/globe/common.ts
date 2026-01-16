@@ -69,3 +69,18 @@ export function getGeoCoords(
   // ThreeGlobe.toGeoCoords doesn't consider globe rotation, so we apply inverse rotation to the position
   return globe.toGeoCoords(convertedPosition);
 }
+
+// Get Coords of globe in world space
+// The `getCoords` function of `ThreeGlobe` returns it in local space
+export function getCoords(
+  globe: ThreeGlobe,
+  lat: number,
+  lng: number,
+  altitude?: number,
+): THREE.Vector3 {
+  const position = globe.getCoords(lat, lng, altitude);
+  convertedPosition.set(position.x, position.y, position.z);
+  convertedPosition.applyQuaternion(globe.quaternion);
+  // ThreeGlobe.toGeoCoords doesn't consider globe rotation, so we apply inverse rotation to the position
+  return convertedPosition.clone();
+}
