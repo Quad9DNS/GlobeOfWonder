@@ -10,9 +10,12 @@ import { GlobeLayerAttachHook, GlobeLayerSceneAttachHook } from "../layer";
 import CommonObjectProvider from "./utils/baseprovider";
 import { TextboxPointerData } from "../../data/textbox";
 import { getGeoCoords } from "../common";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineGeometry, LineMaterial } from "three/examples/jsm/Addons.js";
 
-const lineMaterial = new THREE.MeshBasicMaterial({
+const lineMaterial = new LineMaterial({
   color: new THREE.Color("red"),
+  linewidth: 1,
 });
 
 const zero = new THREE.Vector3();
@@ -68,7 +71,11 @@ export class TextboxPointersLayer
     const bottom = object.textbox.bottom;
 
     let material = lineMaterial;
-    if (object.text_pointer_color || object.text_pointer_opacity) {
+    if (
+      object.text_pointer_color ||
+      object.text_pointer_opacity ||
+      object.text_pointer_thickness
+    ) {
       material = material.clone();
     }
     if (object.text_pointer_color) {
@@ -76,6 +83,9 @@ export class TextboxPointersLayer
     }
     if (object.text_pointer_opacity) {
       material.opacity = object.text_pointer_opacity / 100;
+    }
+    if (object.text_pointer_thickness) {
+      material.linewidth = object.text_pointer_thickness;
     }
 
     parent.getWorldPosition(this.pointerGlobePos);
@@ -89,8 +99,8 @@ export class TextboxPointersLayer
       .sub(this.pointerGlobePos);
 
     const points = [zero, this.pointerEndPos];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const pointerLine = new THREE.Line(geometry, material);
+    const geometry = new LineGeometry().setFromPoints(points);
+    const pointerLine = new Line2(geometry, material);
 
     const dummy = new THREE.Object3D();
     dummy.name = "dummy";
@@ -116,12 +126,6 @@ export class TextboxPointersLayer
 
     const dummy = parent.getObjectByName("dummy")!;
     const line = this.cachedScene.getObjectByName(dummy.uuid)! as THREE.Line;
-    const posAttr = line.geometry.getAttribute("position");
-    const [oldX, oldY, oldZ] = [
-      posAttr.getX(1),
-      posAttr.getY(1),
-      posAttr.getZ(1),
-    ];
 
     parent.getWorldPosition(this.pointerGlobePos);
     // BUG: this seems to lag 1 frame behind the camera updates when `OrbitControls` are used
@@ -134,19 +138,8 @@ export class TextboxPointersLayer
       .unproject(this.cachedCamera)
       .sub(this.pointerGlobePos);
 
-    if (
-      oldX != this.pointerEndPos.x ||
-      oldY != this.pointerEndPos.y ||
-      oldZ != this.pointerEndPos.z
-    ) {
-      line.geometry.attributes.position.needsUpdate = true;
-      posAttr.setXYZ(
-        1,
-        this.pointerEndPos.x,
-        this.pointerEndPos.y,
-        this.pointerEndPos.z,
-      );
-    }
+    line.geometry.attributes.position.needsUpdate = true;
+    line.geometry.setFromPoints([zero, this.pointerEndPos]);
 
     const {
       lat: currentLat,
