@@ -46,6 +46,9 @@ export abstract class CommonData<T>
   counter?: number;
   counter_include?: boolean;
 
+  dispersed_lat?: number;
+  dispersed_lon?: number;
+
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
    */
@@ -121,6 +124,9 @@ export abstract class CommonData<T>
   }
   public get ignore_zoom(): boolean | undefined {
     return this.additional_data.ignore_zoom;
+  }
+  public get disperse_on_zoom(): boolean {
+    return this.additional_data.disperse_on_zoom ?? false;
   }
   public get hover_text(): string | undefined {
     return this.additional_data.hover_text;
