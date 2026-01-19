@@ -35,6 +35,7 @@ import {
   TextboxPointersLayer,
   TextboxPointersObjectProvider,
 } from "./layers/textboxpointers";
+import { SoundObjectPreloader, SoundObjectsLayer } from "./layers/sound";
 
 // Configures the registry
 // WARN: All the layers should be added here!
@@ -67,6 +68,8 @@ for (const layer of [
   new TextboxPointersLayer(),
   new BarsLayer(),
   new DownloadedObjectsLayer(),
+  new SoundObjectPreloader(),
+  new SoundObjectsLayer(),
   new OpacityLayer(),
   new GlobalZoomLayer(),
 ]) {
@@ -131,6 +134,7 @@ export function setupGlobe(
     state.newPointsQueue
       .splice(0, state.newPointsQueue.length)
       .forEach((p: PointData) => {
+        registry.prepareNewPoint(p);
         registry.takeNewPoint(p);
       });
 

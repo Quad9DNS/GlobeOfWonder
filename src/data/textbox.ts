@@ -1,11 +1,9 @@
 import * as THREE from "three";
-import { BoundingBoxData, LayerData, PointData, ScaleData } from ".";
+import { BoundingBoxData, PointData } from ".";
 import { LifetimeData } from "../service/data";
 import { IndicatorData } from "./indicator";
 import { LinkData } from "./link";
-import { CommonData } from "./common";
-import { LabelsData } from "./label";
-import { HoverTextData } from "./hover";
+import { CommonData, SharedData } from "./common";
 
 /**
  * Additional data that can be used to customize textboxes
@@ -240,20 +238,15 @@ export class TextboxPointerData
   private linked_data: TextboxData;
 
   constructor(
-    data: LifetimeData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData &
-      HoverTextData &
-      TextboxCustomizationData &
-      TextboxPointerCustomizationData,
+    data: SharedData<
+      TextboxCustomizationData & TextboxPointerCustomizationData
+    >,
     linked_data: TextboxData,
   ) {
     super({
+      ...data,
       lat: data.text_pointer_lat!,
       lon: data.text_pointer_lon!,
-      ...data,
     });
     this.linked_data = linked_data;
   }

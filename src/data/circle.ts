@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { LayerData, PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import { CommonData } from "./common";
+import { CommonData, SharedData } from "./common";
 import { HoverTextData } from "./hover";
-import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundSet } from "./sound";
 
 /**
  * Additional data that can be used to customize circles.
@@ -40,19 +40,11 @@ export class CircleData
     LinkData,
     LayerData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
-  constructor(
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      CircleCustomizationData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData &
-      HoverTextData,
-  ) {
+  constructor(data: SharedData<CircleCustomizationData>) {
     super(data);
   }
 

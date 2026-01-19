@@ -83,6 +83,19 @@ export interface GlobeLayerPreUpdateHook extends GlobeLayer {
 }
 
 /**
+ * Hook before new data is passed to other layers, to be prepared
+ */
+export interface GlobeLayerPrepareNewDataHook extends GlobeLayer {
+  /**
+   * Passes new point into this layer. It is free to modify the point and other layers will see these changes.
+   * The point is shared!
+   *
+   * @param point the point to modify
+   */
+  prepareNewPoint(point: PointData): void;
+}
+
+/**
  * Hook for getting new data
  */
 export interface GlobeLayerNewDataHook extends GlobeLayer {
@@ -147,6 +160,7 @@ export class GlobeLayerRegistry
     GlobeLayerSettingsHook,
     GlobeLayerAppStateHook,
     GlobeLayerPreUpdateHook,
+    GlobeLayerPrepareNewDataHook,
     GlobeLayerNewDataHook,
     GlobeLayerDataUpdateHook,
     GlobeLayerFrameUpdateHook
@@ -158,6 +172,7 @@ export class GlobeLayerRegistry
   public settingsHooks: GlobeLayerSettingsHook[] = [];
   public stateHooks: GlobeLayerAppStateHook[] = [];
   public preUpdateHooks: GlobeLayerPreUpdateHook[] = [];
+  public prepareNewDataHooks: GlobeLayerPrepareNewDataHook[] = [];
   public newDataHooks: GlobeLayerNewDataHook[] = [];
   public dataUpdateHooks: GlobeLayerDataUpdateHook[] = [];
   public frameUpdateHooks: GlobeLayerFrameUpdateHook[] = [];
@@ -183,6 +198,9 @@ export class GlobeLayerRegistry
     }
     if ((layer as GlobeLayerPreUpdateHook).preUpdate !== undefined) {
       this.preUpdateHooks.push(layer as GlobeLayerPreUpdateHook);
+    }
+    if ((layer as GlobeLayerPrepareNewDataHook).prepareNewPoint !== undefined) {
+      this.prepareNewDataHooks.push(layer as GlobeLayerPrepareNewDataHook);
     }
     if ((layer as GlobeLayerNewDataHook).takeNewPoint !== undefined) {
       this.newDataHooks.push(layer as GlobeLayerNewDataHook);
@@ -242,6 +260,12 @@ export class GlobeLayerRegistry
   preUpdate(): void {
     for (const hook of this.preUpdateHooks) {
       hook.preUpdate();
+    }
+  }
+
+  prepareNewPoint(point: PointData): void {
+    for (const hook of this.prepareNewDataHooks) {
+      hook.prepareNewPoint(point);
     }
   }
 
