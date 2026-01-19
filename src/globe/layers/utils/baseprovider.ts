@@ -12,6 +12,7 @@ import {
   GlobeLayerPreUpdateHook,
 } from "../../layer";
 import { CustomObjectProvider } from "../customobject";
+import { ClearMapEvent, CountEvent } from "../../../service/state";
 
 export default abstract class CommonObjectProvider<T extends PointData>
   implements
@@ -21,6 +22,7 @@ export default abstract class CommonObjectProvider<T extends PointData>
     CustomObjectProvider
 {
   abstract readonly layerName: string;
+  abstract readonly objectType: string;
 
   private data: T[] = [];
 
@@ -32,6 +34,23 @@ export default abstract class CommonObjectProvider<T extends PointData>
   }
   takeNewPoint(point: PointData): void {
     binarySearchReplace(this.data, point);
+  }
+  handleClearEvent(event: ClearMapEvent): CountEvent[] {
+    const events = [];
+    if (event.types.length == 0 || event.types.includes(this.objectType)) {
+      if (event.clearEvents) {
+        for (const data of this.data) {
+          events.push({
+            // Most events should have startTime - if they don't, startTime of 0 will probably work fine
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            startTime: (data as any).startTime ?? 0,
+            count: -(data.counter ?? 1),
+          });
+        }
+      }
+      this.data.length = 0;
+    }
+    return events;
   }
   preUpdate(): void {
     mapAndFilter(this.data);

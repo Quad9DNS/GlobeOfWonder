@@ -17,6 +17,7 @@ import {
   PointData,
   updateDataForFrame,
 } from "../../../data";
+import { ClearMapEvent, CountEvent } from "../../../service/state";
 
 /**
  * Globe layer that handles {@link ExplosionData} objects and makes it easier for multiple layers to access them.
@@ -49,6 +50,22 @@ export class ExplosionDataLayerGroup
 
   shouldTakePoint(point: PointData): boolean {
     return point instanceof ExplosionData;
+  }
+
+  handleClearEvent(event: ClearMapEvent): CountEvent[] {
+    const events = [];
+    if (event.types.length == 0 || event.types.includes("explosion")) {
+      if (event.clearEvents) {
+        for (const explosion of this.data) {
+          events.push({
+            startTime: explosion.startTime,
+            count: -(explosion.counter ?? 1),
+          });
+        }
+      }
+      this.data.length = 0;
+    }
+    return events;
   }
 
   takeNewPoint(point: PointData): void {

@@ -133,7 +133,7 @@ Available event data:
 Available command data:
 | Key                                | Default value                                     | Description                                                                                                                                          |
 |------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type                               | - (required)                                      | Type of the command (view_command, settings_command, show_textbox_command, play_sound_command)                                                                           |
+| type                               | - (required)                                      | Type of the command (clear_map_command, view_command, settings_command, show_textbox_command, play_sound_command)                                    |
 | command_delay                      | -                                                 | Delay the execution of this command in ms (similar to draw_delay). Can be useful to precisely control commands                                       |
 | view_lat                           | - (required - view_command only)                  | Latitude of the new view position                                                                                                                    |
 | view_lon                           | - (required - view_command only)                  | Longitude of the new view position                                                                                                                   |
@@ -169,6 +169,8 @@ Available command data:
 | sound_url                          | - (required - play_sound_command only)            | URL of the sound to be played                                                                                                                        |
 | sound_volume                       | 10                                                | Volume of the sound to be played                                                                                                                     |
 | sound_set                          | - (required - play_sound_command only)            | List of soundset objects to be played (either sound_link or sound_pause) - sounds are played sequentially. Any failure stops the whole sequence      |
+| clear_types                        | []                                                | Event types to clear from the map. Use empty array to clear all types                                                                                |
+| clear_events                       | true                                              | Determines if the event counter should be updated after removing events from the map                                                                 |
 
 Available soundset object data:
 | Key                                | Default value                                     | Description                                                                                                                                          |

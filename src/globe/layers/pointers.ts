@@ -149,6 +149,7 @@ export class PointersLayer
  */
 export class PointersObjectProvider extends CommonObjectProvider<PointerData> {
   readonly layerName: string = "PointersProvider";
+  readonly objectType: string = "pointer";
 
   layerEnabled(settings: Settings): boolean {
     return settings.enablePointers;

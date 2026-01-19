@@ -83,5 +83,8 @@
 		"downloaded_object_scale": 2,
 		"hover_text": "Click here to open wikipedia",
 		"link_url": "https://wikipedia.org"
+	},
+	{
+		"type": "clear_map_command"
 	}
 ]

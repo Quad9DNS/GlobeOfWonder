@@ -182,6 +182,7 @@ export class TextboxPointersLayer
  */
 export class TextboxPointersObjectProvider extends CommonObjectProvider<PointData> {
   readonly layerName: string = "TextboxPointersProvider";
+  readonly objectType: string = "textbox";
 
   layerEnabled(settings: Settings): boolean {
     return settings.enableTextboxCommands;

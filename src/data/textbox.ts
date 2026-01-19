@@ -296,6 +296,10 @@ export class TextboxPointerData
     return new TextboxPointerData(this.cloneData(), this.linked_data);
   }
 
+  eventName(): string {
+    return "textbox";
+  }
+
   public get textbox(): TextboxData {
     return this.linked_data;
   }

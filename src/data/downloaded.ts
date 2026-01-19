@@ -61,4 +61,8 @@ export class DownloadedData
   labelScale(): number {
     return this.scale();
   }
+
+  eventName(): string {
+    return "download";
+  }
 }

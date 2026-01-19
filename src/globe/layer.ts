@@ -2,7 +2,7 @@ import * as THREE from "three";
 import ThreeGlobe from "three-globe";
 import { Settings } from "../settings";
 import { PointData } from "../data";
-import { AppState } from "../service/state";
+import { AppState, ClearMapEvent, CountEvent } from "../service/state";
 
 /**
  * Marker interface for any of the globe layers
@@ -115,6 +115,14 @@ export interface GlobeLayerNewDataHook extends GlobeLayer {
    * @param point the point to take in and optionally store
    */
   takeNewPoint(point: PointData): void;
+
+  /**
+   * Passes a clear event that has been received into this layer. The event is shared so it should be read-only!
+   * This should return negative count events that should match the removed items.
+   *
+   * @param event the event describing how to clear map
+   */
+  handleClearEvent(event: ClearMapEvent): CountEvent[];
 }
 
 /**
@@ -279,6 +287,14 @@ export class GlobeLayerRegistry
         hook.takeNewPoint(point.clone());
       }
     }
+  }
+
+  handleClearEvent(e: ClearMapEvent): CountEvent[] {
+    const events = [];
+    for (const hook of this.newDataHooks) {
+      events.push(...hook.handleClearEvent(e));
+    }
+    return events;
   }
 
   updateData(globe: ThreeGlobe, settings: Settings): void {

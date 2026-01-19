@@ -68,4 +68,8 @@ export class CircleData
   clone(): CircleData {
     return new CircleData(this.cloneData());
   }
+
+  eventName(): string {
+    return "circle";
+  }
 }
