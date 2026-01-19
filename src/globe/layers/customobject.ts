@@ -9,7 +9,7 @@ import {
   GlobeLayerSettingsHook,
   RegistryHook,
 } from "../layer";
-import { PointData } from "../../data";
+import { PointData, ScaleData } from "../../data";
 import {
   DEFAULT_GLOBE_RADIUS,
   geoDistance,
@@ -137,22 +137,34 @@ export class CustomObjectLayerGroup
               p.heightOffset() / DEFAULT_GLOBE_RADIUS,
             );
 
-            const dispersionDistanceMid =
-              MIN_CAMERA_DISTANCE +
-              (maxDispersionDistance - MIN_CAMERA_DISTANCE) / 2;
-            let dispersionFactor =
-              (cameraDistance - dispersionDistanceMid + 1) /
-              (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 1);
-            if (cameraDistance < dispersionDistanceMid) {
-              dispersionFactor =
-                (dispersionDistanceMid - cameraDistance + 1) /
-                (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 10);
+            if ((p as ScaleData).ignore_zoom) {
+              const dispersionDistanceMid =
+                MIN_CAMERA_DISTANCE +
+                (maxDispersionDistance - MIN_CAMERA_DISTANCE) / 2;
+              let dispersionFactor =
+                (cameraDistance - dispersionDistanceMid + 1) /
+                (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 1);
+              if (cameraDistance < dispersionDistanceMid) {
+                dispersionFactor =
+                  (dispersionDistanceMid - cameraDistance + 1) /
+                  (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 10);
+              }
+              object.position.set(
+                lerp(dispersedPos.x, startPos.x, dispersionFactor),
+                lerp(dispersedPos.y, startPos.y, dispersionFactor),
+                lerp(dispersedPos.z, startPos.z, dispersionFactor),
+              );
+            } else {
+              const dispersionFactor =
+                (cameraDistance - MIN_CAMERA_DISTANCE + 1) /
+                (maxDispersionDistance - MIN_CAMERA_DISTANCE + 1);
+              console.log("disp factor: ", dispersionFactor);
+              object.position.set(
+                lerp(dispersedPos.x, startPos.x, dispersionFactor),
+                lerp(dispersedPos.y, startPos.y, dispersionFactor),
+                lerp(dispersedPos.z, startPos.z, dispersionFactor),
+              );
             }
-            object.position.set(
-              lerp(dispersedPos.x, startPos.x, dispersionFactor),
-              lerp(dispersedPos.y, startPos.y, dispersionFactor),
-              lerp(dispersedPos.z, startPos.z, dispersionFactor),
-            );
           } else {
             Object.assign(
               object.position,
