@@ -35,6 +35,7 @@ export interface TextboxPointerCustomizationData {
   readonly text_pointer_color?: THREE.Color;
   readonly text_pointer_opacity?: number;
   readonly text_pointer_thickness?: number;
+  readonly text_pointer_arrow_size?: number;
 }
 
 export class TextboxData
@@ -145,6 +146,10 @@ export class TextboxData
 
   public get text_pointer_thickness(): number | undefined {
     return this.additional_data.text_pointer_thickness;
+  }
+
+  public get text_pointer_arrow_size(): number | undefined {
+    return this.additional_data.text_pointer_arrow_size;
   }
 
   public get text_pointer_opacity(): number | undefined {
@@ -275,6 +280,10 @@ export class TextboxPointerData
 
   public get text_pointer_thickness(): number | undefined {
     return this.additional_data.text_pointer_thickness;
+  }
+
+  public get text_pointer_arrow_size(): number | undefined {
+    return this.additional_data.text_pointer_arrow_size;
   }
 
   public get text_pointer_opacity(): number | undefined {

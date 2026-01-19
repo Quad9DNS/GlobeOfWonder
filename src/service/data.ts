@@ -115,8 +115,8 @@ const FLOAT_KEYS = [
   "text_pointer_lon",
   "text_pointer_lat_offset_visibility",
   "text_pointer_lon_offset_visibility",
-  "text_pointer_line_thickness",
-  "text_pointer_line_arrow_size",
+  "text_pointer_thickness",
+  "text_pointer_arrow_size",
   "scroll_speed",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left"];

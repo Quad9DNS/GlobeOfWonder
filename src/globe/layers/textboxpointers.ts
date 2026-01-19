@@ -39,6 +39,19 @@ export class TextboxPointersLayer
   private pointerGlobePos = new THREE.Vector3();
   private pointerEndPos = new THREE.Vector3();
 
+  private directionVec = new THREE.Vector3();
+  private directionUp = new THREE.Vector3();
+  private arrowLeftCorner = new THREE.Vector3();
+  private arrowRightCorner = new THREE.Vector3();
+  private arrowLeftQuat = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 0, 1),
+    Math.PI / 2,
+  );
+  private arrowRightQuat = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 0, 1),
+    -Math.PI,
+  );
+
   attachToGlobe(
     globe: ThreeGlobe,
     camera: THREE.Camera,
@@ -52,11 +65,6 @@ export class TextboxPointersLayer
     if (!(object instanceof TextboxPointerData)) {
       return;
     }
-
-    const top = object.textbox.top;
-    const left = object.textbox.left;
-    const right = object.textbox.right;
-    const bottom = object.textbox.bottom;
 
     let material = lineMaterial;
     if (
@@ -76,20 +84,9 @@ export class TextboxPointersLayer
       material.linewidth = object.text_pointer_thickness;
     }
 
-    this.pointerGlobePos = parent.getWorldPosition(this.pointerGlobePos);
-    this.pointerEndPos = this.pointerEndPos
-      .set(
-        (left + right - window.innerWidth) / window.innerWidth,
-        -(top + bottom - window.innerHeight) / window.innerHeight,
-        0,
-      )
-      .unproject(this.cachedCamera);
-
-    const points = [
-      this.cachedCamera.worldToLocal(this.pointerEndPos),
-      this.cachedCamera.worldToLocal(this.pointerGlobePos),
-    ];
-    const geometry = new LineGeometry().setFromPoints(points);
+    const geometry = new LineGeometry().setFromPoints(
+      this.generatePoints(parent, object),
+    );
     const pointerLine = new Line2(geometry, material);
 
     const dummy = new THREE.Object3D();
@@ -108,27 +105,10 @@ export class TextboxPointersLayer
       return;
     }
 
-    const top = object.textbox.top;
-    const left = object.textbox.left;
-    const right = object.textbox.right;
-    const bottom = object.textbox.bottom;
-
     const dummy = parent.getObjectByName("dummy")!;
     const line = this.cachedCamera.getObjectByName(dummy.uuid)! as THREE.Line;
 
-    parent.getWorldPosition(this.pointerGlobePos);
-    this.pointerEndPos
-      .set(
-        (left + right - window.innerWidth) / window.innerWidth,
-        -(top + bottom - window.innerHeight) / window.innerHeight,
-        0,
-      )
-      .unproject(this.cachedCamera);
-
-    line.geometry.setFromPoints([
-      this.cachedCamera.worldToLocal(this.pointerEndPos),
-      this.cachedCamera.worldToLocal(this.pointerGlobePos),
-    ]);
+    line.geometry.setFromPoints(this.generatePoints(parent, object));
     line.geometry.attributes.position.needsUpdate = true;
 
     const {
@@ -138,6 +118,62 @@ export class TextboxPointersLayer
     } = getGeoCoords(this.cachedGlobe, this.cachedCamera.position);
 
     line.visible = object.updateVisibility(currentLon, currentLat);
+  }
+
+  generatePoints(
+    parent: THREE.Object3D,
+    object: TextboxPointerData,
+  ): THREE.Vector3[] {
+    const top = object.textbox.top;
+    const left = object.textbox.left;
+    const right = object.textbox.right;
+    const bottom = object.textbox.bottom;
+
+    parent.getWorldPosition(this.pointerGlobePos).project(this.cachedCamera);
+    this.pointerGlobePos.z = 0;
+    this.pointerGlobePos.unproject(this.cachedCamera);
+    this.pointerEndPos
+      .set(
+        (left + right - window.innerWidth) / window.innerWidth,
+        -(top + bottom - window.innerHeight) / window.innerHeight,
+        0,
+      )
+      .unproject(this.cachedCamera);
+
+    const points: THREE.Vector3[] = [
+      this.cachedCamera.worldToLocal(this.pointerEndPos),
+      this.cachedCamera.worldToLocal(this.pointerGlobePos),
+    ];
+
+    if (object.text_pointer_arrow_size) {
+      this.directionVec
+        .subVectors(points[1], points[0])
+        .normalize()
+        .multiplyScalar(object.text_pointer_arrow_size * 0.005);
+      this.directionUp
+        .subVectors(this.pointerGlobePos, this.cachedGlobe.position)
+        .normalize();
+      this.arrowLeftQuat
+        .setFromAxisAngle(this.directionUp, Math.PI / 8)
+        .normalize();
+      this.arrowRightQuat
+        .setFromAxisAngle(this.directionUp, -Math.PI / 4)
+        .normalize();
+      this.arrowLeftCorner.subVectors(
+        points[1],
+        this.directionVec.applyQuaternion(this.arrowLeftQuat),
+      );
+      points.push(this.arrowLeftCorner);
+      points.push(this.pointerGlobePos);
+      this.arrowRightCorner.subVectors(
+        points[1],
+        this.directionVec.applyQuaternion(this.arrowRightQuat),
+      );
+      points.push(this.arrowRightCorner);
+      points.push(this.pointerGlobePos);
+    }
+
+    return points;
   }
 }
 
