@@ -90,5 +90,59 @@
 			"bar"
 		],
 		"clear_events": true
+	},
+	{
+		"type": "downloaded",
+		"lat": 50,
+		"lon": 20,
+		"downloaded_object_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
+		"downloaded_object_scale": 2,
+		"hover_text": "Listen to the sound",
+		"ttl": 10000,
+		"fade_duration": 5000,
+		"sound_set": [
+			{
+				"type": "sound_link",
+				"sound_url": "sample.mp3"
+			},
+			{
+				"type": "sound_pause",
+				"sound_pause_milliseconds": 4000
+			},
+			{
+				"type": "sound_link",
+				"sound_url": "other.mp3"
+			}
+		]
+	},
+	{
+		"type": "play_sound_command",
+		"sound_type": "sound_set",
+		"command_delay": 100000,
+		"sound_set": [
+			{
+				"type": "sound_link",
+				"sound_url": "sample.mp3"
+			},
+			{
+				"type": "sound_pause",
+				"sound_pause_milliseconds": 4000
+			},
+			{
+				"type": "sound_link",
+				"sound_url": "other.mp3"
+			},
+			{
+				"type": "sound_link",
+				"sound_url": "sound.mp3"
+			}
+		]
+	},
+	{
+		"type": "play_sound_command",
+		"sound_type": "sound_link",
+		"command_delay": 10000,
+		"sound_url": "sound.mp3",
+		"sound_volume": 5
 	}
 ]
