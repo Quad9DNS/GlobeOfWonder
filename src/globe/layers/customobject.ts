@@ -31,12 +31,11 @@ import { MAX_CAMERA_DISTANCE, MIN_CAMERA_DISTANCE } from "../../data/camera";
  */
 export class CustomObjectLayerGroup
   implements
-    GlobeLayerAttachHook,
-    GlobeLayerSettingsHook,
-    GlobeLayerDataUpdateHook,
-    GlobeLayerFrameUpdateHook,
-    RegistryHook
-{
+  GlobeLayerAttachHook,
+  GlobeLayerSettingsHook,
+  GlobeLayerDataUpdateHook,
+  GlobeLayerFrameUpdateHook,
+  RegistryHook {
   readonly layerName: string = "CustomObjects";
   private settings!: Settings;
   private objects: PointData[] = [];
@@ -158,7 +157,6 @@ export class CustomObjectLayerGroup
               const dispersionFactor =
                 (cameraDistance - MIN_CAMERA_DISTANCE + 1) /
                 (maxDispersionDistance - MIN_CAMERA_DISTANCE + 1);
-              console.log("disp factor: ", dispersionFactor);
               object.position.set(
                 lerp(dispersedPos.x, startPos.x, dispersionFactor),
                 lerp(dispersedPos.y, startPos.y, dispersionFactor),
@@ -242,13 +240,13 @@ export class CustomObjectLayerGroup
     for (const i of indices) {
       this.objects[i].dispersed_lat = clamp(
         this.objects[i].lat +
-          Math.sin(angle) * settings.dispersionRadius * KM_TO_LATITUDE,
+        Math.sin(angle) * settings.dispersionRadius * KM_TO_LATITUDE,
         -90,
         90,
       );
       this.objects[i].dispersed_lon = clamp(
         this.objects[i].lon +
-          Math.cos(angle) * settings.dispersionRadius * KM_TO_LONGITUDE,
+        Math.cos(angle) * settings.dispersionRadius * KM_TO_LONGITUDE,
         -180,
         180,
       );
