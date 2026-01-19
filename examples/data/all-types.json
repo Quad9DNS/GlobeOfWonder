@@ -85,6 +85,10 @@
 		"link_url": "https://wikipedia.org"
 	},
 	{
-		"type": "clear_map_command"
+		"type": "clear_map_command",
+		"clear_types": [
+			"bar"
+		],
+		"clear_events": true
 	}
 ]
