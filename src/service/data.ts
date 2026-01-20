@@ -480,11 +480,12 @@ function buildAndPublishCommand(
             {
               const audio = prepareAudio(data);
               let start = Promise.resolve();
+              const load = waitForLoad(audio);
               if (data.command_delay) {
                 start = start.then(() => delay(data.command_delay!));
               }
               start
-                .then(() => waitForLoad(audio))
+                .then(() => load)
                 .then(() => playAudio(audio))
                 .catch((err) => console.error("Play sound failure: ", err));
             }
