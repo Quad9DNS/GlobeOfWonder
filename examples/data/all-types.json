@@ -78,7 +78,7 @@
 		"sound_set": [
 			{
 				"type": "sound_link",
-				"sound_url": "sample.mp3"
+				"sound_url": "Submarine-Klaxon.mp3"
 			},
 			{
 				"type": "sound_pause",
@@ -86,7 +86,7 @@
 			},
 			{
 				"type": "sound_link",
-				"sound_url": "other.mp3"
+				"sound_url": "Submarine-Klaxon.mp3"
 			}
 		]
 	},
@@ -97,7 +97,7 @@
 		"sound_set": [
 			{
 				"type": "sound_link",
-				"sound_url": "sample.mp3"
+				"sound_url": "Submarine-Klaxon.mp3"
 			},
 			{
 				"type": "sound_pause",
@@ -105,11 +105,11 @@
 			},
 			{
 				"type": "sound_link",
-				"sound_url": "other.mp3"
+				"sound_url": "Submarine-Klaxon.mp3"
 			},
 			{
 				"type": "sound_link",
-				"sound_url": "sound.mp3"
+				"sound_url": "Submarine-Klaxon.mp3"
 			}
 		]
 	},
@@ -117,7 +117,7 @@
 		"type": "play_sound_command",
 		"sound_type": "sound_link",
 		"command_delay": 10000,
-		"sound_url": "sound.mp3",
-		"sound_volume": 5
+		"sound_url": "Submarine-Klaxon.mp3",
+		"sound_volume": 10
 	}
 ]
