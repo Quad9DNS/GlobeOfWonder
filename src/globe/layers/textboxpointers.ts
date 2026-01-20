@@ -6,12 +6,13 @@ import {
   CustomObjectLayerBuildHook,
   CustomObjectLayerFrameUpdateHook,
 } from "./customobject";
-import { GlobeLayerAttachHook } from "../layer";
+import { GlobeLayerAppStateHook, GlobeLayerAttachHook } from "../layer";
 import CommonObjectProvider from "./utils/baseprovider";
-import { TextboxPointerData } from "../../data/textbox";
+import { TextboxData, TextboxPointerData } from "../../data/textbox";
 import { getGeoCoords } from "../common";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineGeometry, LineMaterial } from "three/examples/jsm/Addons.js";
+import { AppState } from "../../service/state";
 
 const lineMaterial = new LineMaterial({
   color: new THREE.Color("red"),
@@ -29,12 +30,14 @@ const lineMaterial = new LineMaterial({
 export class TextboxPointersLayer
   implements
     GlobeLayerAttachHook,
+    GlobeLayerAppStateHook,
     CustomObjectLayerBuildHook,
     CustomObjectLayerFrameUpdateHook
 {
   readonly layerName: string = "TextboxPointers";
   private cachedCamera!: THREE.Camera;
   private cachedGlobe!: ThreeGlobe;
+  private state!: AppState;
 
   private pointerGlobePos = new THREE.Vector3();
   private pointerEndPos = new THREE.Vector3();
@@ -59,6 +62,10 @@ export class TextboxPointersLayer
   ): void {
     this.cachedGlobe = globe;
     this.cachedCamera = camera;
+  }
+
+  attachToState(state: AppState): void {
+    this.state = state;
   }
 
   buildObject(parent: THREE.Object3D, object: PointData): void {
@@ -96,6 +103,16 @@ export class TextboxPointersLayer
     this.cachedCamera.add(pointerLine);
     parent.addEventListener("removed", () => {
       this.cachedCamera.remove(pointerLine);
+      // HACK: removing indicator when the textbox is removed
+      this.state.newNonEventIndicatorsQueue.push(
+        new TextboxData({
+          left: object.textbox.left,
+          right: object.textbox.right,
+          top: object.textbox.top,
+          bottom: object.textbox.bottom,
+          text: undefined,
+        }),
+      );
     });
     parent.add(dummy);
   }
