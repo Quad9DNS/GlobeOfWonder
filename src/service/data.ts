@@ -137,13 +137,13 @@ export type CounterData = {
 };
 type EventTypeData = {
   type:
-  | ExplosionTypeData["type"]
-  | CircleTypeData["type"]
-  | PointerTypeData["type"]
-  | BarTypeData["type"]
-  | DownloadedTypeData["type"]
-  | ArcTypeData["type"]
-  | null;
+    | ExplosionTypeData["type"]
+    | CircleTypeData["type"]
+    | PointerTypeData["type"]
+    | BarTypeData["type"]
+    | DownloadedTypeData["type"]
+    | ArcTypeData["type"]
+    | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &

@@ -44,7 +44,7 @@ export type LayerConfig = {
 function SettingsField<T>(
   fieldMapper: ((instance: Settings, value: T) => T) | undefined = undefined,
 ) {
-  return function(
+  return function (
     target: ClassAccessorDecoratorTarget<Settings, T>,
     context: ClassAccessorDecoratorContext<Settings, T>,
   ): ClassAccessorDecoratorResult<Settings, T> {
