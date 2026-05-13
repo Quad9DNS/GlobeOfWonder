@@ -143,6 +143,7 @@ export class BarsLayer
  */
 export class BarsObjectProvider extends CommonObjectProvider<BarData> {
   readonly layerName: string = "BarsProvider";
+  readonly objectType: string = "bar";
 
   shouldTakePoint(point: PointData): boolean {
     return point instanceof BarData;

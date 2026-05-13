@@ -81,6 +81,7 @@ export class DownloadedObjectsLayer
  */
 export class DownloadedObjectsProvider extends CommonObjectProvider<DownloadedData> {
   readonly layerName: string = "DownloadedObjectsProvider";
+  readonly objectType: string = "downloaded";
   private imageLoader: THREE.ImageBitmapLoader =
     new THREE.ImageBitmapLoader().setOptions({ imageOrientation: "flipY" });
 

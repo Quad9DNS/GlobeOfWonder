@@ -205,9 +205,12 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return ["view_command", "settings_command", "show_textbox_command"].includes(
-    data.type,
-  );
+  return [
+    "view_command",
+    "settings_command",
+    "show_textbox_command",
+    "clear_map_command",
+  ].includes(data.type);
 }
 type CommonCommandData = {
   command_delay?: number;
@@ -234,6 +237,16 @@ export type SettingsCommandData = {
 export type SettingsCommandServiceData = CommonCommandData &
   SettingsCommandTypeData &
   SettingsCommandData;
+type ClearMapCommandTypeData = {
+  type: "clear_map_command";
+};
+export type ClearMapCommandData = {
+  clear_types?: string[];
+  clear_events?: boolean;
+};
+export type ClearMapCommandServiceData = CommonCommandData &
+  ClearMapCommandTypeData &
+  ClearMapCommandData;
 
 type ShowTextboxCommandTypeData = {
   type: "show_textbox_command";
@@ -262,6 +275,7 @@ export type ServiceEventData =
 export type ServiceCommandData =
   | ViewCommandServiceData
   | SettingsCommandServiceData
+  | ClearMapCommandServiceData
   | ShowTextboxCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
@@ -375,7 +389,8 @@ function parseServiceData(data: string): ServiceData | null {
         k == "ignore_zoom" ||
         k == "always_faces_viewer" ||
         k == "display_text_always_faces_viewer" ||
-        k == "display_text_hover_only"
+        k == "display_text_hover_only" ||
+        k == "clear_events"
       ) {
         return Boolean(v) && v != "false";
       } else {
@@ -488,6 +503,14 @@ function buildAndPublishCommand(
     case "settings_command":
       if (settings.enableSettingsCommands) {
         settings.loadParameters(data.settings);
+      }
+      break;
+    case "clear_map_command":
+      if (settings.enableClearMapCommands) {
+        state.clearEventsQueue.push({
+          clearEvents: data.clear_events ?? true,
+          types: data.clear_types ?? [],
+        });
       }
       break;
     case "show_textbox_command":

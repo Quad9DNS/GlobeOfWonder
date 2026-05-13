@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import ThreeGlobe from "three-globe";
 import { Settings, SettingsChangedEvent } from "../settings";
-import { AppState } from "../service/state";
+import { AppState, ClearMapEvent } from "../service/state";
 import { GlobeLayerRegistry } from "./layer";
 import { RotationLayer } from "./layers/rotation";
 import { CoreMapLayer } from "./layers/coremap";
@@ -132,6 +132,16 @@ export function setupGlobe(
       .splice(0, state.newPointsQueue.length)
       .forEach((p: PointData) => {
         registry.takeNewPoint(p);
+      });
+
+    // TODO: What happens if we have both new points queue and clear events?
+    state.clearEventsQueue
+      .splice(0, state.clearEventsQueue.length)
+      .forEach((e: ClearMapEvent) => {
+        const counters = registry.handleClearEvent(e);
+        if (e.clearEvents) {
+          state.newEventsQueue.push(...counters);
+        }
       });
 
     registry.updateData(globe, settings);

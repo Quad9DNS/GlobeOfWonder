@@ -41,7 +41,7 @@ export abstract class CommonData<T>
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
    */
-  protected startTime: number;
+  startTime: number;
 
   /**
    * Current lifetime of the point
@@ -226,5 +226,9 @@ export abstract class CommonData<T>
   }
   variableScale(): boolean {
     return false;
+  }
+
+  eventName(): string {
+    throw new Error("Method not implemented.");
   }
 }

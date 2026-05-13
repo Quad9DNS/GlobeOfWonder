@@ -116,6 +116,11 @@ export interface PointData extends ExpirableObject {
    * Useful for optimization - to sort objects by lifetime for easier removal.
    */
   timeLeft(): number;
+
+  /**
+   * Returns the name of the event that this {@link PointData} represents.
+   */
+  eventName(): string;
 }
 
 /**

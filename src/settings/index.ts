@@ -63,6 +63,7 @@ function SettingsField<T>(
  */
 export class Settings extends EventTarget {
   private readonly eventType = "settings-changed";
+  readonly clearMapEventType = "clear-map-requested";
   private validProperties: string[] | null = null;
   @SettingsField()
   accessor antialiasingEnabled: boolean = true;
@@ -122,6 +123,8 @@ export class Settings extends EventTarget {
   accessor enableViewCommands: boolean = true;
   @SettingsField()
   accessor enableSettingsCommands: boolean = true;
+  @SettingsField()
+  accessor enableClearMapCommands: boolean = true;
   @SettingsField()
   accessor enableTextboxCommands: boolean = true;
 
@@ -267,6 +270,7 @@ export class Settings extends EventTarget {
         (name) =>
           ![
             "eventType",
+            "clearMapEventType",
             "validProperties",
             "filters",
             "services",
@@ -454,6 +458,16 @@ export function setupSettingsDialog(
     dialog.close();
   });
 
+  const clearMapButton =
+    fields.dialogContainer.querySelector<HTMLElement>("#clearmapbutton")!;
+  clearMapButton.addEventListener("click", (_event: Event) => {
+    if (
+      confirm("Are you sure? This may cause unusable results on visualization.")
+    ) {
+      settings.dispatchEvent(new CustomEvent<void>(settings.clearMapEventType));
+    }
+  });
+
   const tzSelector =
     fields.dialogContainer.querySelector<HTMLSelectElement>("#timezone")!;
   for (const tz of Intl.supportedValuesOf("timeZone")) {
@@ -501,6 +515,7 @@ export function setupSettingsDialog(
     ["#enablebars", "boolean", "enableBars"],
     ["#enableviewcommands", "boolean", "enableViewCommands"],
     ["#enablesettingscommands", "boolean", "enableSettingsCommands"],
+    ["#enableclearmapcommands", "boolean", "enableClearMapCommands"],
     ["#enabletextboxcommands", "boolean", "enableTextboxCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
@@ -926,11 +941,15 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="text" id="datadownloadurl" name="datadownloadurl" />
         <label for="datadownloadinterval">Data download interval (ms):</label>
         <input type="number" min="0" step="1" id="datadownloadinterval" name="datadownloadinterval" />
+        <button class="grid-item-2cols" id="clearmapbutton" type="button" class="light">Clear map</button>
+        <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Warning: this may cause unusable results on visualization.</p>
         <h3 class="grid-item-2cols" style="margin: auto;">Data source commands</h3>
         <label for="enableviewcommands">Enable view commands:</label>
         <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
         <label for="enablesettingscommands">Enable settings commands:</label>
         <input type="checkbox" id="enablesettingscommands" name="enablesettingscommands" />
+        <label for="enableclearmapcommands">Enable clear map commands:</label>
+        <input type="checkbox" id="enableclearmapcommands" name="enableclearmapcommands" />
         <label for="enabletextboxcommands">Enable textbox commands:</label>
         <input type="checkbox" id="enabletextboxcommands" name="enabletextboxcommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
