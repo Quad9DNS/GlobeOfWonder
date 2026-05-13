@@ -19,8 +19,14 @@ import {
   DownloadedData,
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
-import { LayerData, ScaleData } from "../data";
+import { BoundingBoxData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
+import {
+  TextboxCustomizationData,
+  TextboxData,
+  TextboxPointerData,
+  TextboxPointerCustomizationData,
+} from "../data/textbox";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -102,7 +108,18 @@ const FLOAT_KEYS = [
   "view_lon",
   "view_zoom",
   "view_speed",
+  "border_thickness",
+  "text_font_size",
+  "box_corner_radius",
+  "text_pointer_lat",
+  "text_pointer_lon",
+  "text_pointer_lat_offset_visibility",
+  "text_pointer_lon_offset_visibility",
+  "text_pointer_thickness",
+  "text_pointer_arrow_size",
+  "scroll_speed",
 ];
+const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 
 export type PositionData = {
   lat: number;
@@ -120,13 +137,13 @@ export type CounterData = {
 };
 type EventTypeData = {
   type:
-    | ExplosionTypeData["type"]
-    | CircleTypeData["type"]
-    | PointerTypeData["type"]
-    | BarTypeData["type"]
-    | DownloadedTypeData["type"]
-    | ArcTypeData["type"]
-    | null;
+  | ExplosionTypeData["type"]
+  | CircleTypeData["type"]
+  | PointerTypeData["type"]
+  | BarTypeData["type"]
+  | DownloadedTypeData["type"]
+  | ArcTypeData["type"]
+  | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &
@@ -188,9 +205,12 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return ["view_command", "settings_command", "clear_map_command"].includes(
-    data.type,
-  );
+  return [
+    "view_command",
+    "settings_command",
+    "show_textbox_command",
+    "clear_map_command",
+  ].includes(data.type);
 }
 type CommonCommandData = {
   command_delay?: number;
@@ -228,6 +248,23 @@ export type ClearMapCommandServiceData = CommonCommandData &
   ClearMapCommandTypeData &
   ClearMapCommandData;
 
+type ShowTextboxCommandTypeData = {
+  type: "show_textbox_command";
+};
+export type ShowTextboxCommandData = {
+  settings: Record<string, string>;
+};
+export type ShowTextboxCommandServiceData = CommonCommandData &
+  LifetimeData &
+  ShowTextboxCommandTypeData &
+  ShowTextboxCommandData &
+  BoundingBoxData &
+  LinkData &
+  TextboxCustomizationData &
+  TextboxPointerCustomizationData;
+export type ShowTextboxCommandPointerServiceData =
+  ShowTextboxCommandServiceData & SharedServiceData;
+
 export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
@@ -238,7 +275,8 @@ export type ServiceEventData =
 export type ServiceCommandData =
   | ViewCommandServiceData
   | SettingsCommandServiceData
-  | ClearMapCommandServiceData;
+  | ClearMapCommandServiceData
+  | ShowTextboxCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -332,9 +370,11 @@ function parseServiceData(data: string): ServiceData | null {
     (k: string, v: string) => {
       if (FLOAT_KEYS.indexOf(k) !== -1) {
         return parseFloat(v);
+      } else if (INTEGER_KEYS.indexOf(k) !== -1) {
+        return parseInt(v);
       } else if (k == "counter" || k == "ttl" || k == "layer_id") {
         return parseInt(v);
-      } else if (k == "opacity") {
+      } else if (k == "opacity" || k.includes("_opacity")) {
         return clamp(parseInt(v), 0, 100);
       } else if (k.includes("_color")) {
         if (v == null || v == "none" || v == "<null>") {
@@ -471,6 +511,20 @@ function buildAndPublishCommand(
           clearEvents: data.clear_events ?? true,
           types: data.clear_types ?? [],
         });
+      }
+      break;
+    case "show_textbox_command":
+      if (settings.enableTextboxCommands) {
+        const textboxData = new TextboxData(
+          data as ShowTextboxCommandServiceData,
+        );
+        state.newNonEventIndicatorsQueue.push(textboxData);
+        state.newPointsQueue.push(
+          new TextboxPointerData(
+            data as ShowTextboxCommandPointerServiceData,
+            textboxData,
+          ),
+        );
       }
       break;
   }

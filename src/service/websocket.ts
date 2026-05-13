@@ -10,6 +10,7 @@ const connectionStatus: { [key: number]: string } = {
   [WebSocket.CLOSING]: "Closing",
   [WebSocket.CLOSED]: "Closed",
 };
+let reconnectId: number | undefined;
 
 let websocket: WebSocket | null = null;
 
@@ -262,7 +263,8 @@ function connectWebsocket(
       ? ""
       : "none";
     updateWebsocketStatus(fields, settings);
-    setTimeout(() => {
+    clearTimeout(reconnectId);
+    reconnectId = setTimeout(() => {
       connectWebsocket(
         fields,
         settingsFields,

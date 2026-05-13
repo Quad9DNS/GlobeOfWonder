@@ -160,3 +160,23 @@ button:focus-visible {
 input:invalid {
   border-color: #ff646c;
 }
+
+@keyframes scrolllr {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(100%, 0); }
+}
+
+@keyframes scrollrl {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+@keyframes scrolltb {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(0, 100%); }
+}
+
+@keyframes scrollbt {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(0, -100%); }
+}

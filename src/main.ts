@@ -17,6 +17,9 @@ import { BarData } from "./data/bar.ts";
 import { DownloadedData } from "./data/downloaded.ts";
 import { ArcData } from "./data/arc.ts";
 import { setupDataDownloader } from "./service/downloader.ts";
+import { setupOverlays } from "./components/overlays.ts";
+import { IndicatorData } from "./data/indicator.ts";
+import { TextboxData } from "./data/textbox.ts";
 
 let appContainer = document.querySelector<HTMLDivElement>("#app")!;
 appContainer.innerHTML = `
@@ -75,6 +78,7 @@ setupEventCounters(appContainer, state, settings);
 setupEventCountKey(appContainer, state, settings);
 
 setupGlobe(appContainer, state, settings);
+setupOverlays(appContainer, state, settings);
 
 if (import.meta.env.VITE_RELOAD_INTERVAL_MS) {
   setTimeout(
@@ -94,7 +98,9 @@ declare global {
     BarData: typeof BarData;
     DownloadedData: typeof DownloadedData;
     ArcData: typeof ArcData;
+    TextboxData: typeof TextboxData;
     addObject: (newPoint: PointData) => void;
+    addIndicator: (newIndicator: IndicatorData) => void;
   }
 }
 if (import.meta.env.MODE == "development") {
@@ -104,7 +110,11 @@ if (import.meta.env.MODE == "development") {
   window.BarData = BarData;
   window.DownloadedData = DownloadedData;
   window.ArcData = ArcData;
+  window.TextboxData = TextboxData;
   window.addObject = (newPoint: PointData) => {
     state.newPointsQueue.push(newPoint);
+  };
+  window.addIndicator = (newIndicator: IndicatorData) => {
+    state.newNonEventIndicatorsQueue.push(newIndicator);
   };
 }

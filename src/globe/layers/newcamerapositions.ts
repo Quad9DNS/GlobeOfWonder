@@ -12,6 +12,7 @@ import {
   distanceToZoom,
   zoomToDistance,
 } from "../../data/camera";
+import { getCoords, getGeoCoords } from "../common";
 
 const DEFAULT_ZOOM_SPEED_PER_S = 5;
 const DEFAULT_ZOOM_SPEED_PER_MS = DEFAULT_ZOOM_SPEED_PER_S / 1000;
@@ -55,7 +56,7 @@ export class NewCameraPositionsLayer
         lat: currentLat,
         lng: currentLon,
         altitude: _altitude,
-      } = globe.toGeoCoords(this.camera.position);
+      } = getGeoCoords(globe, this.camera.position);
 
       const [zoom, zoomDone] = this.nextPosition.zoom
         ? this.moveBy(
@@ -108,7 +109,8 @@ export class NewCameraPositionsLayer
     globe: ThreeGlobe,
     newCameraPosition: CameraPosition,
   ) {
-    const { x, y, z } = globe.getCoords(
+    const { x, y, z } = getCoords(
+      globe,
       newCameraPosition!.lat,
       newCameraPosition!.lon,
     );
