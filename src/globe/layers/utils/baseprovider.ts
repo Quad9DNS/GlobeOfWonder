@@ -18,11 +18,12 @@ import { ClearMapEvent, CountEvent } from "../../../service/state";
 
 export default abstract class CommonObjectProvider<T extends PointData>
   implements
-  GlobeLayerSettingsHook,
-  GlobeLayerPreUpdateHook,
-  GlobeLayerNewDataHook,
-  GlobeLayerFrameUpdateHook,
-  CustomObjectProvider {
+    GlobeLayerSettingsHook,
+    GlobeLayerPreUpdateHook,
+    GlobeLayerNewDataHook,
+    GlobeLayerFrameUpdateHook,
+    CustomObjectProvider
+{
   abstract readonly layerName: string;
   abstract readonly objectType: string;
 
