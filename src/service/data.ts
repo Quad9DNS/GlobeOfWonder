@@ -19,7 +19,7 @@ import {
   DownloadedData,
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
-import { LayerData, ScaleData } from "../data";
+import { BoundingBoxData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
 import {
   delay,
@@ -28,6 +28,12 @@ import {
   waitForLoad,
 } from "../components/global_audio";
 import { AudioObjectData, SoundLink, SoundSet } from "../data/sound";
+import {
+  TextboxCustomizationData,
+  TextboxData,
+  TextboxPointerData,
+  TextboxPointerCustomizationData,
+} from "../data/textbox";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -109,7 +115,18 @@ const FLOAT_KEYS = [
   "view_lon",
   "view_zoom",
   "view_speed",
+  "border_thickness",
+  "text_font_size",
+  "box_corner_radius",
+  "text_pointer_lat",
+  "text_pointer_lon",
+  "text_pointer_lat_offset_visibility",
+  "text_pointer_lon_offset_visibility",
+  "text_pointer_thickness",
+  "text_pointer_arrow_size",
+  "scroll_speed",
 ];
+const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 
 export type PositionData = {
   lat: number;
@@ -127,13 +144,13 @@ export type CounterData = {
 };
 type EventTypeData = {
   type:
-    | ExplosionTypeData["type"]
-    | CircleTypeData["type"]
-    | PointerTypeData["type"]
-    | BarTypeData["type"]
-    | DownloadedTypeData["type"]
-    | ArcTypeData["type"]
-    | null;
+  | ExplosionTypeData["type"]
+  | CircleTypeData["type"]
+  | PointerTypeData["type"]
+  | BarTypeData["type"]
+  | DownloadedTypeData["type"]
+  | ArcTypeData["type"]
+  | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &
@@ -197,9 +214,13 @@ export type ArcServiceData = ArcTypeData &
   ArcCustomizationData;
 
 function isCommandData(data: ServiceData): data is ServiceCommandData {
-  return ["view_command", "settings_command", "play_sound_command"].includes(
-    data.type,
-  );
+  return [
+    "view_command",
+    "settings_command",
+    "show_textbox_command",
+    "clear_map_command",
+    "play_sound_command",
+  ].includes(data.type);
 }
 function autoHandleDelay(data: ServiceCommandData): boolean {
   return ["view_command", "settings_command"].includes(data.type);
@@ -229,6 +250,33 @@ export type SettingsCommandData = {
 export type SettingsCommandServiceData = CommonCommandData &
   SettingsCommandTypeData &
   SettingsCommandData;
+type ClearMapCommandTypeData = {
+  type: "clear_map_command";
+};
+export type ClearMapCommandData = {
+  clear_types?: string[];
+  clear_events?: boolean;
+};
+export type ClearMapCommandServiceData = CommonCommandData &
+  ClearMapCommandTypeData &
+  ClearMapCommandData;
+
+type ShowTextboxCommandTypeData = {
+  type: "show_textbox_command";
+};
+export type ShowTextboxCommandData = {
+  settings: Record<string, string>;
+};
+export type ShowTextboxCommandServiceData = CommonCommandData &
+  LifetimeData &
+  ShowTextboxCommandTypeData &
+  ShowTextboxCommandData &
+  BoundingBoxData &
+  LinkData &
+  TextboxCustomizationData &
+  TextboxPointerCustomizationData;
+export type ShowTextboxCommandPointerServiceData =
+  ShowTextboxCommandServiceData & SharedServiceData;
 
 type PlaySoundCommandTypeData = {
   type: "play_sound_command";
@@ -247,7 +295,9 @@ export type ServiceEventData =
 export type ServiceCommandData =
   | ViewCommandServiceData
   | SettingsCommandServiceData
-  | PlaySoundCommandServiceData;
+  | PlaySoundCommandServiceData
+  | ClearMapCommandServiceData
+  | ShowTextboxCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -341,9 +391,11 @@ function parseServiceData(data: string): ServiceData | null {
     (k: string, v: string) => {
       if (FLOAT_KEYS.indexOf(k) !== -1) {
         return parseFloat(v);
+      } else if (INTEGER_KEYS.indexOf(k) !== -1) {
+        return parseInt(v);
       } else if (k == "counter" || k == "ttl" || k == "layer_id") {
         return parseInt(v);
-      } else if (k == "opacity") {
+      } else if (k == "opacity" || k.includes("_opacity")) {
         return clamp(parseInt(v), 0, 100);
       } else if (k.includes("_color")) {
         if (v == null || v == "none" || v == "<null>") {
@@ -356,9 +408,11 @@ function parseServiceData(data: string): ServiceData | null {
         k == "arc_animated" ||
         k == "counter_include" ||
         k == "ignore_zoom" ||
+        k == "disperse_on_zoom" ||
         k == "always_faces_viewer" ||
         k == "display_text_always_faces_viewer" ||
-        k == "display_text_hover_only"
+        k == "display_text_hover_only" ||
+        k == "clear_events"
       ) {
         return Boolean(v) && v != "false";
       } else {
@@ -539,6 +593,28 @@ function buildAndPublishCommand(
             }
             break;
         }
+      }
+      break;
+    case "clear_map_command":
+      if (settings.enableClearMapCommands) {
+        state.clearEventsQueue.push({
+          clearEvents: data.clear_events ?? true,
+          types: data.clear_types ?? [],
+        });
+      }
+      break;
+    case "show_textbox_command":
+      if (settings.enableTextboxCommands) {
+        const textboxData = new TextboxData(
+          data as ShowTextboxCommandServiceData,
+        );
+        state.newNonEventIndicatorsQueue.push(textboxData);
+        state.newPointsQueue.push(
+          new TextboxPointerData(
+            data as ShowTextboxCommandPointerServiceData,
+            textboxData,
+          ),
+        );
       }
       break;
   }

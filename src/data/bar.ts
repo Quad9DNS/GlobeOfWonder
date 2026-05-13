@@ -73,6 +73,10 @@ export class BarData
     return new BarData(this.cloneData());
   }
 
+  eventName(): string {
+    return "bar";
+  }
+
   faceCamera(): boolean {
     // Yhe bar should never face towards the camera, because that makes it appear as just a hexagon.
     return false;

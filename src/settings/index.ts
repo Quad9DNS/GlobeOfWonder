@@ -44,7 +44,7 @@ export type LayerConfig = {
 function SettingsField<T>(
   fieldMapper: ((instance: Settings, value: T) => T) | undefined = undefined,
 ) {
-  return function (
+  return function(
     target: ClassAccessorDecoratorTarget<Settings, T>,
     context: ClassAccessorDecoratorContext<Settings, T>,
   ): ClassAccessorDecoratorResult<Settings, T> {
@@ -63,6 +63,7 @@ function SettingsField<T>(
  */
 export class Settings extends EventTarget {
   private readonly eventType = "settings-changed";
+  readonly clearMapEventType = "clear-map-requested";
   private validProperties: string[] | null = null;
   @SettingsField()
   accessor antialiasingEnabled: boolean = true;
@@ -70,6 +71,12 @@ export class Settings extends EventTarget {
   accessor autoRotateGlobe: boolean = true;
   @SettingsField()
   accessor enableAtmosphere: boolean = true;
+  @SettingsField()
+  accessor dispersionRadius: number = 25;
+  @SettingsField()
+  accessor dispersionDistanceThreshold: number = 10;
+  @SettingsField()
+  accessor dispersionZoomThreshold: number = 150;
   @SettingsField()
   accessor enableGraticules: boolean = false;
   @SettingsField()
@@ -124,6 +131,10 @@ export class Settings extends EventTarget {
   accessor enableSettingsCommands: boolean = true;
   @SettingsField()
   accessor enableAudioCommands: boolean = true;
+  @SettingsField()
+  accessor enableClearMapCommands: boolean = true;
+  @SettingsField()
+  accessor enableTextboxCommands: boolean = true;
 
   @SettingsField()
   accessor analysisModeResolution: number = 3;
@@ -267,6 +278,7 @@ export class Settings extends EventTarget {
         (name) =>
           ![
             "eventType",
+            "clearMapEventType",
             "validProperties",
             "filters",
             "services",
@@ -454,6 +466,16 @@ export function setupSettingsDialog(
     dialog.close();
   });
 
+  const clearMapButton =
+    fields.dialogContainer.querySelector<HTMLElement>("#clearmapbutton")!;
+  clearMapButton.addEventListener("click", (_event: Event) => {
+    if (
+      confirm("Are you sure? This may cause unusable results on visualization.")
+    ) {
+      settings.dispatchEvent(new CustomEvent<void>(settings.clearMapEventType));
+    }
+  });
+
   const tzSelector =
     fields.dialogContainer.querySelector<HTMLSelectElement>("#timezone")!;
   for (const tz of Intl.supportedValuesOf("timeZone")) {
@@ -471,6 +493,9 @@ export function setupSettingsDialog(
     ["#autorotateglobe", "boolean", "autoRotateGlobe"],
     ["#enableatmosphere", "boolean", "enableAtmosphere"],
     ["#enablegraticules", "boolean", "enableGraticules"],
+    ["#dispersionradius", "number", "dispersionRadius"],
+    ["#dispersiondistancethreshold", "number", "dispersionDistanceThreshold"],
+    ["#dispersionzoomthreshold", "number", "dispersionZoomThreshold"],
     ["#showwebsocketui", "boolean", "showWebsocketUi"],
     ["#showwsstatus", "boolean", "showWebsocketStatus"],
     ["#showtime", "boolean", "showDateAndTime"],
@@ -502,6 +527,8 @@ export function setupSettingsDialog(
     ["#enableviewcommands", "boolean", "enableViewCommands"],
     ["#enablesettingscommands", "boolean", "enableSettingsCommands"],
     ["#enableaudiocommands", "boolean", "enableAudioCommands"],
+    ["#enableclearmapcommands", "boolean", "enableClearMapCommands"],
+    ["#enabletextboxcommands", "boolean", "enableTextboxCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
     ["#showhelp", "boolean", "showHelp"],
@@ -827,6 +854,12 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enablegraticules" name="enablegraticules" />
         <label for="simplecountryborders">Simpler country borders:</label>
         <input type="checkbox" id="simplecountryborders" name="simplecountryborders" />
+        <label for="dispersionradius">Marker dispersion radius in km:</label>
+        <input type="number" min="0" id="dispersionradius" name="dispersionradius" />
+        <label for="dispersiondistancethreshold">Marker distance dispersion threshold in km:</label>
+        <input type="number" min="0" id="dispersiondistancethreshold" name="dispersiondistancethreshold" />
+        <label for="dispersionzoomthreshold">Zoom threshold for marker dispersion:</label>
+        <input type="number" min="100" max="750" id="dispersionzoomthreshold" name="dispersionzoomtancethreshold" />
         <h3 class="grid-item-2cols" style="margin: auto;">Layers</h3>
         <label for="enableheatmaps">Enable heatmaps (requires WebGPU):</label>
         <input type="checkbox" id="enableheatmaps" name="enableheatmaps" />
@@ -926,6 +959,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="text" id="datadownloadurl" name="datadownloadurl" />
         <label for="datadownloadinterval">Data download interval (ms):</label>
         <input type="number" min="0" step="1" id="datadownloadinterval" name="datadownloadinterval" />
+        <button class="grid-item-2cols" id="clearmapbutton" type="button" class="light">Clear map</button>
+        <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Warning: this may cause unusable results on visualization.</p>
         <h3 class="grid-item-2cols" style="margin: auto;">Data source commands</h3>
         <label for="enableviewcommands">Enable view commands:</label>
         <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
@@ -933,6 +968,10 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enablesettingscommands" name="enablesettingscommands" />
         <label for="enableaudiocommands">Enable audio commands:</label>
         <input type="checkbox" id="enableaudiocommands" name="enableaudiocommands" />
+        <label for="enableclearmapcommands">Enable clear map commands:</label>
+        <input type="checkbox" id="enableclearmapcommands" name="enableclearmapcommands" />
+        <label for="enabletextboxcommands">Enable textbox commands:</label>
+        <input type="checkbox" id="enabletextboxcommands" name="enabletextboxcommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
         <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Configuration for opacity of different objects, grouped into layers by their layer ID.</p>
         <div id="layersArea" class="grid-item-2cols two-col-grid">

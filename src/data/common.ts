@@ -29,15 +29,14 @@ export type SharedData<T> = T &
  */
 export abstract class CommonData<T>
   implements
-    PointData,
-    LabelsData,
-    LinkData,
-    LayerData,
-    ScaleData,
-    HoverTextData,
-    SoundLink,
-    SoundSet
-{
+  PointData,
+  LabelsData,
+  LinkData,
+  LayerData,
+  ScaleData,
+  HoverTextData,
+  SoundLink,
+  SoundSet {
   lat: number;
   lon: number;
   total_lifetime: number;
@@ -46,10 +45,13 @@ export abstract class CommonData<T>
   counter?: number;
   counter_include?: boolean;
 
+  dispersed_lat?: number;
+  dispersed_lon?: number;
+
   /**
    * Time when this point was added. It can be in the future too, which will make it appear later.
    */
-  protected startTime: number;
+  startTime: number;
 
   /**
    * Current lifetime of the point
@@ -121,6 +123,9 @@ export abstract class CommonData<T>
   }
   public get ignore_zoom(): boolean | undefined {
     return this.additional_data.ignore_zoom;
+  }
+  public get disperse_on_zoom(): boolean {
+    return this.additional_data.disperse_on_zoom ?? false;
   }
   public get hover_text(): string | undefined {
     return this.additional_data.hover_text;
@@ -272,5 +277,8 @@ export abstract class CommonData<T>
   }
   getSoundSetLoaderPromise(): Promise<AudioBuffer | SoundPause>[] {
     return this.soundSetPromise;
+  }
+  eventName(): string {
+    throw new Error("Method not implemented.");
   }
 }

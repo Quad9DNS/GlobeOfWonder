@@ -9,11 +9,15 @@ export class AnalysisModeData implements PointData {
   total_lifetime: number;
   startTime: number;
   counter?: number;
+  pointName: string;
 
   public get fade_duration(): number {
     return 0;
   }
   public get always_faces_viewer(): boolean {
+    return false;
+  }
+  public get disperse_on_zoom(): boolean {
     return false;
   }
 
@@ -23,6 +27,7 @@ export class AnalysisModeData implements PointData {
     this.counter = data.counter;
     this.total_lifetime = lifetime;
     this.startTime = Date.now();
+    this.pointName = data.eventName();
   }
 
   visible(): boolean {
@@ -62,5 +67,9 @@ export class AnalysisModeData implements PointData {
   // Unimportant for analysis mode - this allows us to have 1 less field store in here
   timeLeft(): number {
     return this.total_lifetime;
+  }
+
+  eventName(): string {
+    return this.pointName;
   }
 }

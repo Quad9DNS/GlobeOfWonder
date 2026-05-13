@@ -1,5 +1,6 @@
 import { PointData } from "../data";
 import { CameraPosition, normalize } from "../data/camera";
+import { IndicatorData } from "../data/indicator";
 import { Settings } from "../settings";
 
 /**
@@ -15,10 +16,18 @@ export class AppState {
    */
   newEventsQueue: CountEvent[] = [];
   /**
+   * All clear map events should be pushed into this queue. Globe is expected to react accordingly and push negative count events for rectifying event counter.
+   */
+  clearEventsQueue: ClearMapEvent[] = [];
+  /**
    * If new camera positions are requested programatically, they need to be pushed into this queue.
    * Globe should periodically process this queue.
    */
   newCameraPositionsQueue: CameraPosition[] = [];
+  /**
+   * All new non event data should be pushed into this queue. The indicators overlay is expected to periodically take items out of this queue.
+   */
+  newNonEventIndicatorsQueue: IndicatorData[] = [];
   /**
    * Represents current globe zoom factor - to enable access to it to components other than the globe.
    */
@@ -32,6 +41,15 @@ export class AppState {
 export interface CountEvent {
   startTime: number;
   count: number;
+}
+
+/**
+ * Represents clear map events that were received.
+ * Used to process clearing in the globe and also update events if needed.
+ */
+export interface ClearMapEvent {
+  types: string[];
+  clearEvents: boolean;
 }
 
 /**

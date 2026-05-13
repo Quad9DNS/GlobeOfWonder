@@ -84,4 +84,8 @@ export class PointerData
     // Ensures the label scales with the pointer
     return this.scale();
   }
+
+  eventName(): string {
+    return "pointer";
+  }
 }

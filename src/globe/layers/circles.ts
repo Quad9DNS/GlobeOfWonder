@@ -124,6 +124,7 @@ export class CirclesLayer
  */
 export class CirclesObjectProvider extends CommonObjectProvider<CircleData> {
   readonly layerName: string = "CirclesProvider";
+  readonly objectType: string = "circle";
 
   layerEnabled(settings: Settings): boolean {
     return settings.enableCircles;

@@ -1,7 +1,9 @@
+import { ExpirableObject } from "./expirable";
+
 /**
  * Represents common point data, absolutely required for any point displayed on the globe.
  */
-export interface PointData {
+export interface PointData extends ExpirableObject {
   /**
    * Latitude of the point
    */
@@ -10,6 +12,15 @@ export interface PointData {
    * Longitude of the point
    */
   lon: number;
+
+  /**
+   * Latitude of the point, when dispersion is used
+   */
+  dispersed_lat?: number;
+  /**
+   * Longitude of the point, when dispersion is used
+   */
+  dispersed_lon?: number;
 
   /**
    * Total lifetime of the point
@@ -26,6 +37,11 @@ export interface PointData {
    * If set to true, the object will always turn to face the camera.
    */
   always_faces_viewer: boolean;
+
+  /**
+   * If set to true, this point may be moved slightly on high zoom levels to accomodate other items.
+   */
+  disperse_on_zoom: boolean;
 
   /**
    * Number of actual events represented by this point.
@@ -114,6 +130,11 @@ export interface PointData {
    * Useful for optimization - to sort objects by lifetime for easier removal.
    */
   timeLeft(): number;
+
+  /**
+   * Returns the name of the event that this {@link PointData} represents.
+   */
+  eventName(): string;
 }
 
 /**
@@ -144,6 +165,39 @@ export interface ScaleData {
    * If set to true, the object will stay roughly the same size on the screen, regardless of the zoom level.
    */
   ignore_zoom?: boolean;
+
+  /**
+   * Whether the object may be dispresed on higher zoom levels, if overlapping other objects with this flag.
+   */
+  disperse_on_zoom?: boolean;
+}
+
+/**
+ * Represents an object bounding box in pixels (0,0) top left
+ */
+export interface BoundingBoxData {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/**
+ * Checks if two {@link BoundingBoxData} are equal.
+ */
+export function boxesEqual(
+  left: BoundingBoxData,
+  right: BoundingBoxData,
+): boolean {
+  if (
+    Math.abs(left.left - right.left) < 0.001 &&
+    Math.abs(left.top - right.top) < 0.001 &&
+    Math.abs(left.right - right.right) < 0.001 &&
+    Math.abs(left.bottom - right.bottom) < 0.001
+  ) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -184,10 +238,11 @@ export function updateDataForFrame<T extends PointData>(collection: T[]) {
  *
  * @param [opts={}] takes additional options - `sortedByLifetime` can be set to true if the collection is sorted by lifetime in descending order, to remove expired objects more easily, `retainedElementCallback` is called for every object that is not removed
  */
-export function mapAndFilter<T extends PointData>(
+export function mapAndFilter<T extends ExpirableObject>(
   collection: T[],
   opts: {
     retainedElementCallback?: (element: T) => void;
+    removedElementCallback?: (element: T) => void;
     sortedByLifetime?: boolean;
   } = {},
 ) {
@@ -203,8 +258,12 @@ export function mapAndFilter<T extends PointData>(
       if (opts.retainedElementCallback) {
         opts.retainedElementCallback(val as T);
       }
-    } else if (opts.sortedByLifetime) {
-      break;
+    } else {
+      if (opts.sortedByLifetime && opts.removedElementCallback == null) {
+        break;
+      } else if (opts.removedElementCallback != null) {
+        opts.removedElementCallback(collection[i]);
+      }
     }
     i++;
   }

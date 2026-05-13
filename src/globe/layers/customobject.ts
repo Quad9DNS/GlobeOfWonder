@@ -6,10 +6,19 @@ import {
   GlobeLayerAttachHook,
   GlobeLayerDataUpdateHook,
   GlobeLayerFrameUpdateHook,
+  GlobeLayerSettingsHook,
   RegistryHook,
 } from "../layer";
-import { PointData } from "../../data";
-import { DEFAULT_GLOBE_RADIUS } from "../common";
+import { PointData, ScaleData } from "../../data";
+import {
+  DEFAULT_GLOBE_RADIUS,
+  geoDistance,
+  KM_TO_LATITUDE,
+  KM_TO_LONGITUDE,
+  UNIT_KMS,
+} from "../common";
+import { clamp, lerp } from "three/src/math/MathUtils.js";
+import { MAX_CAMERA_DISTANCE, MIN_CAMERA_DISTANCE } from "../../data/camera";
 
 /**
  * Globe layer that draws all objects that need custom implementation (not provided by three-globe).
@@ -23,12 +32,15 @@ import { DEFAULT_GLOBE_RADIUS } from "../common";
 export class CustomObjectLayerGroup
   implements
     GlobeLayerAttachHook,
+    GlobeLayerSettingsHook,
     GlobeLayerDataUpdateHook,
     GlobeLayerFrameUpdateHook,
     RegistryHook
 {
   readonly layerName: string = "CustomObjects";
+  private settings!: Settings;
   private objects: PointData[] = [];
+
   private buildHooks: CustomObjectLayerBuildHook[] = [];
   private postBuildHooks: CustomObjectLayerPostBuildHook[] = [];
   private updateHooks: CustomObjectLayerFrameUpdateHook[] = [];
@@ -59,6 +71,10 @@ export class CustomObjectLayerGroup
     if ((layer as CustomObjectProvider).getCurrentObjects !== undefined) {
       this.providers.push(layer as CustomObjectProvider);
     }
+  }
+
+  attachToSettings(settings: Settings): void {
+    this.settings = settings;
   }
 
   attachToGlobe(
@@ -98,6 +114,69 @@ export class CustomObjectLayerGroup
       })
       .customThreeObjectUpdate((object: THREE.Object3D, o: object) => {
         const p = o as PointData;
+
+        if (p.disperse_on_zoom) {
+          const cameraDistance = clamp(
+            Math.abs(camera.position.clone().sub(globe.position).length()),
+            MIN_CAMERA_DISTANCE,
+            MAX_CAMERA_DISTANCE,
+          );
+          const maxDispersionDistance = this.settings.dispersionZoomThreshold;
+          if (cameraDistance < maxDispersionDistance) {
+            if (p.dispersed_lon == undefined || p.dispersed_lat == undefined) {
+              this.updateDispersionPositions(p, this.settings);
+            }
+            const startPos = globe.getCoords(
+              p.lat,
+              p.lon,
+              p.heightOffset() / DEFAULT_GLOBE_RADIUS,
+            );
+            const dispersedPos = globe.getCoords(
+              p.dispersed_lat!,
+              p.dispersed_lon!,
+              p.heightOffset() / DEFAULT_GLOBE_RADIUS,
+            );
+
+            if ((p as ScaleData).ignore_zoom) {
+              const dispersionDistanceMid =
+                MIN_CAMERA_DISTANCE +
+                (maxDispersionDistance - MIN_CAMERA_DISTANCE) / 2;
+              let dispersionFactor =
+                (cameraDistance - dispersionDistanceMid + 1) /
+                (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 1);
+              if (cameraDistance < dispersionDistanceMid) {
+                dispersionFactor =
+                  (dispersionDistanceMid - cameraDistance + 1) /
+                  (dispersionDistanceMid - MIN_CAMERA_DISTANCE + 10);
+              }
+              object.position.set(
+                lerp(dispersedPos.x, startPos.x, dispersionFactor),
+                lerp(dispersedPos.y, startPos.y, dispersionFactor),
+                lerp(dispersedPos.z, startPos.z, dispersionFactor),
+              );
+            } else {
+              const dispersionFactor =
+                (cameraDistance - MIN_CAMERA_DISTANCE + 1) /
+                (maxDispersionDistance - MIN_CAMERA_DISTANCE + 1);
+              console.log("disp factor: ", dispersionFactor);
+              object.position.set(
+                lerp(dispersedPos.x, startPos.x, dispersionFactor),
+                lerp(dispersedPos.y, startPos.y, dispersionFactor),
+                lerp(dispersedPos.z, startPos.z, dispersionFactor),
+              );
+            }
+          } else {
+            Object.assign(
+              object.position,
+              globe.getCoords(
+                p.lat,
+                p.lon,
+                p.heightOffset() / DEFAULT_GLOBE_RADIUS,
+              ),
+            );
+          }
+        }
+
         if (!p.visible()) {
           object.visible = false;
           return;
@@ -132,6 +211,49 @@ export class CustomObjectLayerGroup
 
   updateFrame(globe: ThreeGlobe, _settings: Settings): void {
     globe.customLayerData(this.objects);
+  }
+
+  updateDispersionPositions(object: PointData, settings: Settings) {
+    const geoDistanceThreshold =
+      settings.dispersionDistanceThreshold / UNIT_KMS / DEFAULT_GLOBE_RADIUS;
+    const indices = [];
+    for (let i = 0; i < this.objects.length; i++) {
+      if (!this.objects[i].disperse_on_zoom) {
+        continue;
+      }
+      if (
+        geoDistance(
+          this.objects[i].lat,
+          this.objects[i].lon,
+          object.lat,
+          object.lon,
+        ) < geoDistanceThreshold
+      ) {
+        indices.push(i);
+      }
+    }
+    if (indices.length <= 1) {
+      object.dispersed_lat = object.lat;
+      object.dispersed_lon = object.lon;
+      return;
+    }
+    const angleStep = (2 * Math.PI) / indices.length;
+    let angle = 0;
+    for (const i of indices) {
+      this.objects[i].dispersed_lat = clamp(
+        this.objects[i].lat +
+          Math.sin(angle) * settings.dispersionRadius * KM_TO_LATITUDE,
+        -90,
+        90,
+      );
+      this.objects[i].dispersed_lon = clamp(
+        this.objects[i].lon +
+          Math.cos(angle) * settings.dispersionRadius * KM_TO_LONGITUDE,
+        -180,
+        180,
+      );
+      angle += angleStep;
+    }
   }
 }
 
