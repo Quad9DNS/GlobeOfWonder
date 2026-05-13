@@ -14,6 +14,24 @@
 		"command_delay": 1000
 	},
 	{
+		"type": "show_textbox_command",
+		"left": 200,
+		"top": 200,
+		"right": 600,
+		"bottom": 300,
+		"text": "Click here to go to\nthe Globe of Wonder GitHub page!",
+		"link_url": "https://github.com/Quad9DNS/globeofwonder",
+		"text_color": "red",
+		"box_color": "black",
+		"border_color": "blue",
+		"text_pointer_lat": 50,
+		"text_pointer_lon": 30,
+		"text_pointer_lon_offset_visibility": 30,
+		"text_pointer_lat_offset_visibility": 30,
+		"text_pointer_color": "blue",
+		"scroll_direction": "rtl"
+	},
+	{
 		"type": "circle",
 		"lat": 50,
 		"lon": 5,

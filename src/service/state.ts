@@ -1,5 +1,6 @@
 import { PointData } from "../data";
 import { CameraPosition, normalize } from "../data/camera";
+import { IndicatorData } from "../data/indicator";
 import { Settings } from "../settings";
 
 /**
@@ -19,6 +20,10 @@ export class AppState {
    * Globe should periodically process this queue.
    */
   newCameraPositionsQueue: CameraPosition[] = [];
+  /**
+   * All new non event data should be pushed into this queue. The indicators overlay is expected to periodically take items out of this queue.
+   */
+  newNonEventIndicatorsQueue: IndicatorData[] = [];
   /**
    * Represents current globe zoom factor - to enable access to it to components other than the globe.
    */

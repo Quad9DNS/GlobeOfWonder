@@ -31,6 +31,10 @@ import { AmbientLightLayer } from "./layers/ambientlight";
 import { OrbitControlsLayer } from "./layers/orbitcontrols";
 import { NewCameraPositionsLayer } from "./layers/newcamerapositions";
 import { LinkDataObjectsLayer } from "./layers/links";
+import {
+  TextboxPointersLayer,
+  TextboxPointersObjectProvider,
+} from "./layers/textboxpointers";
 
 // Configures the registry
 // WARN: All the layers should be added here!
@@ -48,6 +52,7 @@ for (const layer of [
   new ExplosionsLayer(),
   new CirclesObjectProvider(),
   new PointersObjectProvider(),
+  new TextboxPointersObjectProvider(),
   new BarsObjectProvider(),
   new DownloadedObjectsProvider(),
   new ExplosionDataLayerGroup(),
@@ -59,6 +64,7 @@ for (const layer of [
   new LabeledObjectsLayer(),
   new CirclesLayer(),
   new PointersLayer(),
+  new TextboxPointersLayer(),
   new BarsLayer(),
   new DownloadedObjectsLayer(),
   new OpacityLayer(),
@@ -103,6 +109,7 @@ export function setupGlobe(
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   camera.position.z = DEFAULT_CAMERA_DISTANCE;
+  scene.add(camera);
 
   registry.attachToGlobe(globe, camera, renderer);
   registry.attachToScene(scene, camera, renderer);
