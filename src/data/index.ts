@@ -14,6 +14,15 @@ export interface PointData extends ExpirableObject {
   lon: number;
 
   /**
+   * Latitude of the point, when dispersion is used
+   */
+  dispersed_lat?: number;
+  /**
+   * Longitude of the point, when dispersion is used
+   */
+  dispersed_lon?: number;
+
+  /**
    * Total lifetime of the point
    */
   total_lifetime: number;
@@ -28,6 +37,11 @@ export interface PointData extends ExpirableObject {
    * If set to true, the object will always turn to face the camera.
    */
   always_faces_viewer: boolean;
+
+  /**
+   * If set to true, this point may be moved slightly on high zoom levels to accomodate other items.
+   */
+  disperse_on_zoom: boolean;
 
   /**
    * Number of actual events represented by this point.
@@ -151,6 +165,11 @@ export interface ScaleData {
    * If set to true, the object will stay roughly the same size on the screen, regardless of the zoom level.
    */
   ignore_zoom?: boolean;
+
+  /**
+   * Whether the object may be dispresed on higher zoom levels, if overlapping other objects with this flag.
+   */
+  disperse_on_zoom?: boolean;
 }
 
 /**

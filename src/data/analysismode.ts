@@ -17,6 +17,9 @@ export class AnalysisModeData implements PointData {
   public get always_faces_viewer(): boolean {
     return false;
   }
+  public get disperse_on_zoom(): boolean {
+    return false;
+  }
 
   constructor(data: PointData, lifetime: number) {
     this.lon = data.lon;

@@ -387,6 +387,7 @@ function parseServiceData(data: string): ServiceData | null {
         k == "arc_animated" ||
         k == "counter_include" ||
         k == "ignore_zoom" ||
+        k == "disperse_on_zoom" ||
         k == "always_faces_viewer" ||
         k == "display_text_always_faces_viewer" ||
         k == "display_text_hover_only" ||

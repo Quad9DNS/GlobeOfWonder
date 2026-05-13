@@ -198,6 +198,7 @@ export class TextboxPointersLayer
  * Implementation of {@link CustomObjectProvider} for {@link TextboxPointerData} objects.
  */
 export class TextboxPointersObjectProvider extends CommonObjectProvider<PointData> {
+  readonly objectType: string = "textbox";
   readonly layerName: string = "TextboxPointersProvider";
 
   layerEnabled(settings: Settings): boolean {
