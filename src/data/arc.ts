@@ -144,6 +144,10 @@ export class ArcData
   clone(): ArcData {
     return new ArcData(this.cloneData());
   }
+
+  eventName(): string {
+    return "arc";
+  }
 }
 
 /**
@@ -188,5 +192,9 @@ export class ArcLabel
 
   clone(): ArcLabel {
     return new ArcLabel(this.defaultHeight, this.startTime, this.cloneData());
+  }
+
+  eventName(): string {
+    return "arc";
   }
 }

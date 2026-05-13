@@ -306,4 +306,8 @@ export class ExplosionData
     // This ensures that label generally stays the same size throughout the explosion inflation
     return 1 / this.scale();
   }
+
+  eventName(): string {
+    return "explosion";
+  }
 }
