@@ -29,14 +29,15 @@ export type SharedData<T> = T &
  */
 export abstract class CommonData<T>
   implements
-  PointData,
-  LabelsData,
-  LinkData,
-  LayerData,
-  ScaleData,
-  HoverTextData,
-  SoundLink,
-  SoundSet {
+    PointData,
+    LabelsData,
+    LinkData,
+    LayerData,
+    ScaleData,
+    HoverTextData,
+    SoundLink,
+    SoundSet
+{
   lat: number;
   lon: number;
   total_lifetime: number;
