@@ -57,11 +57,13 @@ jobs:
           path: ./dist
 
       - name: Build project in demo mode
+        if: ${{ github.ref_name == "main" }}
         env:
           VITE_DEMO_MODE: true
         run: npm run build
 
       - name: Upload to gh pages
+        if: ${{ github.ref_name == "main" }}
         run: |
           mv ./dist ..
           git fetch origin gh-pages
