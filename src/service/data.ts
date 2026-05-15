@@ -22,6 +22,13 @@ import { ArcCustomizationData, ArcData } from "../data/arc";
 import { BoundingBoxData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
 import {
+  delay,
+  playAudio,
+  prepareAudio,
+  waitForLoad,
+} from "../components/global_audio";
+import { AudioObjectData, SoundLink, SoundSet } from "../data/sound";
+import {
   TextboxCustomizationData,
   TextboxData,
   TextboxPointerData,
@@ -152,7 +159,9 @@ export type SharedServiceData = PositionData &
   LinkData &
   LayerData &
   ScaleData &
-  HoverTextData;
+  HoverTextData &
+  SoundLink &
+  SoundSet;
 export type CommonServiceData = SharedServiceData & EventTypeData;
 export type FilterData = Record<string, string> & EventTypeData;
 
@@ -210,7 +219,11 @@ function isCommandData(data: ServiceData): data is ServiceCommandData {
     "settings_command",
     "show_textbox_command",
     "clear_map_command",
+    "play_sound_command",
   ].includes(data.type);
+}
+function autoHandleDelay(data: ServiceCommandData): boolean {
+  return ["view_command", "settings_command"].includes(data.type);
 }
 type CommonCommandData = {
   command_delay?: number;
@@ -265,6 +278,13 @@ export type ShowTextboxCommandServiceData = CommonCommandData &
 export type ShowTextboxCommandPointerServiceData =
   ShowTextboxCommandServiceData & SharedServiceData;
 
+type PlaySoundCommandTypeData = {
+  type: "play_sound_command";
+};
+export type PlaySoundCommandServiceData = CommonCommandData &
+  PlaySoundCommandTypeData &
+  AudioObjectData;
+
 export type ServiceEventData =
   | ExplosionServiceData
   | CircleServiceData
@@ -275,6 +295,7 @@ export type ServiceEventData =
 export type ServiceCommandData =
   | ViewCommandServiceData
   | SettingsCommandServiceData
+  | PlaySoundCommandServiceData
   | ClearMapCommandServiceData
   | ShowTextboxCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
@@ -298,7 +319,7 @@ export function processServiceData(
   const incomingEvent = parseServiceData(data);
   if (incomingEvent) {
     if (isCommandData(incomingEvent)) {
-      if (incomingEvent.command_delay) {
+      if (incomingEvent.command_delay && autoHandleDelay(incomingEvent)) {
         setTimeout(() => {
           buildAndPublishCommand(incomingEvent, settings, appState);
         }, incomingEvent.command_delay);
@@ -504,6 +525,74 @@ function buildAndPublishCommand(
     case "settings_command":
       if (settings.enableSettingsCommands) {
         settings.loadParameters(data.settings);
+      }
+      break;
+    case "play_sound_command":
+      if (settings.enableAudioCommands) {
+        switch (data.sound_type) {
+          case "sound_link":
+            {
+              const audio = prepareAudio(data);
+              let start = Promise.resolve();
+              const load = waitForLoad(audio);
+              if (data.command_delay) {
+                start = start.then(() => delay(data.command_delay!));
+              }
+              start
+                .then(() => load)
+                .then(() => playAudio(audio))
+                .catch((err) => console.error("Play sound failure: ", err));
+            }
+            break;
+          case "sound_set":
+            {
+              const promises: (() => Promise<void>)[] = [];
+              const readyPromises: Promise<void>[] = [];
+              for (const item of data.sound_set!) {
+                switch (item.type) {
+                  case "sound_link":
+                    {
+                      const audio = prepareAudio(item);
+                      readyPromises.push(waitForLoad(audio));
+                      promises.push(() => playAudio(audio));
+                    }
+                    break;
+                  case "sound_pause":
+                    promises.push(() => delay(item.sound_pause_milliseconds));
+                    break;
+                }
+              }
+
+              let finalPromise = Promise.resolve();
+              if (data.command_delay) {
+                finalPromise = finalPromise.then(() =>
+                  delay(data.command_delay!),
+                );
+              }
+              for (const promise of readyPromises) {
+                finalPromise = finalPromise
+                  .then(() => promise)
+                  // Catch error so that other items can still be played
+                  .catch((err) => {
+                    console.error("Soundset item load failed: ", err);
+                  });
+              }
+
+              for (const promise of promises) {
+                finalPromise = finalPromise
+                  .then(() => promise())
+                  // Catch error so that other items can still be played
+                  .catch((err) => {
+                    console.error("Soundset item play failed: ", err);
+                  });
+              }
+
+              finalPromise.catch((err) =>
+                console.error("SoundSet failure: ", err),
+              );
+            }
+            break;
+        }
       }
       break;
     case "clear_map_command":

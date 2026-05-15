@@ -6,6 +6,7 @@ import { LinkData } from "./link";
 import { CommonData } from "./common";
 import { LabelsData } from "./label";
 import { HoverTextData } from "./hover";
+import { SoundLink, SoundSet } from "./sound";
 
 /**
  * Additional data that can be used to customize textboxes
@@ -246,6 +247,8 @@ export class TextboxPointerData
       LayerData &
       ScaleData &
       HoverTextData &
+      SoundLink &
+      SoundSet &
       TextboxCustomizationData &
       TextboxPointerCustomizationData,
     linked_data: TextboxData,

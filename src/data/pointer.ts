@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { LayerData, PointData, ScaleData } from ".";
+import { PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import { CommonData } from "./common";
+import { CommonData, SharedData } from "./common";
 import { HoverTextData } from "./hover";
-import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundSet } from "./sound";
 
 /**
  * Additional data that can be used to customize pointers
@@ -39,21 +39,13 @@ export class PointerData
     LabelsData,
     LinkData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   private _labelOffset: THREE.Vector3;
 
-  constructor(
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      PointerCustomizationData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData &
-      HoverTextData,
-  ) {
+  constructor(data: SharedData<PointerCustomizationData>) {
     super(data);
     this._labelOffset = new THREE.Vector3(
       0.0,

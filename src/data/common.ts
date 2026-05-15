@@ -4,10 +4,11 @@ import { LabelsData } from "./label";
 import { LinkData } from "./link";
 import { HoverTextData } from "./hover";
 import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundNodeObject, SoundPause, SoundSet } from "./sound";
 
 export const VEC3_ZERO = new THREE.Vector3(0, 0, 0);
 
-type SharedData<T> = T &
+export type SharedData<T> = T &
   PositionData &
   CounterData &
   LifetimeData &
@@ -15,7 +16,12 @@ type SharedData<T> = T &
   LinkData &
   LayerData &
   ScaleData &
-  HoverTextData;
+  HoverTextData &
+  SoundLink &
+  SoundSet & {
+    soundLinkPromise?: Promise<AudioBuffer> | undefined;
+    soundSetPromise?: Promise<AudioBuffer | SoundPause>[];
+  };
 
 /**
  * Abstract point implementation.
@@ -28,7 +34,9 @@ export abstract class CommonData<T>
     LinkData,
     LayerData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   lat: number;
   lon: number;
@@ -68,7 +76,9 @@ export abstract class CommonData<T>
     LinkData &
     LayerData &
     ScaleData &
-    HoverTextData;
+    HoverTextData &
+    SoundLink &
+    SoundSet;
 
   public get display_text(): string | undefined {
     return this.additional_data.display_text;
@@ -121,6 +131,15 @@ export abstract class CommonData<T>
   public get hover_text(): string | undefined {
     return this.additional_data.hover_text;
   }
+  public get sound_url(): string | undefined {
+    return this.additional_data.sound_url;
+  }
+  public get sound_volume(): number | undefined {
+    return this.additional_data.sound_volume;
+  }
+  public get sound_set(): SoundNodeObject[] | undefined {
+    return this.additional_data.sound_set;
+  }
 
   constructor({ lat, lon, ...additional_data }: SharedData<T>) {
     this.lat = lat;
@@ -133,7 +152,9 @@ export abstract class CommonData<T>
       LinkData &
       LayerData &
       ScaleData &
-      HoverTextData;
+      HoverTextData &
+      SoundLink &
+      SoundSet;
 
     this.total_lifetime = additional_data.ttl ?? Infinity;
     this.fade_duration = additional_data.fade_duration ?? 0;
@@ -144,8 +165,9 @@ export abstract class CommonData<T>
       this.startTime += additional_data.draw_delay;
       this.lifetime -= additional_data.draw_delay;
     }
+    this.soundSetPromise = additional_data.soundSetPromise ?? [];
+    this.soundLinkPromise = additional_data.soundLinkPromise;
   }
-
   scaleZ(): boolean {
     return false;
   }
@@ -215,6 +237,8 @@ export abstract class CommonData<T>
       always_faces_viewer: this.always_faces_viewer,
       counter: this.counter,
       counter_include: this.counter_include,
+      soundLinkPromise: this.soundLinkPromise,
+      soundSetPromise: this.soundSetPromise,
     };
   }
 
@@ -234,6 +258,27 @@ export abstract class CommonData<T>
     return false;
   }
 
+  private soundLinkPromise: Promise<AudioBuffer> | undefined = undefined;
+  private soundSetPromise: Promise<AudioBuffer | SoundPause>[] = [];
+
+  preloadSound(loader: THREE.AudioLoader): void {
+    this.soundLinkPromise = loader.loadAsync(this.sound_url!);
+  }
+  preloadSoundSet(loader: THREE.AudioLoader): void {
+    for (const sound of this.sound_set ?? []) {
+      if (sound.type == "sound_link") {
+        this.soundSetPromise.push(loader.loadAsync(sound.sound_url!));
+      } else if (sound.type == "sound_pause") {
+        this.soundSetPromise.push(Promise.resolve(sound));
+      }
+    }
+  }
+  getSoundLoaderPromise(): Promise<AudioBuffer> {
+    return this.soundLinkPromise!;
+  }
+  getSoundSetLoaderPromise(): Promise<AudioBuffer | SoundPause>[] {
+    return this.soundSetPromise;
+  }
   eventName(): string {
     throw new Error("Method not implemented.");
   }

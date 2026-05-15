@@ -130,6 +130,8 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor enableSettingsCommands: boolean = true;
   @SettingsField()
+  accessor enableAudioCommands: boolean = true;
+  @SettingsField()
   accessor enableClearMapCommands: boolean = true;
   @SettingsField()
   accessor enableTextboxCommands: boolean = true;
@@ -524,6 +526,7 @@ export function setupSettingsDialog(
     ["#enablebars", "boolean", "enableBars"],
     ["#enableviewcommands", "boolean", "enableViewCommands"],
     ["#enablesettingscommands", "boolean", "enableSettingsCommands"],
+    ["#enableaudiocommands", "boolean", "enableAudioCommands"],
     ["#enableclearmapcommands", "boolean", "enableClearMapCommands"],
     ["#enabletextboxcommands", "boolean", "enableTextboxCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
@@ -963,6 +966,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enableviewcommands" name="enableviewcommands" />
         <label for="enablesettingscommands">Enable settings commands:</label>
         <input type="checkbox" id="enablesettingscommands" name="enablesettingscommands" />
+        <label for="enableaudiocommands">Enable audio commands:</label>
+        <input type="checkbox" id="enableaudiocommands" name="enableaudiocommands" />
         <label for="enableclearmapcommands">Enable clear map commands:</label>
         <input type="checkbox" id="enableclearmapcommands" name="enableclearmapcommands" />
         <label for="enabletextboxcommands">Enable textbox commands:</label>

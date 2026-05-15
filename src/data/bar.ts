@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { LayerData, PointData, ScaleData } from ".";
+import { PointData, ScaleData } from ".";
 import { LabelsData } from "./label";
 import { LinkData } from "./link";
-import { CommonData } from "./common";
+import { CommonData, SharedData } from "./common";
 import { UNIT_KMS } from "../globe/common";
 import { HoverTextData } from "./hover";
-import { CounterData, LifetimeData, PositionData } from "../service/data";
+import { SoundLink, SoundSet } from "./sound";
 
 /**
  * Additional data that can be used to customize bar
@@ -40,21 +40,13 @@ export class BarData
     LabelsData,
     LinkData,
     ScaleData,
-    HoverTextData
+    HoverTextData,
+    SoundLink,
+    SoundSet
 {
   private _labelOffset: THREE.Vector3;
 
-  constructor(
-    data: PositionData &
-      CounterData &
-      LifetimeData &
-      BarCustomizationData &
-      LabelsData &
-      LinkData &
-      LayerData &
-      ScaleData &
-      HoverTextData,
-  ) {
+  constructor(data: SharedData<BarCustomizationData>) {
     super(data);
     this._labelOffset = new THREE.Vector3(0.0, 0.0, this.bar_height / UNIT_KMS);
   }

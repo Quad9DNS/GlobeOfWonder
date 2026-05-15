@@ -31,6 +31,7 @@ import { AmbientLightLayer } from "./layers/ambientlight";
 import { OrbitControlsLayer } from "./layers/orbitcontrols";
 import { NewCameraPositionsLayer } from "./layers/newcamerapositions";
 import { LinkDataObjectsLayer } from "./layers/links";
+import { SoundObjectPreloader, SoundObjectsLayer } from "./layers/sound";
 import {
   TextboxPointersLayer,
   TextboxPointersObjectProvider,
@@ -67,6 +68,8 @@ for (const layer of [
   new TextboxPointersLayer(),
   new BarsLayer(),
   new DownloadedObjectsLayer(),
+  new SoundObjectPreloader(),
+  new SoundObjectsLayer(),
   new OpacityLayer(),
   new GlobalZoomLayer(),
 ]) {
@@ -131,6 +134,7 @@ export function setupGlobe(
     state.newPointsQueue
       .splice(0, state.newPointsQueue.length)
       .forEach((p: PointData) => {
+        registry.prepareNewPoint(p);
         registry.takeNewPoint(p);
       });
 
