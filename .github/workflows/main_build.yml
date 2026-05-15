@@ -68,7 +68,7 @@ jobs:
           git switch gh-pages
           git clean -x -d -f
           git rm -r *
-          cp ../dist/* .
+          cp -r ../dist/* .
           git add -A
           git commit -m "Automated update"
           git push
