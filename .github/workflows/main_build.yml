@@ -64,8 +64,10 @@ jobs:
       - name: Upload to gh pages
         run: |
           mv ./dist ..
+          git fetch origin gh-pages
           git switch gh-pages
           git clean -x -d -f
+          git rm -r *
           cp ../dist/* .
           git add -A
           git commit -m "Automated update"
