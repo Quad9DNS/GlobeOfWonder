@@ -82,7 +82,7 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor showWebsocketStatus: boolean = false;
   @SettingsField()
-  accessor showWebsocketUi: boolean = true;
+  accessor showWebsocketUi: boolean = !import.meta.env.VITE_DEMO_MODE;
   @SettingsField()
   accessor showDateAndTime: boolean = true;
   @SettingsField()
@@ -228,6 +228,8 @@ export class Settings extends EventTarget {
   accessor globeBumpMapUrl: string = GLOBE_BUMP_MAP_URL;
   @SettingsField()
   accessor countriesGeoJsonUrl: string = COUNTRIES_GEOJSON_URL;
+  @SettingsField()
+  accessor showDemoNotice: boolean = import.meta.env.VITE_DEMO_MODE;
 
   @SettingsField()
   accessor enableSettingsDialog: boolean = true;

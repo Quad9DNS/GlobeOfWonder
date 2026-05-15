@@ -6,6 +6,10 @@ on:
       - "main"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  deployments: write
+
 jobs:
   build:
     name: Build
@@ -51,3 +55,18 @@ jobs:
         with:
           name: production-files
           path: ./dist
+
+      - name: Build project in demo mode
+        env:
+          VITE_DEMO_MODE: true
+        run: npm run build
+
+      - name: Upload to gh pages
+        run: |
+          mv ./dist ..
+          git switch gh-pages
+          git clean -x -d -f
+          cp ../dist/* .
+          git add -A
+          git commit -m "Automated update"
+          git push

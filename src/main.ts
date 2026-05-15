@@ -38,6 +38,20 @@ const websocketServiceState = new ServiceState();
 const dataDownloaderServiceState = new ServiceState();
 settings.services = [websocketServiceState, dataDownloaderServiceState];
 settings.connectoToUrlSearchParameters();
+
+if (settings.showDemoNotice) {
+  const demoModeNotice = document.createElement("p");
+  demoModeNotice.innerText =
+    "Demonstration JSON file has artificial delays between events; websocket can be realtime";
+  demoModeNotice.style.position = "absolute";
+  demoModeNotice.style.bottom = "10px";
+  demoModeNotice.style.padding = "10px";
+  demoModeNotice.style.margin = "0 auto";
+  demoModeNotice.style.width = "100%";
+  demoModeNotice.style.setProperty("font-size", "0.6em");
+  appContainer.appendChild(demoModeNotice);
+}
+
 setupLightMode(settings);
 
 const dateTimeDisplay =
