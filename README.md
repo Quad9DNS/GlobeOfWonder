@@ -3,7 +3,7 @@
 </p>
 
 # Globe of Wonder
-[![Static Badge](https://img.shields.io/badge/Click_here_for_an_example-dc205e)](https://quad9dns.github.io/GlobeOfWonder/?dataDownloadUrl=assets%2Fdata%2Fdemo1.json)  
+[![Static Badge](https://img.shields.io/badge/Click_here_for_an_example-dc205e)](https://quad9dns.github.io/GlobeOfWonder/?dataDownloadUrl=assets%2Fdata%2Fdemo1.json)
 The Globe Of Wonder (GoW) is a WebGL-based spinning or static globe that shows events ingested from a websocket (or a file) with lat/lon data, placing visible events on a customizable globe in a number of animated or static formats that aid in the rapid understanding of events as they are distributed worldwide. Events can be filtered on the client, and visualization can be extended with some criteria (labels, sizes, durations) via JSON tags. It was written by Quad9, and is the basis of the QED (Quad9 Event Dashboard) that shows the realtime DNS blocking event stream on the Quad9 network, as well as a number of other near-realtime data behaviors as they are observed globally.
 
 ## Display Elements
@@ -77,7 +77,7 @@ Available event data:
 | lat                                | - (required)                                      | Latitude of the event                                                                                                                                |
 | lon                                | - (required)                                      | Longitude of the event                                                                                                                               |
 | type                               | explosion                                         | Type of the event (explosion, circle, pointer, bar, downloaded, arc)                                                                                 |
-| ttl                                | 15000 (explosion), 5000 (arc), Infinity otherwise | How long the item should be visible on the map                                                                                                       |
+| ttl                                | 15000 (explosion), 5000 (arc), Infinity otherwise | How long the item should be visible on the map. Set to 0 for infinite ttl.                                                                           |
 | fade_duration                      | -                                                 | Fade period at the end of object lifetime                                                                                                            |
 | draw_delay                         | -                                                 | Delay the drawing of this object in ms. Can be useful to add random delays, or to precisely control objects display time                             |
 | opacity                            | 100                                               | Object opacity (0-100). This can be further modified with global opacity slider and per layer opacity sliders                                        |

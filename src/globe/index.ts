@@ -131,13 +131,6 @@ export function setupGlobe(
   setInterval(() => {
     registry.preUpdate();
 
-    state.newPointsQueue
-      .splice(0, state.newPointsQueue.length)
-      .forEach((p: PointData) => {
-        registry.prepareNewPoint(p);
-        registry.takeNewPoint(p);
-      });
-
     // TODO: What happens if we have both new points queue and clear events?
     state.clearEventsQueue
       .splice(0, state.clearEventsQueue.length)
@@ -146,6 +139,13 @@ export function setupGlobe(
         if (e.clearEvents) {
           state.newEventsQueue.push(...counters);
         }
+      });
+
+    state.newPointsQueue
+      .splice(0, state.newPointsQueue.length)
+      .forEach((p: PointData) => {
+        registry.prepareNewPoint(p);
+        registry.takeNewPoint(p);
       });
 
     registry.updateData(globe, settings);

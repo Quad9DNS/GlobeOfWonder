@@ -157,6 +157,8 @@ export abstract class CommonData<T>
       SoundSet;
 
     this.total_lifetime = additional_data.ttl ?? Infinity;
+    this.total_lifetime =
+      this.total_lifetime == 0 ? Infinity : this.total_lifetime;
     this.fade_duration = additional_data.fade_duration ?? 0;
     this.counter = additional_data.counter;
     this.counter_include = additional_data.counter_include;

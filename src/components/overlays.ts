@@ -129,6 +129,9 @@ export function setupOverlays(
             overlayContainer.querySelector<HTMLElement>("#textboxText")!;
           // TODO: support for bold, italic spans
           textElement.textContent = i.text!;
+          if (!i.scroll_direction) {
+            textElement.style.whiteSpace = "pre";
+          }
           const font = i.text_font ?? "Quad9Sans";
           const fontSize = i.text_font_size ?? 24;
           let fontStyle = i.text_font_style ?? "";
