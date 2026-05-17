@@ -4,6 +4,8 @@
 
 # Globe of Wonder
 [![Static Badge](https://img.shields.io/badge/Click_here_for_an_example-dc205e)](https://quad9dns.github.io/GlobeOfWonder/?dataDownloadUrl=assets%2Fdata%2Fdemo1.json)
+
+
 The Globe Of Wonder (GoW) is a WebGL-based spinning or static globe that shows events ingested from a websocket (or a file) with lat/lon data, placing visible events on a customizable globe in a number of animated or static formats that aid in the rapid understanding of events as they are distributed worldwide. Events can be filtered on the client, and visualization can be extended with some criteria (labels, sizes, durations) via JSON tags. It was written by Quad9, and is the basis of the QED (Quad9 Event Dashboard) that shows the realtime DNS blocking event stream on the Quad9 network, as well as a number of other near-realtime data behaviors as they are observed globally.
 
 ## Display Elements
