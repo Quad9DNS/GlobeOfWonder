@@ -57,14 +57,14 @@ jobs:
           path: ./dist
 
       - name: Build project in demo mode
-        if: ${{ github.ref_name == "main" }}
+        if: ${{ github.ref_name == 'main' }}
         env:
           VITE_DEMO_MODE: true
           VITE_DEFAULT_COUNTERS_TITLE: "Demo events"
         run: npm run build
 
       - name: Upload to gh pages
-        if: ${{ github.ref_name == "main" }}
+        if: ${{ github.ref_name == 'main' }}
         run: |
           cp examples/data/demo*.json ./dist/assets/data
           mv ./dist ..
