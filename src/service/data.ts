@@ -223,7 +223,12 @@ function isCommandData(data: ServiceData): data is ServiceCommandData {
   ].includes(data.type);
 }
 function autoHandleDelay(data: ServiceCommandData): boolean {
-  return ["view_command", "settings_command"].includes(data.type);
+  return [
+    "view_command",
+    "settings_command",
+    "clear_map_command",
+    "show_textbox_command",
+  ].includes(data.type);
 }
 type CommonCommandData = {
   command_delay?: number;
@@ -609,12 +614,14 @@ function buildAndPublishCommand(
           data as ShowTextboxCommandServiceData,
         );
         state.newNonEventIndicatorsQueue.push(textboxData);
-        state.newPointsQueue.push(
-          new TextboxPointerData(
-            data as ShowTextboxCommandPointerServiceData,
-            textboxData,
-          ),
-        );
+        if (data.text_pointer_lat && data.text_pointer_lon) {
+          state.newPointsQueue.push(
+            new TextboxPointerData(
+              data as ShowTextboxCommandPointerServiceData,
+              textboxData,
+            ),
+          );
+        }
       }
       break;
   }

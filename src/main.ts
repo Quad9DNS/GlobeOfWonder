@@ -31,6 +31,7 @@ appContainer.innerHTML = `
     </div>
   </div>
 `;
+
 appContainer = appContainer.children[0] as HTMLDivElement;
 
 const settings = new Settings();

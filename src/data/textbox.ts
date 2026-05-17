@@ -309,4 +309,8 @@ export class TextboxPointerData
   public get textbox(): TextboxData {
     return this.linked_data;
   }
+
+  eventName(): string {
+    return "textbox";
+  }
 }

@@ -1,0 +1,162 @@
+[
+	{
+		"type": "clear_map_command"
+	},
+	{
+		"type": "show_textbox_command",
+		"text": "Demonstrates light mode and simplified display settings.\nClick here to go to the next demo.",
+		"link_url": "?dataDownloadUrl=assets/data/demo3.json",
+		"new_window": false,
+		"top": 300
+	},
+	{
+		"type": "view_command",
+		"view_lat": 35,
+		"view_lon": 10,
+		"view_zoom": 2.2,
+		"view_speed": 1
+	},
+	{
+		"comment": "Disable websocket UI and extra earth details",
+		"type": "settings_command",
+		"command_delay": 0,
+		"settings": {
+			"lightMode": "true",
+			"showWebsocketUi": "false",
+			"enableAtmosphere": "false",
+			"simpleCountryBorders": "true",
+			"autoRotateGlobe": "false",
+			"showEventCounters": "false",
+			"showCountersKey": "false"
+		}
+	},
+	{
+		"lat": 37.7749,
+		"lon": -122.4194,
+		"type": "bar",
+		"bar_height": 500,
+		"bar_top_color": "#00ffff",
+		"bar_bottom_color": "#003366",
+		"display_text": "San Francisco POP",
+		"layer_id": 2,
+		"layer_name": "POP Sites"
+	},
+	{
+		"lat": 38.9072,
+		"lon": -77.0369,
+		"type": "bar",
+		"bar_height": 420,
+		"display_text": "Washington POP"
+	},
+	{
+		"lat": 50.1109,
+		"lon": 8.6821,
+		"type": "bar",
+		"bar_height": 460,
+		"display_text": "Frankfurt POP"
+	},
+	{
+		"lat": 35.6762,
+		"lon": 139.6503,
+		"type": "bar",
+		"bar_height": 540,
+		"display_text": "Tokyo POP"
+	},
+	{
+		"lat": 37.7749,
+		"lon": -122.4194,
+		"point2_lat": 50.1109,
+		"point2_lon": 8.6821,
+		"type": "arc",
+		"ttl": 0,
+		"arc_animated": true,
+		"arc_line_type": "solid",
+		"arc_color": "#00ffcc",
+		"arc_draw_duration": 2500
+	},
+	{
+		"lat": 50.1109,
+		"lon": 8.6821,
+		"point2_lat": 35.6762,
+		"point2_lon": 139.6503,
+		"type": "arc",
+		"ttl": 0,
+		"arc_animated": true,
+		"arc_line_type": "dashed_small",
+		"arc_color": "#ffaa00"
+	},
+	{
+		"lat": 35.6762,
+		"lon": 139.6503,
+		"point2_lat": 38.9072,
+		"point2_lon": -77.0369,
+		"type": "arc",
+		"ttl": 0,
+		"arc_animated": true,
+		"arc_line_type": "dots",
+		"arc_color": "#ff00ff"
+	},
+	{
+		"lat": 41.9028,
+		"lon": 12.4964,
+		"type": "pointer",
+		"display_text": "Rome Probe"
+	},
+	{
+		"lat": 52.3676,
+		"lon": 4.9041,
+		"type": "pointer",
+		"display_text": "Amsterdam Probe"
+	},
+	{
+		"lat": 1.3521,
+		"lon": 103.8198,
+		"type": "pointer",
+		"display_text": "Singapore Probe"
+	},
+	{
+		"lat": -34.6037,
+		"lon": -58.3816,
+		"type": "explosion",
+		"counter": 7,
+		"display_text": "Traffic Spike"
+	},
+	{
+		"lat": 19.076,
+		"lon": 72.8777,
+		"type": "explosion",
+		"counter": 9,
+		"display_text": "Heavy Load"
+	},
+	{
+		"lat": 31.2304,
+		"lon": 121.4737,
+		"type": "explosion",
+		"counter": 6,
+		"display_text": "Routing Event"
+	},
+	{
+		"lat": 60.1699,
+		"lon": 24.9384,
+		"type": "circle",
+		"circle_radius": 100,
+		"circle_color": "#66ff66",
+		"display_text": "Low Latency Zone"
+	},
+	{
+		"lat": -26.2041,
+		"lon": 28.0473,
+		"type": "circle",
+		"circle_radius": 130,
+		"circle_color": "#ff6666",
+		"display_text": "Congestion Area"
+	},
+	{
+		"type": "view_command",
+		"command_delay": 4000,
+		"view_lat": 48,
+		"view_lon": 10,
+		"view_zoom": 3.5,
+		"view_speed": 0.5
+	}
+]
