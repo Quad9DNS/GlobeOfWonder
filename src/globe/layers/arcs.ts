@@ -210,10 +210,10 @@ export class ArcsLayer
 
 function compare_arcs(left: ArcData, right: ArcData): number {
   if (
-    Math.abs(left.lon - right.lon) < 0.001 &&
-    Math.abs(left.lat - right.lat) < 0.001 &&
-    Math.abs(left.point2_lon - right.point2_lon) < 0.001 &&
-    Math.abs(left.point2_lat - right.point2_lat) < 0.001
+    Math.abs(left.lon - right.lon) < 0.0001 &&
+    Math.abs(left.lat - right.lat) < 0.0001 &&
+    Math.abs(left.point2_lon - right.point2_lon) < 0.0001 &&
+    Math.abs(left.point2_lat - right.point2_lat) < 0.0001
   ) {
     return 0;
   }

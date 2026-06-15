@@ -158,7 +158,6 @@ export class CustomObjectLayerGroup
               const dispersionFactor =
                 (cameraDistance - MIN_CAMERA_DISTANCE + 1) /
                 (maxDispersionDistance - MIN_CAMERA_DISTANCE + 1);
-              console.log("disp factor: ", dispersionFactor);
               object.position.set(
                 lerp(dispersedPos.x, startPos.x, dispersionFactor),
                 lerp(dispersedPos.y, startPos.y, dispersionFactor),

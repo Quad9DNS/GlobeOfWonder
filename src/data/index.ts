@@ -190,10 +190,10 @@ export function boxesEqual(
   right: BoundingBoxData,
 ): boolean {
   if (
-    Math.abs(left.left - right.left) < 0.001 &&
-    Math.abs(left.top - right.top) < 0.001 &&
-    Math.abs(left.right - right.right) < 0.001 &&
-    Math.abs(left.bottom - right.bottom) < 0.001
+    Math.abs(left.left - right.left) < 0.0001 &&
+    Math.abs(left.top - right.top) < 0.0001 &&
+    Math.abs(left.right - right.right) < 0.0001 &&
+    Math.abs(left.bottom - right.bottom) < 0.0001
   ) {
     return true;
   }
@@ -205,8 +205,8 @@ export function boxesEqual(
  */
 export function comparePositions(left: PointData, right: PointData): number {
   if (
-    Math.abs(left.lon - right.lon) < 0.001 &&
-    Math.abs(left.lat - right.lat) < 0.001
+    Math.abs(left.lon - right.lon) < 0.0001 &&
+    Math.abs(left.lat - right.lat) < 0.0001
   ) {
     return 0;
   }
