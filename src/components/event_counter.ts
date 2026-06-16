@@ -5,7 +5,6 @@ import { Settings, SettingsChangedEvent } from "../settings";
 import { registerInfoDialog } from "./info_dialog";
 import { AppState, CountEvent } from "../service/state";
 
-const UPDATE_PERIOD = 1000;
 const SECONDS_TO_MILLIS = 1000;
 const MINUTES_TO_SECONDS = 60;
 const MINUTES_TO_MILLIS = MINUTES_TO_SECONDS * SECONDS_TO_MILLIS;
@@ -77,9 +76,9 @@ export function setupEventCounters(
   elements.last10sLabel.hidden = !settings.showEventCountersLast10s;
   elements.helpButton.style.display = settings.showHelp ? "inline" : "none";
 
-  setInterval(() => {
+  let updatesTask = setInterval(() => {
     updateCounters(state.newEventsQueue);
-  }, UPDATE_PERIOD);
+  }, settings.eventCountersUpdateInterval);
 
   settings.addChangedListener((event: CustomEvent<SettingsChangedEvent>) => {
     // Reset counters when a filter is changed
@@ -92,6 +91,13 @@ export function setupEventCounters(
 
     if (event.detail.field_changed == "showEventCounters") {
       container.hidden = !settings.showEventCounters;
+    }
+
+    if (event.detail.field_changed == "eventCountersUpdateInterval") {
+      clearInterval(updatesTask);
+      updatesTask = setInterval(() => {
+        updateCounters(state.newEventsQueue);
+      }, settings.eventCountersUpdateInterval);
     }
 
     if (event.detail.field_changed == "lightMode") {
@@ -140,7 +146,7 @@ export function setupEventCounters(
   });
 
   requestAnimationFrame((timestamp: DOMHighResTimeStamp) =>
-    updateCountersUI(timestamp, elements),
+    updateCountersUI(timestamp, elements, settings),
   );
 }
 
@@ -241,9 +247,14 @@ function updateCounters(newEventsQueue: CountEvent[]) {
 function updateCountersUI(
   timestamp: DOMHighResTimeStamp,
   elements: EventCounterElements,
+  settings: Settings,
 ) {
-  const delta = clamp(timestamp - lastUpdate, 0, UPDATE_PERIOD);
-  const factor = delta / UPDATE_PERIOD;
+  const delta = clamp(
+    timestamp - lastUpdate,
+    0,
+    settings.eventCountersUpdateInterval,
+  );
+  const factor = delta / settings.eventCountersUpdateInterval;
   const scaledValue = prevData.lerpTo(lastData, factor);
   for (const [element, value] of [
     [elements.total, scaledValue.total],
@@ -254,7 +265,7 @@ function updateCountersUI(
     element.innerHTML = value.toString();
   }
   requestAnimationFrame((nt: DOMHighResTimeStamp) =>
-    updateCountersUI(nt, elements),
+    updateCountersUI(nt, elements, settings),
   );
 }
 

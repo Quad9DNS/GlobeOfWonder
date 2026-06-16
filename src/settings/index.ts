@@ -199,6 +199,8 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor showEventCountersLast10s: boolean = true;
   @SettingsField()
+  accessor eventCountersUpdateInterval: number = 1000;
+  @SettingsField()
   accessor countersTitle: string =
     import.meta.env.VITE_DEFAULT_COUNTERS_TITLE || "Malicious Lookups Blocked";
   @SettingsField()
@@ -509,6 +511,7 @@ export function setupSettingsDialog(
     ["#showeventcounters5m", "boolean", "showEventCountersLast5m"],
     ["#showeventcounters1m", "boolean", "showEventCountersLast1m"],
     ["#showeventcounters10s", "boolean", "showEventCountersLast10s"],
+    ["#eventcountersupdateinterval", "number", "eventCountersUpdateInterval"],
     ["#showcounterskey", "boolean", "showCountersKey"],
     ["#enableheatmaps", "boolean", "enableHeatmaps"],
     ["#enableanalysismode", "boolean", "enableAnalysisMode"],
@@ -647,6 +650,11 @@ export function setupSettingsDialog(
       "#showeventcounters10s",
     )!;
   showEventCountersLast10sField.disabled = !settings.showEventCounters;
+  const eventCountersUpdateIntervalField =
+    fields.dialogContainer.querySelector<HTMLInputElement>(
+      "#eventcountersupdateinterval",
+    )!;
+  eventCountersUpdateIntervalField.disabled = !settings.showEventCounters;
 
   const analysisModeResolutionField =
     fields.dialogContainer.querySelector<HTMLInputElement>(
@@ -716,6 +724,7 @@ export function setupSettingsDialog(
       showEventCountersLast5mField.disabled = !settings.showEventCounters;
       showEventCountersLast1mField.disabled = !settings.showEventCounters;
       showEventCountersLast10sField.disabled = !settings.showEventCounters;
+      eventCountersUpdateIntervalField.disabled = !settings.showEventCounters;
     }
   });
 
@@ -960,6 +969,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="showeventcounters1m" name="showeventcounters1m" />
         <label for="showeventcounters10s">Show events last 10s:</label>
         <input type="checkbox" id="showeventcounters10s" name="showeventcounters10s" />
+        <label for="eventcountersupdateinterval">Event counters update interval:</label>
+        <input type="number" id="eventcountersupdateinterval" name="eventcountersupdateinterval" />
         <label for="showcounterskey">Show event counter key:</label>
         <input type="checkbox" id="showcounterskey" name="showcounterskey" />
         <label for="timezone">Time zone:</label>
