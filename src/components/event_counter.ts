@@ -253,9 +253,9 @@ function updateCountersUI(
     const delta = clamp(
       timestamp - lastUpdate,
       0,
-      settings.eventCountersUpdateInterval,
+      settings.eventCountersSmoothingInterval,
     );
-    const factor = delta / settings.eventCountersUpdateInterval;
+    const factor = delta / settings.eventCountersSmoothingInterval;
     const scaledValue = prevData.lerpTo(lastData, factor);
     for (const [element, value] of [
       [elements.total, scaledValue.total],
