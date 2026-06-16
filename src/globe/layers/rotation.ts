@@ -14,14 +14,22 @@ export class RotationLayer
   readonly layerName: string = "Rotation";
 
   private state!: AppState;
+  private lastFrame: number = Date.now();
 
   attachToState(state: AppState): void {
     this.state = state;
   }
 
   updateFrame(globe: ThreeGlobe, settings: Settings): void {
+    const now = Date.now();
+    const diff = now - this.lastFrame;
+    this.lastFrame = now;
     if (settings.autoRotateGlobe) {
-      globe.rotation.y += 0.001 / (10 * this.state.globeCurrentZoomFactor);
+      globe.rotation.y +=
+        ((0.0001 / (10 * this.state.globeCurrentZoomFactor)) *
+          diff *
+          settings.rotationSpeed) /
+        100;
     }
   }
 }

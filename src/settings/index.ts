@@ -70,6 +70,8 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor autoRotateGlobe: boolean = true;
   @SettingsField()
+  accessor rotationSpeed: number = 100;
+  @SettingsField()
   accessor enableAtmosphere: boolean = true;
   @SettingsField()
   accessor dispersionRadius: number = 25;
@@ -493,6 +495,7 @@ export function setupSettingsDialog(
   for (const [selector, type, property] of [
     ["#antialiasing", "boolean", "antialiasingEnabled"],
     ["#autorotateglobe", "boolean", "autoRotateGlobe"],
+    ["#rotationspeed", "number", "rotationSpeed"],
     ["#enableatmosphere", "boolean", "enableAtmosphere"],
     ["#enablegraticules", "boolean", "enableGraticules"],
     ["#dispersionradius", "number", "dispersionRadius"],
@@ -598,6 +601,10 @@ export function setupSettingsDialog(
     });
   }
 
+  const rotationSpeedField =
+    fields.dialogContainer.querySelector<HTMLInputElement>("#rotationspeed")!;
+  rotationSpeedField.disabled = !settings.autoRotateGlobe;
+
   const maxScaleField =
     fields.dialogContainer.querySelector<HTMLInputElement>("#maxscale")!;
   maxScaleField.disabled =
@@ -673,7 +680,14 @@ export function setupSettingsDialog(
   analysisModeMaxHeightKmsField.disabled = !settings.enableAnalysisMode;
 
   settings.addChangedListener((event: CustomEvent<SettingsChangedEvent>) => {
-    if (event.detail.field_changed == "enableCounterScaling") {
+    if (event.detail.field_changed == "autoRotateGlobe") {
+      rotationSpeedField.disabled = !settings.autoRotateGlobe;
+    }
+
+    if (
+      event.detail.field_changed == "enableCounterScaling" ||
+      event.detail.field_changed == "enableEventExplosions"
+    ) {
       showCountersKeyField.disabled =
         !settings.enableCounterScaling || !settings.enableEventExplosions;
       maxScaleField.disabled =
@@ -683,12 +697,6 @@ export function setupSettingsDialog(
     }
 
     if (event.detail.field_changed == "enableEventExplosions") {
-      showCountersKeyField.disabled =
-        !settings.enableCounterScaling || !settings.enableEventExplosions;
-      maxScaleField.disabled =
-        !settings.enableCounterScaling || !settings.enableEventExplosions;
-      maxScaleCounterField.disabled =
-        !settings.enableCounterScaling || !settings.enableEventExplosions;
       enableCounterScalingField.disabled = !settings.enableEventExplosions;
     }
 
@@ -850,6 +858,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="antialiasing" name="antialiasing" />
         <label for="autorotateglobe">Automatically rotate globe:</label>
         <input type="checkbox" id="autorotateglobe" name="autorotateglobe" />
+        <label for="rotationspeed">Automatic globe rotation speed:</label>
+        <input type="number" min="1" max="10000" id="rotationspeed" name="rotationspeed" />
         <label for="enableatmosphere">Show earth atmosphere:</label>
         <input type="checkbox" id="enableatmosphere" name="enableatmosphere" />
         <label for="enablegraticules">Show earth graticules:</label>
