@@ -98,6 +98,7 @@ h1 {
 }
 
 .counter-value {
+  font-family: monospace;
   line-height: 1;
   margin-bottom: 0px;
   margin-top: 0px;
