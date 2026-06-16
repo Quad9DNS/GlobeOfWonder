@@ -201,6 +201,8 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor eventCountersUpdateInterval: number = 1000;
   @SettingsField()
+  accessor smoothEventCountersUpdates: boolean = true;
+  @SettingsField()
   accessor countersTitle: string =
     import.meta.env.VITE_DEFAULT_COUNTERS_TITLE || "Malicious Lookups Blocked";
   @SettingsField()
@@ -512,6 +514,7 @@ export function setupSettingsDialog(
     ["#showeventcounters1m", "boolean", "showEventCountersLast1m"],
     ["#showeventcounters10s", "boolean", "showEventCountersLast10s"],
     ["#eventcountersupdateinterval", "number", "eventCountersUpdateInterval"],
+    ["#smootheventcountersupdates", "boolean", "smoothEventCountersUpdates"],
     ["#showcounterskey", "boolean", "showCountersKey"],
     ["#enableheatmaps", "boolean", "enableHeatmaps"],
     ["#enableanalysismode", "boolean", "enableAnalysisMode"],
@@ -655,6 +658,11 @@ export function setupSettingsDialog(
       "#eventcountersupdateinterval",
     )!;
   eventCountersUpdateIntervalField.disabled = !settings.showEventCounters;
+  const smoothEventCountersUpdatesField =
+    fields.dialogContainer.querySelector<HTMLInputElement>(
+      "#smootheventcountersupdates",
+    )!;
+  smoothEventCountersUpdatesField.disabled = !settings.showEventCounters;
 
   const analysisModeResolutionField =
     fields.dialogContainer.querySelector<HTMLInputElement>(
@@ -725,6 +733,7 @@ export function setupSettingsDialog(
       showEventCountersLast1mField.disabled = !settings.showEventCounters;
       showEventCountersLast10sField.disabled = !settings.showEventCounters;
       eventCountersUpdateIntervalField.disabled = !settings.showEventCounters;
+      smoothEventCountersUpdatesField.disabled = !settings.showEventCounters;
     }
   });
 
@@ -971,6 +980,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="showeventcounters10s" name="showeventcounters10s" />
         <label for="eventcountersupdateinterval">Event counters update interval:</label>
         <input type="number" id="eventcountersupdateinterval" name="eventcountersupdateinterval" />
+        <label for="smootheventcountersupdates">Smooth event counters updates:</label>
+        <input type="checkbox" id="smootheventcountersupdates" name="smootheventcountersupdates" />
         <label for="showcounterskey">Show event counter key:</label>
         <input type="checkbox" id="showcounterskey" name="showcounterskey" />
         <label for="timezone">Time zone:</label>

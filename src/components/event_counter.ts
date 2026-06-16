@@ -249,20 +249,31 @@ function updateCountersUI(
   elements: EventCounterElements,
   settings: Settings,
 ) {
-  const delta = clamp(
-    timestamp - lastUpdate,
-    0,
-    settings.eventCountersUpdateInterval,
-  );
-  const factor = delta / settings.eventCountersUpdateInterval;
-  const scaledValue = prevData.lerpTo(lastData, factor);
-  for (const [element, value] of [
-    [elements.total, scaledValue.total],
-    [elements.last5min, scaledValue.last5min],
-    [elements.last1min, scaledValue.last1min],
-    [elements.last10s, scaledValue.last10s],
-  ] as [HTMLElement, number][]) {
-    element.innerHTML = value.toString();
+  if (settings.smoothEventCountersUpdates) {
+    const delta = clamp(
+      timestamp - lastUpdate,
+      0,
+      settings.eventCountersUpdateInterval,
+    );
+    const factor = delta / settings.eventCountersUpdateInterval;
+    const scaledValue = prevData.lerpTo(lastData, factor);
+    for (const [element, value] of [
+      [elements.total, scaledValue.total],
+      [elements.last5min, scaledValue.last5min],
+      [elements.last1min, scaledValue.last1min],
+      [elements.last10s, scaledValue.last10s],
+    ] as [HTMLElement, number][]) {
+      element.innerHTML = value.toString();
+    }
+  } else {
+    for (const [element, value] of [
+      [elements.total, lastData.total],
+      [elements.last5min, lastData.last5min],
+      [elements.last1min, lastData.last1min],
+      [elements.last10s, lastData.last10s],
+    ] as [HTMLElement, number][]) {
+      element.innerHTML = value.toString();
+    }
   }
   requestAnimationFrame((nt: DOMHighResTimeStamp) =>
     updateCountersUI(nt, elements, settings),
