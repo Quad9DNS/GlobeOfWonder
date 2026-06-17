@@ -76,6 +76,18 @@ export function setupEventCounters(
   elements.last10sLabel.hidden = !settings.showEventCountersLast10s;
   elements.helpButton.style.display = settings.showHelp ? "inline" : "none";
 
+  if (settings.monospaceEventCounters) {
+    elements.total.style.fontFamily = "monospace";
+    elements.last5min.style.fontFamily = "monospace";
+    elements.last1min.style.fontFamily = "monospace";
+    elements.last10s.style.fontFamily = "monospace";
+  } else {
+    elements.total.style.fontFamily = "";
+    elements.last5min.style.fontFamily = "";
+    elements.last1min.style.fontFamily = "";
+    elements.last10s.style.fontFamily = "";
+  }
+
   let updatesTask = setInterval(() => {
     updateCounters(state.newEventsQueue);
   }, settings.eventCountersUpdateInterval);
@@ -91,6 +103,20 @@ export function setupEventCounters(
 
     if (event.detail.field_changed == "showEventCounters") {
       container.hidden = !settings.showEventCounters;
+    }
+
+    if (event.detail.field_changed == "monospaceEventCounters") {
+      if (settings.monospaceEventCounters) {
+        elements.total.style.fontFamily = "monospace";
+        elements.last5min.style.fontFamily = "monospace";
+        elements.last1min.style.fontFamily = "monospace";
+        elements.last10s.style.fontFamily = "monospace";
+      } else {
+        elements.total.style.fontFamily = "";
+        elements.last5min.style.fontFamily = "";
+        elements.last1min.style.fontFamily = "";
+        elements.last10s.style.fontFamily = "";
+      }
     }
 
     if (event.detail.field_changed == "eventCountersUpdateInterval") {

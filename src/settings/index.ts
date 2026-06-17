@@ -191,6 +191,8 @@ export class Settings extends EventTarget {
   @SettingsField()
   accessor showEventCounters: boolean = true;
   @SettingsField()
+  accessor monospaceEventCounters: boolean = false;
+  @SettingsField()
   accessor showEventCountersTotal: boolean = true;
   @SettingsField()
   accessor showEventCountersLast5m: boolean = true;
@@ -511,6 +513,7 @@ export function setupSettingsDialog(
     ["#showwsstatus", "boolean", "showWebsocketStatus"],
     ["#showtime", "boolean", "showDateAndTime"],
     ["#showeventcounters", "boolean", "showEventCounters"],
+    ["#monospaceeventcounters", "boolean", "monospaceEventCounters"],
     ["#showeventcounterstotal", "boolean", "showEventCountersTotal"],
     ["#showeventcounters5m", "boolean", "showEventCountersLast5m"],
     ["#showeventcounters1m", "boolean", "showEventCountersLast1m"],
@@ -640,6 +643,11 @@ export function setupSettingsDialog(
   const eventCountersLabelField =
     fields.dialogContainer.querySelector<HTMLInputElement>("#counterslabel")!;
   eventCountersLabelField.disabled = !settings.showEventCounters;
+  const monospaceEventCountersField =
+    fields.dialogContainer.querySelector<HTMLInputElement>(
+      "#monospaceeventcounters",
+    )!;
+  monospaceEventCountersField.disabled = !settings.showEventCounters;
   const showEventCountersTotalField =
     fields.dialogContainer.querySelector<HTMLInputElement>(
       "#showeventcounterstotal",
@@ -743,6 +751,7 @@ export function setupSettingsDialog(
     if (event.detail.field_changed == "showEventCounters") {
       eventCountersTitleField.disabled = !settings.showEventCounters;
       eventCountersLabelField.disabled = !settings.showEventCounters;
+      monospaceEventCountersField.disabled = !settings.showEventCounters;
       showEventCountersTotalField.disabled = !settings.showEventCounters;
       showEventCountersLast5mField.disabled = !settings.showEventCounters;
       showEventCountersLast1mField.disabled = !settings.showEventCounters;
@@ -993,6 +1002,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="showhelp" name="showhelp" />
         <label for="showeventcounters">Show event counter data:</label>
         <input type="checkbox" id="showeventcounters" name="showeventcounters" />
+        <label for="monospaceeventcounters">Use monospace font for event counters:</label>
+        <input type="checkbox" id="monospaceeventcounters" name="monospaceeventcounters" />
         <label for="counterstitle">Counter intervals title:</label>
         <input type="text" id="counterstitle" name="counterstitle" />
         <label for="counterslabel">Counter intervals label prefix:</label>
