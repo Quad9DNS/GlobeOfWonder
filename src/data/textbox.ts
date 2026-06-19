@@ -1,5 +1,12 @@
 import * as THREE from "three";
-import { BoundingBoxData, LayerData, PointData, ScaleData } from ".";
+import {
+  BoundingBoxData,
+  BoxBorderData,
+  LayerData,
+  PointData,
+  ScaleData,
+  updateVisibilityForOverlay,
+} from ".";
 import { LifetimeData } from "../service/data";
 import { IndicatorData } from "./indicator";
 import { LinkData } from "./link";
@@ -12,12 +19,6 @@ import { SoundLink, SoundSet } from "./sound";
  * Additional data that can be used to customize textboxes
  */
 export interface TextboxCustomizationData {
-  readonly box_color?: THREE.Color;
-  readonly box_opacity?: number;
-  readonly box_corner_radius?: number;
-  readonly border_color?: THREE.Color;
-  readonly border_thickness?: number;
-  readonly border_opacity?: number;
   readonly text?: string;
   readonly text_font?: string;
   readonly text_font_style?: string;
@@ -41,12 +42,12 @@ export interface TextboxPointerCustomizationData {
 
 export class TextboxData
   implements
-    IndicatorData,
-    BoundingBoxData,
-    LinkData,
-    TextboxCustomizationData,
-    TextboxPointerCustomizationData
-{
+  IndicatorData,
+  BoundingBoxData,
+  BoxBorderData,
+  LinkData,
+  TextboxCustomizationData,
+  TextboxPointerCustomizationData {
   private startTime: number;
   private lifetime: number;
   total_lifetime: number;
@@ -166,6 +167,7 @@ export class TextboxData
   }
 
   private additional_data: BoundingBoxData &
+    BoxBorderData &
     TextboxCustomizationData &
     TextboxPointerCustomizationData &
     LinkData;
@@ -207,37 +209,21 @@ export class TextboxData
   }
 
   updateVisibility(camera_lon: number, camera_lat: number): boolean {
-    if (
-      this.text_pointer_lon != undefined &&
-      this.text_pointer_lon_offset_visibility != undefined
-    ) {
-      const normalized_lon =
-        this.text_pointer_lon > 180.0
-          ? this.text_pointer_lon - 360.0
-          : this.text_pointer_lon;
-      this.in_visiblity_cone =
-        Math.abs(normalized_lon - camera_lon) <
-        this.text_pointer_lon_offset_visibility;
-    }
-    if (!this.in_visiblity_cone) {
-      return this.in_visiblity_cone;
-    }
-    if (
-      this.text_pointer_lat != undefined &&
-      this.text_pointer_lat_offset_visibility != undefined
-    ) {
-      this.in_visiblity_cone =
-        Math.abs(this.text_pointer_lat - camera_lat) <
-        this.text_pointer_lat_offset_visibility;
-    }
+    this.in_visiblity_cone = updateVisibilityForOverlay(
+      camera_lon,
+      camera_lat,
+      this.text_pointer_lon,
+      this.text_pointer_lat,
+      this.text_pointer_lon_offset_visibility,
+      this.text_pointer_lat_offset_visibility,
+    );
     return this.in_visiblity_cone;
   }
 }
 
 export class TextboxPointerData
   extends CommonData<TextboxPointerCustomizationData>
-  implements PointData, TextboxPointerCustomizationData
-{
+  implements PointData, TextboxPointerCustomizationData {
   private linked_data: TextboxData;
 
   constructor(

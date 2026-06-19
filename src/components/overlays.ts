@@ -1,11 +1,17 @@
 import { clamp } from "three/src/math/MathUtils.js";
 import { registerDialogContainer } from ".";
-import { boxesEqual, mapAndFilter } from "../data";
+import {
+  boxesEqual,
+  isBoundingBoxData,
+  isBoxBorderData,
+  mapAndFilter,
+} from "../data";
 import { ExpirableObject } from "../data/expirable";
 import { IndicatorData } from "../data/indicator";
 import { TextboxData } from "../data/textbox";
 import { AppState } from "../service/state";
 import { Settings } from "../settings";
+import { GraphData } from "../data/graph";
 
 class IndicatorPair implements ExpirableObject {
   data: IndicatorData;
@@ -58,12 +64,52 @@ export function setupOverlays(
     state.newNonEventIndicatorsQueue
       .splice(0, state.newNonEventIndicatorsQueue.length)
       .forEach((i: IndicatorData) => {
-        if (i instanceof TextboxData) {
-          const overlayContainer = registerDialogContainer(
-            overlaysContainer,
-            "textbox-test",
-          );
+        const overlayId = typeof i + "-overlay";
+        const overlayContainer = registerDialogContainer(
+          overlaysContainer,
+          overlayId,
+        );
 
+        if (isBoundingBoxData(i)) {
+          const bottom = window.innerHeight - i.bottom;
+          const right = window.innerWidth - i.right;
+          let boxColor = "transparent";
+          if (isBoxBorderData(i) && i.box_color) {
+            boxColor = "#" + i.box_color.getHexString();
+          }
+          overlayContainer.innerHTML = `
+          <div id="overlaybox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
+          </div>
+          `;
+
+          const root = overlayContainer.children[0] as HTMLElement;
+          if (isBoxBorderData(i)) {
+            if (i.box_opacity != undefined) {
+              root.style.opacity = `${i.box_opacity}%`;
+            }
+
+            if (i.box_corner_radius != undefined) {
+              root.style.borderRadius = `${i.box_corner_radius}px`;
+            }
+
+            if (i.border_color != undefined) {
+              root.style.borderStyle = "solid";
+              if (i.border_opacity != undefined) {
+                root.style.borderColor =
+                  "#" +
+                  i.border_color.getHexString() +
+                  (i.border_opacity * 2.55).toString(16);
+              } else {
+                root.style.borderColor = "#" + i.border_color.getHexString();
+              }
+              if (i.border_thickness != undefined) {
+                root.style.borderWidth = `${i.border_thickness}px`;
+              }
+            }
+          }
+        }
+
+        if (i instanceof TextboxData) {
           if (i.text == undefined) {
             const index = indicators.findIndex(
               (val) =>
@@ -75,19 +121,6 @@ export function setupOverlays(
               return;
             }
           }
-
-          indicators.push(new IndicatorPair(i, overlayContainer));
-          const bottom = window.innerHeight - i.bottom;
-          const right = window.innerWidth - i.right;
-          let boxColor = "transparent";
-          if (i.box_color) {
-            boxColor = "#" + i.box_color.getHexString();
-          }
-          overlayContainer.innerHTML = `
-          <div id="textbox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
-          <p id="textboxText"></p>
-          </div>
-          `;
 
           const root = overlayContainer.children[0] as HTMLElement;
 
@@ -102,29 +135,9 @@ export function setupOverlays(
             });
           }
 
-          if (i.box_opacity != undefined) {
-            root.style.opacity = `${i.box_opacity}%`;
-          }
-
-          if (i.box_corner_radius != undefined) {
-            root.style.borderRadius = `${i.box_corner_radius}px`;
-          }
-
-          if (i.border_color != undefined) {
-            root.style.borderStyle = "solid";
-            if (i.border_opacity != undefined) {
-              root.style.borderColor =
-                "#" +
-                i.border_color.getHexString() +
-                (i.border_opacity * 2.55).toString(16);
-            } else {
-              root.style.borderColor = "#" + i.border_color.getHexString();
-            }
-            if (i.border_thickness != undefined) {
-              root.style.borderWidth = `${i.border_thickness}px`;
-            }
-          }
-
+          root.innerHTML = `
+          <p id="textboxText"></p>
+          `;
           const textElement =
             overlayContainer.querySelector<HTMLElement>("#textboxText")!;
           // TODO: support for bold, italic spans
@@ -174,9 +187,22 @@ export function setupOverlays(
                 break;
             }
           }
-
-          overlayContainer.hidden = !i.visible();
+        } else if (i instanceof GraphData) {
+          if (i.name == undefined) {
+            const index = indicators.findIndex(
+              (val) =>
+                val.data instanceof GraphData &&
+                boxesEqual(val.data as GraphData, i),
+            );
+            if (index !== -1) {
+              indicators.splice(index, 1);
+              return;
+            }
+          }
         }
+
+        overlayContainer.hidden = !i.visible();
+        indicators.push(new IndicatorPair(i, overlayContainer));
       });
   }, 200);
 
@@ -190,11 +216,10 @@ export function setupOverlays(
 
   function onWindowResize() {
     indicators.forEach((i: IndicatorPair) => {
-      if (i.data instanceof TextboxData) {
-        const data = i.data as TextboxData;
+      if (isBoundingBoxData(i.data)) {
         const root = i.element.children[0] as HTMLElement;
-        const bottom = window.innerHeight - data.bottom;
-        const right = window.innerWidth - data.right;
+        const bottom = window.innerHeight - i.data.bottom;
+        const right = window.innerWidth - i.data.right;
         root.style.bottom = `${bottom}px`;
         root.style.right = `${right}px`;
       }

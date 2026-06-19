@@ -19,7 +19,7 @@ import {
   DownloadedData,
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
-import { BoundingBoxData, LayerData, ScaleData } from "../data";
+import { BoundingBoxData, BoxBorderData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
 import {
   delay,
@@ -34,6 +34,12 @@ import {
   TextboxPointerData,
   TextboxPointerCustomizationData,
 } from "../data/textbox";
+import {
+  GraphAnchorCustomizationData,
+  GraphAnchorData,
+  GraphCustomizationData,
+  GraphData,
+} from "../data/graph";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -144,13 +150,13 @@ export type CounterData = {
 };
 type EventTypeData = {
   type:
-    | ExplosionTypeData["type"]
-    | CircleTypeData["type"]
-    | PointerTypeData["type"]
-    | BarTypeData["type"]
-    | DownloadedTypeData["type"]
-    | ArcTypeData["type"]
-    | null;
+  | ExplosionTypeData["type"]
+  | CircleTypeData["type"]
+  | PointerTypeData["type"]
+  | BarTypeData["type"]
+  | DownloadedTypeData["type"]
+  | ArcTypeData["type"]
+  | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &
@@ -218,6 +224,7 @@ function isCommandData(data: ServiceData): data is ServiceCommandData {
     "view_command",
     "settings_command",
     "show_textbox_command",
+    "show_graph_command",
     "clear_map_command",
     "play_sound_command",
   ].includes(data.type);
@@ -228,6 +235,7 @@ function autoHandleDelay(data: ServiceCommandData): boolean {
     "settings_command",
     "clear_map_command",
     "show_textbox_command",
+    "show_graph_command",
   ].includes(data.type);
 }
 type CommonCommandData = {
@@ -277,11 +285,30 @@ export type ShowTextboxCommandServiceData = CommonCommandData &
   ShowTextboxCommandTypeData &
   ShowTextboxCommandData &
   BoundingBoxData &
+  BoxBorderData &
   LinkData &
   TextboxCustomizationData &
   TextboxPointerCustomizationData;
 export type ShowTextboxCommandPointerServiceData =
   ShowTextboxCommandServiceData & SharedServiceData;
+
+type ShowGraphCommandTypeData = {
+  type: "show_graph_command";
+};
+export type ShowGraphCommandData = {
+  settings: Record<string, string>;
+};
+export type ShowGraphCommandServiceData = CommonCommandData &
+  LifetimeData &
+  ShowGraphCommandTypeData &
+  ShowGraphCommandData &
+  BoundingBoxData &
+  BoxBorderData &
+  LinkData &
+  GraphCustomizationData &
+  GraphAnchorCustomizationData;
+export type ShowGraphCommandPointerServiceData = ShowGraphCommandServiceData &
+  SharedServiceData;
 
 type PlaySoundCommandTypeData = {
   type: "play_sound_command";
@@ -302,7 +329,8 @@ export type ServiceCommandData =
   | SettingsCommandServiceData
   | PlaySoundCommandServiceData
   | ClearMapCommandServiceData
-  | ShowTextboxCommandServiceData;
+  | ShowTextboxCommandServiceData
+  | ShowGraphCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -619,6 +647,20 @@ function buildAndPublishCommand(
             new TextboxPointerData(
               data as ShowTextboxCommandPointerServiceData,
               textboxData,
+            ),
+          );
+        }
+      }
+      break;
+    case "show_graph_command":
+      if (settings.enableGraphCommands) {
+        const graphData = new GraphData(data as ShowGraphCommandServiceData);
+        state.newNonEventIndicatorsQueue.push(graphData);
+        if (data.graph_anchor_lat && data.graph_anchor_lon) {
+          state.newPointsQueue.push(
+            new GraphAnchorData(
+              data as ShowGraphCommandPointerServiceData,
+              graphData,
             ),
           );
         }
