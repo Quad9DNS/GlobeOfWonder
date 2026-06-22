@@ -36,6 +36,7 @@ import {
   TextboxPointersLayer,
   TextboxPointersObjectProvider,
 } from "./layers/textboxpointers";
+import { GraphAnchorsLayer, GraphAnchorsObjectProvider } from "./layers/graphs";
 
 // Configures the registry
 // WARN: All the layers should be added here!
@@ -54,6 +55,7 @@ for (const layer of [
   new CirclesObjectProvider(),
   new PointersObjectProvider(),
   new TextboxPointersObjectProvider(),
+  new GraphAnchorsObjectProvider(),
   new BarsObjectProvider(),
   new DownloadedObjectsProvider(),
   new ExplosionDataLayerGroup(),
@@ -66,6 +68,7 @@ for (const layer of [
   new CirclesLayer(),
   new PointersLayer(),
   new TextboxPointersLayer(),
+  new GraphAnchorsLayer(),
   new BarsLayer(),
   new DownloadedObjectsLayer(),
   new SoundObjectPreloader(),

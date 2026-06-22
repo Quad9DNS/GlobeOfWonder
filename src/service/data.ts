@@ -148,19 +148,23 @@ export type CounterData = {
   counter?: number;
   counter_include?: boolean;
 };
+export type GraphCountData = {
+  graphs?: string[];
+};
 type EventTypeData = {
   type:
-  | ExplosionTypeData["type"]
-  | CircleTypeData["type"]
-  | PointerTypeData["type"]
-  | BarTypeData["type"]
-  | DownloadedTypeData["type"]
-  | ArcTypeData["type"]
-  | null;
+    | ExplosionTypeData["type"]
+    | CircleTypeData["type"]
+    | PointerTypeData["type"]
+    | BarTypeData["type"]
+    | DownloadedTypeData["type"]
+    | ArcTypeData["type"]
+    | null;
 };
 export type SharedServiceData = PositionData &
   LifetimeData &
   CounterData &
+  GraphCountData &
   LabelsData &
   LinkData &
   LayerData &
@@ -393,6 +397,13 @@ export function processServiceData(
       }
       if (incomingEvent.counter_include ?? true) {
         appState.newEventsQueue.push({
+          count: incomingEvent.counter ?? 1,
+          startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
+        });
+      }
+      if (incomingEvent.graphs !== undefined) {
+        appState.newGraphEventsQueue.push({
+          graphs: incomingEvent.graphs,
           count: incomingEvent.counter ?? 1,
           startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
         });
