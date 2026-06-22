@@ -36,7 +36,6 @@ export class GraphData
     IndicatorData,
     BoundingBoxData,
     BoxBorderData,
-    LinkData,
     GraphCustomizationData,
     GraphAnchorCustomizationData
 {
