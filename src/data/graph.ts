@@ -14,6 +14,8 @@ import { CommonData } from "./common";
 import { LabelsData } from "./label";
 import { HoverTextData } from "./hover";
 import { SoundLink, SoundSet } from "./sound";
+import { Subscription } from "../service/graph";
+import { GraphEvent } from "../service/state";
 
 /**
  * Additional data that can be used to customize textboxes
@@ -44,6 +46,9 @@ export class GraphData
   total_lifetime: number;
 
   in_visiblity_cone: boolean = true;
+
+  subscription?: Subscription = undefined;
+  events: GraphEvent[] = [];
 
   public get left(): number {
     return this.additional_data.left;
