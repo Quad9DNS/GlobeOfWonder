@@ -216,13 +216,17 @@ export function setupOverlays(
 
           const gy = svg
             .append("g")
+            .attr("class", "yAxis")
             .attr("transform", `translate(30, 0)`)
+            .attr("width", i.right - i.left - 31)
             .attr("height", i.bottom - i.top - 30)
             .call(d3.axisLeft(y));
           const gx = svg
             .append("g")
+            .attr("class", "xAxis")
             .attr("transform", `translate(30, ${i.bottom - i.top - 30})`)
             .attr("width", i.right - i.left - 31)
+            .attr("height", i.bottom - i.top - 30)
             .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
 
           const path = svg
@@ -230,7 +234,7 @@ export function setupOverlays(
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-            .attr("transform", `translate(30, )`);
+            .attr("transform", `translate(30, 0)`);
 
           root.appendChild(svg.node()!);
 
@@ -264,6 +268,27 @@ export function setupOverlays(
                   },
                 ),
               );
+
+              d3.selectAll("g.tick line.gridline").remove();
+              d3.selectAll("g.yAxis g.tick")
+                .append("line")
+                .attr("class", "gridline")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", i.right - i.left)
+                .attr("y2", 0)
+                .attr("stroke", "#9ca5aecf")
+                .attr("stroke-dasharray", "4");
+
+              d3.selectAll("g.xAxis g.tick")
+                .append("line")
+                .attr("class", "gridline")
+                .attr("x1", 0)
+                .attr("y1", -(i.bottom - i.top))
+                .attr("x2", 0)
+                .attr("y2", 0)
+                .attr("stroke", "#9ca5aecf")
+                .attr("stroke-dasharray", "4");
             },
           );
         }
