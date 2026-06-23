@@ -12,6 +12,8 @@ import { TextboxData } from "../data/textbox";
 import { AppState } from "../service/state";
 import { Settings } from "../settings";
 import { GraphData } from "../data/graph";
+import { subscribeToGraph, unsubscribeFromGraph } from "../service/graph";
+import * as d3 from "d3";
 
 class IndicatorPair implements ExpirableObject {
   data: IndicatorData;
@@ -196,9 +198,72 @@ export function setupOverlays(
             );
             if (index !== -1) {
               indicators.splice(index, 1);
-              return;
+              if (i.subscription !== undefined) {
+                unsubscribeFromGraph(i.subscription);
+              }
             }
+            return;
           }
+
+          const root = overlayContainer.children[0] as HTMLElement;
+          const svg = d3
+            .create("svg")
+            .attr("width", i.right - i.left)
+            .attr("height", i.bottom - i.top);
+
+          let x = d3.scaleTime().range([0, i.right - i.left]);
+          let y = d3.scaleLinear().range([i.bottom - i.top, 0]);
+
+          const gy = svg
+            .append("g")
+            .attr("transform", `translate(30, -30)`)
+            .call(d3.axisLeft(y));
+          const gx = svg
+            .append("g")
+            .attr("transform", `translate(30, ${i.bottom - i.top - 30})`)
+            .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
+
+          const path = svg
+            .append("path")
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("transform", `translate(30, -30)`);
+
+          root.appendChild(svg.node()!);
+
+          subscribeToGraph(
+            i.name,
+            { bucket_size: 1000 * 10 },
+            (points: Map<number, number>) => {
+              x = x.domain(
+                d3.extent(points.entries(), function([time, _val]) {
+                  return time;
+                }),
+              );
+              gx.transition()
+                .duration(500)
+                .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
+              y = y.domain([
+                0,
+                d3.max(points.entries(), function([_time, val]) {
+                  return val;
+                }),
+              ]);
+              gy.transition().duration(500).call(d3.axisLeft(y));
+              path.datum(points.entries()).attr(
+                "d",
+                d3.line(
+                  function([time, _val]: [number, number]) {
+                    return x(time);
+                  },
+                  function([_time, val]: [number, number]) {
+                    return y(val);
+                  },
+                ),
+              );
+            },
+          );
         }
 
         overlayContainer.hidden = !i.visible();

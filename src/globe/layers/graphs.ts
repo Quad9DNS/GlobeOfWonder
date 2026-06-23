@@ -20,10 +20,11 @@ import { GraphAnchorData, GraphData } from "../../data/graph";
  */
 export class GraphAnchorsLayer
   implements
-  GlobeLayerAttachHook,
-  GlobeLayerAppStateHook,
-  CustomObjectLayerBuildHook,
-  CustomObjectLayerFrameUpdateHook {
+    GlobeLayerAttachHook,
+    GlobeLayerAppStateHook,
+    CustomObjectLayerBuildHook,
+    CustomObjectLayerFrameUpdateHook
+{
   readonly layerName: string = "GraphAnchors";
   private cachedCamera!: THREE.Camera;
   private cachedGlobe!: ThreeGlobe;

@@ -42,12 +42,13 @@ export interface TextboxPointerCustomizationData {
 
 export class TextboxData
   implements
-  IndicatorData,
-  BoundingBoxData,
-  BoxBorderData,
-  LinkData,
-  TextboxCustomizationData,
-  TextboxPointerCustomizationData {
+    IndicatorData,
+    BoundingBoxData,
+    BoxBorderData,
+    LinkData,
+    TextboxCustomizationData,
+    TextboxPointerCustomizationData
+{
   private startTime: number;
   private lifetime: number;
   total_lifetime: number;
@@ -223,7 +224,8 @@ export class TextboxData
 
 export class TextboxPointerData
   extends CommonData<TextboxPointerCustomizationData>
-  implements PointData, TextboxPointerCustomizationData {
+  implements PointData, TextboxPointerCustomizationData
+{
   private linked_data: TextboxData;
 
   constructor(
