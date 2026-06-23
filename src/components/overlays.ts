@@ -14,6 +14,7 @@ import { Settings } from "../settings";
 import { GraphData } from "../data/graph";
 import { subscribeToGraph, unsubscribeFromGraph } from "../service/graph";
 import * as d3 from "d3";
+import { QUAD9_COLOR } from "../globe/common";
 
 class IndicatorPair implements ExpirableObject {
   data: IndicatorData;
@@ -229,11 +230,13 @@ export function setupOverlays(
             .attr("height", i.bottom - i.top - 30)
             .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
 
+          const line_color =
+            "#" + (i.graph_line_color ?? QUAD9_COLOR).getHexString();
           const path = svg
             .append("path")
-            .attr("fill", "none")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 1.5)
+            .attr("fill", i.graph_filled ? line_color : "none")
+            .attr("stroke", line_color)
+            .attr("stroke-width", i.graph_line_width ?? 1)
             .attr("transform", `translate(30, 0)`);
 
           root.appendChild(svg.node()!);
@@ -269,26 +272,51 @@ export function setupOverlays(
                 ),
               );
 
-              d3.selectAll("g.tick line.gridline").remove();
-              d3.selectAll("g.yAxis g.tick")
-                .append("line")
-                .attr("class", "gridline")
-                .attr("x1", 0)
-                .attr("y1", 0)
-                .attr("x2", i.right - i.left)
-                .attr("y2", 0)
-                .attr("stroke", "#9ca5aecf")
-                .attr("stroke-dasharray", "4");
+              if (i.grid_enabled) {
+                let color = i.grid_color?.getHexString();
+                if (color === undefined) {
+                  color = "#ffffffcf";
+                } else {
+                  color = "#" + color + "cf";
+                }
+                d3.selectAll("g.tick line.gridline").remove();
+                const ygrid = d3
+                  .selectAll("g.yAxis g.tick")
+                  .append("line")
+                  .attr("class", "gridline")
+                  .attr("x1", 0)
+                  .attr("y1", 0)
+                  .attr("x2", i.right - i.left)
+                  .attr("y2", 0)
+                  .attr("stroke", color);
 
-              d3.selectAll("g.xAxis g.tick")
-                .append("line")
-                .attr("class", "gridline")
-                .attr("x1", 0)
-                .attr("y1", -(i.bottom - i.top))
-                .attr("x2", 0)
-                .attr("y2", 0)
-                .attr("stroke", "#9ca5aecf")
-                .attr("stroke-dasharray", "4");
+                const xgrid = d3
+                  .selectAll("g.xAxis g.tick")
+                  .append("line")
+                  .attr("class", "gridline")
+                  .attr("x1", 0)
+                  .attr("y1", -(i.bottom - i.top))
+                  .attr("x2", 0)
+                  .attr("y2", 0)
+                  .attr("stroke", color);
+
+                switch (i.grid_style) {
+                  case "solid":
+                    break;
+                  case "dashed_large":
+                    ygrid.attr("stroke-dasharray", "8 4");
+                    xgrid.attr("stroke-dasharray", "8 4");
+                    break;
+                  case "dashed_small":
+                    ygrid.attr("stroke-dasharray", "4");
+                    xgrid.attr("stroke-dasharray", "4");
+                    break;
+                  case "dots":
+                    ygrid.attr("stroke-dasharray", "1");
+                    xgrid.attr("stroke-dasharray", "1");
+                    break;
+                }
+              }
             },
           );
         }

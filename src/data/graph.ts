@@ -17,13 +17,19 @@ import { SoundLink, SoundSet } from "./sound";
 import { Subscription } from "../service/graph";
 import { GraphEvent } from "../service/state";
 
+export type GraphGridType = "solid" | "dashed_large" | "dashed_small" | "dots";
+
 /**
  * Additional data that can be used to customize textboxes
  */
 export interface GraphCustomizationData {
   readonly name?: string;
   readonly grid_enabled?: boolean;
+  readonly grid_style?: GraphGridType;
   readonly grid_color?: THREE.Color;
+  readonly graph_line_color?: THREE.Color;
+  readonly graph_line_width?: number;
+  readonly graph_filled?: boolean;
 }
 
 export interface GraphAnchorCustomizationData {
@@ -74,8 +80,24 @@ export class GraphData
     return this.additional_data.grid_enabled;
   }
 
+  public get grid_style(): GraphGridType | undefined {
+    return this.additional_data.grid_style;
+  }
+
   public get grid_color(): THREE.Color | undefined {
     return this.additional_data.grid_color;
+  }
+
+  public get graph_line_color(): THREE.Color | undefined {
+    return this.additional_data.graph_line_color;
+  }
+
+  public get graph_line_width(): number | undefined {
+    return this.additional_data.graph_line_width;
+  }
+
+  public get graph_filled(): boolean | undefined {
+    return this.additional_data.graph_filled;
   }
 
   public get box_color(): THREE.Color | undefined {

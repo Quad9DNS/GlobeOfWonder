@@ -62,6 +62,7 @@ const COMMON_NON_FILTER_KEYS = [
   "layer_id",
   "layer_name",
   "ignore_zoom",
+  "graphs",
 ];
 const NON_FILTER_KEYS = {
   explosion: [
@@ -131,6 +132,7 @@ const FLOAT_KEYS = [
   "text_pointer_thickness",
   "text_pointer_arrow_size",
   "scroll_speed",
+  "graph_line_width",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left"];
 
@@ -456,7 +458,9 @@ function parseServiceData(data: string): ServiceData | null {
         k == "always_faces_viewer" ||
         k == "display_text_always_faces_viewer" ||
         k == "display_text_hover_only" ||
-        k == "clear_events"
+        k == "clear_events" ||
+        k == "grid_enabled" ||
+        k == "graph_filled"
       ) {
         return Boolean(v) && v != "false";
       } else {
