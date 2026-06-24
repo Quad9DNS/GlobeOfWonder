@@ -260,7 +260,20 @@ export function setupOverlays(
                 }),
               ]);
               gy.transition().duration(500).call(d3.axisLeft(y));
-              path.datum(points.entries()).attr(
+
+              let datum = function* () {
+                yield* points.entries();
+              };
+              if (i.graph_filled) {
+                const last = Math.max(...points.keys());
+                const first = Math.min(...points.keys());
+                datum = function* () {
+                  yield* points.entries();
+                  yield [last, 0];
+                  yield [first, 0];
+                };
+              }
+              path.datum(datum).attr(
                 "d",
                 d3.line(
                   function ([time, _val]: [number, number]) {
