@@ -133,8 +133,11 @@ const FLOAT_KEYS = [
   "text_pointer_arrow_size",
   "scroll_speed",
   "graph_line_width",
+  "graph_y_max",
+  "graph_interval_duration",
+  "graph_transition_duration",
 ];
-const INTEGER_KEYS = ["top", "right", "bottom", "left"];
+const INTEGER_KEYS = ["top", "right", "bottom", "left", "graph_intervals"];
 
 export type PositionData = {
   lat: number;
@@ -460,7 +463,9 @@ function parseServiceData(data: string): ServiceData | null {
         k == "display_text_hover_only" ||
         k == "clear_events" ||
         k == "grid_enabled" ||
-        k == "graph_filled"
+        k == "graph_filled" ||
+        k == "graph_x_axis_labels_visible" ||
+        k == "graph_y_axis_labels_visible"
       ) {
         return Boolean(v) && v != "false";
       } else {

@@ -302,8 +302,27 @@ export function mapAndFilter<T extends ExpirableObject>(
  * Performs binary search of collection and replaces or inserts a new item
  * Mutates the collection
  *
- * @param [comparator=comparePositions] comparator to use when sorting
+ * @param [comparator] comparator to use when sorting
  * @param [opts={}] additional options - `noReplace` forces this to always insert objects, even if comparator tells they are the same, `ascending` forces ascending sort order
+ */
+export function binarySearchReplaceAny<T extends ExpirableObject>(
+  collection: T[],
+  item: T,
+  comparator: (left: T, right: T) => number,
+  opts: { noReplace?: boolean; ascending?: boolean } = {},
+) {
+  const pos = binarySearchAny(collection, item, comparator, opts);
+  collection.splice(
+    pos,
+    (opts.noReplace || collection.length) == 0 ? 0 : 1,
+    item,
+  );
+}
+
+/**
+ * Same as {@link binarySearchReplaceAny}, but for {@link PointData}.
+ *
+ * @param [comparator=comparePositions] comparator to use when sorting
  */
 export function binarySearchReplace<T extends PointData>(
   collection: T[],
@@ -311,19 +330,32 @@ export function binarySearchReplace<T extends PointData>(
   comparator: (left: T, right: T) => number = comparePositions,
   opts: { noReplace?: boolean; ascending?: boolean } = {},
 ) {
+  return binarySearchReplaceAny(collection, item, comparator, opts);
+}
+
+/**
+ * Performs binary search of collection
+ *
+ * @param [comparator] comparator to use when sorting
+ * @param [opts={}] additional options - `ascending` assumes ascending sort order
+ */
+export function binarySearchAny<T>(
+  collection: T[],
+  item: T,
+  comparator: (left: T, right: T) => number,
+  opts: { ascending?: boolean } = {},
+): number {
   let start = 0;
   let end = collection.length - 1;
 
+  const mid = (start + end) >> 1;
   while (start <= end) {
-    const mid = (start + end) >> 1;
-
     let comp = comparator(collection[mid], item);
     if (opts.ascending) {
       comp *= -1;
     }
     if (comp == 0) {
-      collection.splice(mid, opts.noReplace ? 0 : 1, item);
-      return;
+      return mid;
     } else if (comp < 0) {
       start = mid + 1;
     } else {
@@ -331,7 +363,7 @@ export function binarySearchReplace<T extends PointData>(
     }
   }
 
-  collection.splice(start, 0, item);
+  return mid;
 }
 
 export function updateVisibilityForOverlay(

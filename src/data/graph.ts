@@ -30,6 +30,14 @@ export interface GraphCustomizationData {
   readonly graph_line_color?: THREE.Color;
   readonly graph_line_width?: number;
   readonly graph_filled?: boolean;
+  readonly graph_x_axis_labels_visible?: boolean;
+  readonly graph_x_axis_font?: string;
+  readonly graph_y_axis_labels_visible?: boolean;
+  readonly graph_y_axis_font?: string;
+  readonly graph_y_max?: number;
+  readonly graph_interval_duration?: number;
+  readonly graph_intervals?: number;
+  readonly graph_transition_duration?: number;
 }
 
 export interface GraphAnchorCustomizationData {
@@ -98,6 +106,38 @@ export class GraphData
 
   public get graph_filled(): boolean | undefined {
     return this.additional_data.graph_filled;
+  }
+
+  public get graph_x_axis_labels_visible(): boolean | undefined {
+    return this.additional_data.graph_x_axis_labels_visible;
+  }
+
+  public get graph_x_axis_font(): string | undefined {
+    return this.additional_data.graph_x_axis_font;
+  }
+
+  public get graph_y_axis_labels_visible(): boolean | undefined {
+    return this.additional_data.graph_y_axis_labels_visible;
+  }
+
+  public get graph_y_axis_font(): string | undefined {
+    return this.additional_data.graph_y_axis_font;
+  }
+
+  public get graph_y_max(): number | undefined {
+    return this.additional_data.graph_y_max;
+  }
+
+  public get graph_interval_duration(): number | undefined {
+    return this.additional_data.graph_interval_duration;
+  }
+
+  public get graph_intervals(): number | undefined {
+    return this.additional_data.graph_intervals;
+  }
+
+  public get graph_transition_duration(): number | undefined {
+    return this.additional_data.graph_transition_duration;
   }
 
   public get box_color(): THREE.Color | undefined {
