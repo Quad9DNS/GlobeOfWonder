@@ -215,20 +215,38 @@ export function setupOverlays(
           let x = d3.scaleTime().range([0, i.right - i.left - 31]);
           let y = d3.scaleLinear().range([i.bottom - i.top - 30, 0]);
 
+          const build_axes = function (x, y) {
+            let yAxisCall = d3.axisLeft(y);
+            let xAxisCall = d3
+              .axisBottom(x)
+              .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!);
+
+            if (i.graph_x_axis_labels_visible === false) {
+              xAxisCall = xAxisCall.tickFormat((_v, _i) => "");
+            }
+            if (i.graph_y_axis_labels_visible === false) {
+              yAxisCall = yAxisCall.tickFormat((_v, _i) => "");
+            }
+
+            return [xAxisCall, yAxisCall];
+          };
+
+          const [xAxisCall, yAxisCall] = build_axes(x, y);
+
           const gy = svg
             .append("g")
             .attr("class", "yAxis")
             .attr("transform", `translate(30, 0)`)
             .attr("width", i.right - i.left - 31)
             .attr("height", i.bottom - i.top - 30)
-            .call(d3.axisLeft(y));
+            .call(yAxisCall);
           const gx = svg
             .append("g")
             .attr("class", "xAxis")
             .attr("transform", `translate(30, ${i.bottom - i.top - 30})`)
             .attr("width", i.right - i.left - 31)
             .attr("height", i.bottom - i.top - 30)
-            .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
+            .call(xAxisCall);
 
           const line_color =
             "#" + (i.graph_line_color ?? QUAD9_COLOR).getHexString();
@@ -237,53 +255,99 @@ export function setupOverlays(
             .attr("fill", i.graph_filled ? line_color : "none")
             .attr("stroke", line_color)
             .attr("stroke-width", i.graph_line_width ?? 1)
+            .attr("margin-left", `30`)
             .attr("transform", `translate(30, 0)`);
 
           root.appendChild(svg.node()!);
 
+          const bucket_size = 1000 * (i.graph_interval_duration ?? 60);
           subscribeToGraph(
             i.name,
-            { bucket_size: 1000 * 10 },
+            { bucket_size: bucket_size, bucket_count: i.graph_intervals },
             (points: Map<number, number>) => {
               x = x.domain(
-                d3.extent(points.entries(), function ([time, _val]) {
-                  return time;
-                }),
+                i.graph_intervals !== undefined
+                  ? [
+                      Math.floor(
+                        Math.floor(
+                          (Date.now() -
+                            i.graph_intervals! *
+                              (i.graph_interval_duration ?? 60) *
+                              1000) /
+                            bucket_size,
+                        ) * bucket_size,
+                      ),
+                      Math.floor(
+                        Math.floor(Date.now() / bucket_size) * bucket_size,
+                      ),
+                    ]
+                  : d3.extent(points.entries(), function ([time, _val]) {
+                      return time;
+                    }),
               );
-              gx.transition()
-                .duration(500)
-                .call(d3.axisBottom(x).ticks(d3.timeSecond.every(10)!));
-              y = y.domain([
-                0,
+              const y_max =
                 d3.max(points.entries(), function ([_time, val]) {
                   return val;
-                }),
+                }) ?? 0;
+              y = y.domain([
+                0,
+                i.graph_y_max !== undefined ? i.graph_y_max : y_max,
               ]);
-              gy.transition().duration(500).call(d3.axisLeft(y));
+
+              const [xAxisCall, yAxisCall] = build_axes(x, y);
+              if (i.graph_transition_duration !== undefined) {
+                gx.transition()
+                  .duration(i.graph_transition_duration)
+                  .call(xAxisCall);
+                gy.transition()
+                  .duration(i.graph_transition_duration)
+                  .call(yAxisCall);
+              } else {
+                gx.call(xAxisCall);
+                gy.call(yAxisCall);
+              }
 
               let datum = function* () {
-                yield* points.entries();
+                yield* [...points.entries()].sort();
               };
               if (i.graph_filled) {
                 const last = Math.max(...points.keys());
                 const first = Math.min(...points.keys());
                 datum = function* () {
-                  yield* points.entries();
+                  yield* [...points.entries()].sort();
                   yield [last, 0];
                   yield [first, 0];
                 };
               }
-              path.datum(datum).attr(
-                "d",
-                d3.line(
-                  function ([time, _val]: [number, number]) {
-                    return x(time);
-                  },
-                  function ([_time, val]: [number, number]) {
-                    return y(val);
-                  },
-                ),
-              );
+              const path_d = path.datum(datum);
+              if (i.graph_transition_duration !== undefined) {
+                path_d
+                  .transition()
+                  .duration(i.graph_transition_duration)
+                  .attr(
+                    "d",
+                    d3.line(
+                      function ([time, _val]: [number, number]) {
+                        return x(time);
+                      },
+                      function ([_time, val]: [number, number]) {
+                        return y(val);
+                      },
+                    ),
+                  );
+              } else {
+                path_d.attr(
+                  "d",
+                  d3.line(
+                    function ([time, _val]: [number, number]) {
+                      return x(time);
+                    },
+                    function ([_time, val]: [number, number]) {
+                      return y(val);
+                    },
+                  ),
+                );
+              }
 
               if (i.grid_enabled) {
                 let color = i.grid_color?.getHexString();
