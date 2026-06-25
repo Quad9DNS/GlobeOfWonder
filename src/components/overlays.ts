@@ -240,17 +240,21 @@ export function setupOverlays(
             .range([0, i.right - i.left - 2 * x_margin - 1]);
           let y = d3.scaleLinear().range([i.bottom - i.top - 2 * y_margin, 0]);
 
-          const build_axes = function (x, y) {
+          const build_axes = function (
+            x: d3.ScaleTime<number, number, never>,
+            y: d3.ScaleLinear<number, number, never>,
+          ) {
             let yAxisCall = d3
               .axisLeft(y)
               .ticks(i.graph_y_segments !== undefined ? i.graph_y_segments : 10)
-              .tickFormat((val: number) => {
-                if (val >= 1e9) {
-                  return `${(val / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
-                } else if (val >= 1e6) {
-                  return `${(val / 1e6).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
-                } else if (val >= 1e3) {
-                  return `${(val / 1e3).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
+              .tickFormat((val: d3.NumberValue) => {
+                const value = val.valueOf();
+                if (value >= 1e9) {
+                  return `${(value / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+                } else if (value >= 1e6) {
+                  return `${(value / 1e6).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+                } else if (value >= 1e3) {
+                  return `${(value / 1e3).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
                 } else {
                   return val.toLocaleString();
                 }
@@ -335,26 +339,34 @@ export function setupOverlays(
             i.name,
             { bucket_size: bucket_size, bucket_count: i.graph_intervals },
             (points: Map<number, number>) => {
-              x = x.domain(
-                i.graph_intervals !== undefined
-                  ? [
-                      Math.floor(
-                        Math.floor(
-                          (Date.now() -
-                            i.graph_intervals! *
-                              (i.graph_interval_duration ?? 60) *
-                              1000) /
-                            bucket_size,
-                        ) * bucket_size,
-                      ),
-                      Math.floor(
-                        Math.floor(Date.now() / bucket_size) * bucket_size,
-                      ),
-                    ]
-                  : d3.extent(points.entries(), function ([time, _val]) {
-                      return time;
-                    }),
-              );
+              let x_extent = [0, 0];
+              if (i.graph_intervals !== undefined) {
+                x_extent = [
+                  Math.floor(
+                    Math.floor(
+                      (Date.now() -
+                        i.graph_intervals! *
+                          (i.graph_interval_duration ?? 60) *
+                          1000) /
+                        bucket_size,
+                    ) * bucket_size,
+                  ),
+                  Math.floor(
+                    Math.floor(Date.now() / bucket_size) * bucket_size,
+                  ),
+                ];
+              } else {
+                const calculated_extent = d3.extent(
+                  points.entries(),
+                  function ([time, _val]) {
+                    return time;
+                  },
+                );
+                if (calculated_extent[0] !== undefined) {
+                  x_extent = calculated_extent;
+                }
+              }
+              x = x.domain(x_extent);
               const y_max =
                 d3.max(points.entries(), function ([_time, val]) {
                   return val;
