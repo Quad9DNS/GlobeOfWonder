@@ -206,7 +206,14 @@ export interface BoxBorderData {
  * Checks whether the object implements {@link BoxBorderData} interface
  */
 export function isBoxBorderData(object: unknown): object is BoxBorderData {
-  return (object as BoxBorderData).box_color !== undefined;
+  return (
+    (object as BoxBorderData).box_color !== undefined ||
+    (object as BoxBorderData).box_opacity !== undefined ||
+    (object as BoxBorderData).box_corner_radius !== undefined ||
+    (object as BoxBorderData).border_color !== undefined ||
+    (object as BoxBorderData).border_thickness !== undefined ||
+    (object as BoxBorderData).border_opacity !== undefined
+  );
 }
 
 /**
