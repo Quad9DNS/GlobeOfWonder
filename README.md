@@ -133,11 +133,12 @@ Available event data:
 | arc_animated                       | false                                             | If set to true, the arc will be constantly moving from start to end point. Has no effect on solid line type.                                         |
 | arc_draw_duration                  | 200                                               | Duration of arc drawing in milliseconds. The arc will be drawn from start to end and will also be removed from start to end in this duration.        |
 | arc_max_height                     | -                                                 | Arc height at its maximum in kilometers. If not defined, it will be roughly the half of haversine distance between the 2 points.                     |
+| graphs                             | []                                                | List of graphs (name from show_graph_command) this event should be included in. Value of "counter" field will be used to contribute to the graph.    |
 
 Available command data:
 | Key                                | Default value                                     | Description                                                                                                                                          |
 |------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type                               | - (required)                                      | Type of the command (clear_map_command, view_command, settings_command, show_textbox_command, play_sound_command)                                    |
+| type                               | - (required)                                      | Type of the command (clear_map_command, view_command, settings_command, show_textbox_command, show_graph_command, play_sound_command)                |
 | command_delay                      | -                                                 | Delay the execution of this command in ms (similar to draw_delay). Can be useful to precisely control commands                                       |
 | view_lat                           | - (required - view_command only)                  | Latitude of the new view position                                                                                                                    |
 | view_lon                           | - (required - view_command only)                  | Longitude of the new view position                                                                                                                   |
@@ -150,10 +151,10 @@ Available command data:
 | sound_set                          | - (required - play_sound_command only)            | List of soundset objects to be played (either sound_link or sound_pause) - sounds are played sequentially. Any failure stops the whole sequence      |
 | clear_types                        | []                                                | Event types to clear from the map. Use empty array to clear all types                                                                                |
 | clear_events                       | true                                              | Determines if the event counter should be updated after removing events from the map                                                                 |
-| top                                | - (required - show_textbox_command)               | Position of the top edge of the bounding box for the textbox                                                                                         |
-| right                              | - (required - show_textbox_command)               | Position of the right edge of the bounding box for the textbox                                                                                       |
-| bottom                             | - (required - show_textbox_command)               | Position of the bottom edge of the bounding box for the textbox                                                                                      |
-| left                               | - (required - show_textbox_command)               | Position of the left edge of the bounding box for the textbox                                                                                        |
+| top                                | - (required - show_textbox_command, show_graph_command)               | Position of the top edge of the bounding box for the textbox or graph                                                            |
+| right                              | - (required - show_textbox_command, show_graph_command)               | Position of the right edge of the bounding box for the textbox or graph                                                          |
+| bottom                             | - (required - show_textbox_command, show_graph_command)               | Position of the bottom edge of the bounding box for the textbox or graph                                                         |
+| left                               | - (required - show_textbox_command, show_graph_command)               | Position of the left edge of the bounding box for the textbox or graph                                                           |
 | box_color                          | transparent                                       | Background color of the textbox                                                                                                                      |
 | box_opacity                        | 100                                               | Opacity of the textbox (0-100)                                                                                                                       |
 | box_corner_radius                  | 0                                                 | Corner radius for rounding of the textbox                                                                                                            |
@@ -175,6 +176,31 @@ Available command data:
 | text_pointer_color                 | red                                               | Color of the pointer                                                                                                                                 |
 | text_pointer_opacity               | 100                                               | Opacity of the pointer (0-100)                                                                                                                       |
 | text_pointer_thickness             | 1                                                 | Thickness of the pointer in pixels                                                                                                                   |
+| name                               | - (required - show_graph_command only) | Name of the graph. Used to associate events with it.              |
+| grid_enabled                       | false                                  | Set to true to display grid on the graph.                         |
+| grid_style                         | -                                      | Pick a grid line style (solid, dashed_large, dashed_small, dots). |
+| grid_color                         | white                                  | Color for the grid.                                               |
+| graph_line_color                   | #dc205e                                | Color for the graph line.                                         |
+| graph_line_width                   | 1                                      | Width of the graph line in pixels.                                |
+| graph_filled                       | false                                  | If set to true, the area below the line will be filled.           |
+| graph_x_axis_labels_visible        | true                                   | Whether the labels on the X axis should be visible.               |
+| graph_x_axis_font                  | Quad9Sans                              | Font to use for labels on the X axis.                             |
+| graph_x_axis_font_size             | 10                                     | Font size to use for labels on the X axis.                        |
+| graph_x_axis_font_style            | -                                      | Can be defined to make the labels on the X axis bold or italic.   |
+| graph_y_axis_labels_visible        | true                                   | Whether the labels on the Y axis should be visible.               |
+| graph_y_axis_font                  | Quad9Sans                              | Font to use for labels on the Y axis.                             |
+| graph_y_axis_font_size             | 10                                     | Font size to use for labels on the Y axis.                        |
+| graph_y_axis_font_style            | -                                      | Can be defined to make the labels on the Y axis bold or italic.   |
+| graph_y_max                        | -                                      | Can be used to set a fixed maximum value on the graph.            |
+| graph_y_min                        | 0                                      | Can be used to set a fixed minimum value on the graph.            |
+| graph_y_segments                   | -                                      | Can be used to set the number of segments to split the Y axis in. |
+| graph_interval_duration            | 60                                     | Duration of segments on the X axis on the graph in seconds.       |
+| graph_intervals                    | -                                      | Number of intervals to show on graph. Default is no limit.        |
+| graph_transition_duration          | -                                      | Graph transition duration in milliseconds.                        |
+| graph_anchor_lat                   | -                                      | Latitude of the graph anchor, to show the graph around.           |
+| graph_anchor_lon                   | -                                      | Longitude of the graph anchor, to show the graph around.          |
+| graph_anchor_lat_offset_visibility | -                                      | Maximum allowed latitude offset of the current view from the anchor. If outside of this range, the graph will not be displayed.                             |
+| graph_anchor_lon_offset_visibility | -                                      | Maximum allowed longitude offset of the current view from the anchor. If outside of this range, the graph will not be displayed.                            |
 
 Available soundset object data:
 | Key                                | Default value                                     | Description                                                                                                                                          |
