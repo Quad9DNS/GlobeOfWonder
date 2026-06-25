@@ -217,8 +217,28 @@ export function setupOverlays(
             .attr("width", i.right - i.left)
             .attr("height", i.bottom - i.top);
 
-          let x = d3.scaleTime().range([0, i.right - i.left - 31]);
-          let y = d3.scaleLinear().range([i.bottom - i.top - 30, 0]);
+          const y_margin =
+            i.graph_x_axis_font_size !== undefined
+              ? i.graph_x_axis_font_size + 20
+              : 30;
+          let x_margin = 30;
+
+          if (i.graph_y_axis_font_size) {
+            const bitmap = document.createElement("canvas");
+            const g = bitmap.getContext("2d")!;
+            const fontSize = i.graph_y_axis_font_size ?? 24;
+            const text = "888M";
+            const font = i.graph_y_axis_font ?? "Quad9Sans";
+            const fontStyle = i.graph_y_axis_font_style ?? "";
+            const fontSpec = fontStyle + " " + fontSize + "px " + font;
+            g.font = fontSpec;
+            x_margin = g.measureText(text).width + 20;
+          }
+
+          let x = d3
+            .scaleTime()
+            .range([0, i.right - i.left - 2 * x_margin - 1]);
+          let y = d3.scaleLinear().range([i.bottom - i.top - 2 * y_margin, 0]);
 
           const build_axes = function (x, y) {
             let yAxisCall = d3
@@ -254,9 +274,9 @@ export function setupOverlays(
           const gy = svg
             .append("g")
             .attr("class", "yAxis")
-            .attr("transform", `translate(30, 0)`)
-            .attr("width", i.right - i.left - 31)
-            .attr("height", i.bottom - i.top - 30)
+            .attr("transform", `translate(${x_margin}, ${y_margin})`)
+            .attr("width", i.right - i.left - 2 * x_margin - 1)
+            .attr("height", i.bottom - i.top - 2 * y_margin)
             .call(yAxisCall);
 
           if (i.graph_y_axis_font !== undefined) {
@@ -271,9 +291,12 @@ export function setupOverlays(
           const gx = svg
             .append("g")
             .attr("class", "xAxis")
-            .attr("transform", `translate(30, ${i.bottom - i.top - 30})`)
-            .attr("width", i.right - i.left - 31)
-            .attr("height", i.bottom - i.top - 30)
+            .attr(
+              "transform",
+              `translate(${x_margin}, ${i.bottom - i.top - y_margin})`,
+            )
+            .attr("width", i.right - i.left - 2 * x_margin - 1)
+            .attr("height", i.bottom - i.top - 2 * y_margin)
             .call(xAxisCall);
           if (i.graph_x_axis_font !== undefined) {
             gx.attr("font-family", i.graph_x_axis_font);
@@ -291,8 +314,8 @@ export function setupOverlays(
             .append("rect")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("width", i.right - i.left)
-            .attr("height", i.bottom - i.top - 30);
+            .attr("width", i.right - i.left - 2 * x_margin)
+            .attr("height", i.bottom - i.top - 2 * y_margin);
 
           const line_color =
             "#" + (i.graph_line_color ?? QUAD9_COLOR).getHexString();
@@ -302,8 +325,8 @@ export function setupOverlays(
             .attr("fill", i.graph_filled ? line_color : "none")
             .attr("stroke", line_color)
             .attr("stroke-width", i.graph_line_width ?? 1)
-            .attr("margin-left", `30`)
-            .attr("transform", `translate(30, 0)`);
+            .attr("margin-left", `${x_margin}`)
+            .attr("transform", `translate(${x_margin}, -${y_margin})`);
 
           root.appendChild(svg.node()!);
 
@@ -410,7 +433,7 @@ export function setupOverlays(
                   .attr("class", "gridline")
                   .attr("x1", 0)
                   .attr("y1", 0)
-                  .attr("x2", i.right - i.left)
+                  .attr("x2", i.right - i.left - 2 * x_margin)
                   .attr("y2", 0)
                   .attr("stroke", color);
 
@@ -419,7 +442,7 @@ export function setupOverlays(
                   .append("line")
                   .attr("class", "gridline")
                   .attr("x1", 0)
-                  .attr("y1", -(i.bottom - i.top))
+                  .attr("y1", -(i.bottom - i.top - 2 * y_margin))
                   .attr("x2", 0)
                   .attr("y2", 0)
                   .attr("stroke", color);
