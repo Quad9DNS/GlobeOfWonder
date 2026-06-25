@@ -311,12 +311,27 @@ export function binarySearchReplaceAny<T extends ExpirableObject>(
   comparator: (left: T, right: T) => number,
   opts: { noReplace?: boolean; ascending?: boolean } = {},
 ) {
-  const pos = binarySearchAny(collection, item, comparator, opts);
-  collection.splice(
-    pos,
-    (opts.noReplace || collection.length) == 0 ? 0 : 1,
-    item,
-  );
+  let start = 0;
+  let end = collection.length - 1;
+
+  while (start <= end) {
+    const mid = (start + end) >> 1;
+
+    let comp = comparator(collection[mid], item);
+    if (opts.ascending) {
+      comp *= -1;
+    }
+    if (comp == 0) {
+      collection.splice(mid, opts.noReplace ? 0 : 1, item);
+      return;
+    } else if (comp < 0) {
+      start = mid + 1;
+    } else {
+      end = mid - 1;
+    }
+  }
+
+  collection.splice(start, 0, item);
 }
 
 /**
@@ -331,39 +346,6 @@ export function binarySearchReplace<T extends PointData>(
   opts: { noReplace?: boolean; ascending?: boolean } = {},
 ) {
   return binarySearchReplaceAny(collection, item, comparator, opts);
-}
-
-/**
- * Performs binary search of collection
- *
- * @param [comparator] comparator to use when sorting
- * @param [opts={}] additional options - `ascending` assumes ascending sort order
- */
-export function binarySearchAny<T>(
-  collection: T[],
-  item: T,
-  comparator: (left: T, right: T) => number,
-  opts: { ascending?: boolean } = {},
-): number {
-  let start = 0;
-  let end = collection.length - 1;
-
-  const mid = (start + end) >> 1;
-  while (start <= end) {
-    let comp = comparator(collection[mid], item);
-    if (opts.ascending) {
-      comp *= -1;
-    }
-    if (comp == 0) {
-      return mid;
-    } else if (comp < 0) {
-      start = mid + 1;
-    } else {
-      end = mid - 1;
-    }
-  }
-
-  return mid;
 }
 
 export function updateVisibilityForOverlay(
