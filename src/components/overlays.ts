@@ -221,17 +221,20 @@ export function setupOverlays(
           let y = d3.scaleLinear().range([i.bottom - i.top - 30, 0]);
 
           const build_axes = function (x, y) {
-            let yAxisCall = d3.axisLeft(y).tickFormat((val: number) => {
-              if (val >= 1e9) {
-                return `${(val / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
-              } else if (val >= 1e6) {
-                return `${(val / 1e6).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
-              } else if (val >= 1e3) {
-                return `${(val / 1e3).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
-              } else {
-                return val.toLocaleString();
-              }
-            });
+            let yAxisCall = d3
+              .axisLeft(y)
+              .ticks(i.graph_y_segments !== undefined ? i.graph_y_segments : 10)
+              .tickFormat((val: number) => {
+                if (val >= 1e9) {
+                  return `${(val / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+                } else if (val >= 1e6) {
+                  return `${(val / 1e6).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+                } else if (val >= 1e3) {
+                  return `${(val / 1e3).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
+                } else {
+                  return val.toLocaleString();
+                }
+              });
             let xAxisCall = d3
               .axisBottom(x)
               .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!);
@@ -255,6 +258,16 @@ export function setupOverlays(
             .attr("width", i.right - i.left - 31)
             .attr("height", i.bottom - i.top - 30)
             .call(yAxisCall);
+
+          if (i.graph_y_axis_font !== undefined) {
+            gy.attr("font-family", i.graph_y_axis_font);
+          }
+          if (i.graph_y_axis_font_size !== undefined) {
+            gy.attr("font-size", i.graph_y_axis_font_size);
+          }
+          if (i.graph_y_axis_font_style !== undefined) {
+            gy.attr("font-style", i.graph_y_axis_font_style);
+          }
           const gx = svg
             .append("g")
             .attr("class", "xAxis")
@@ -262,6 +275,15 @@ export function setupOverlays(
             .attr("width", i.right - i.left - 31)
             .attr("height", i.bottom - i.top - 30)
             .call(xAxisCall);
+          if (i.graph_x_axis_font !== undefined) {
+            gx.attr("font-family", i.graph_x_axis_font);
+          }
+          if (i.graph_x_axis_font_size !== undefined) {
+            gx.attr("font-size", i.graph_x_axis_font_size);
+          }
+          if (i.graph_x_axis_font_style !== undefined) {
+            gx.attr("font-style", i.graph_x_axis_font_style);
+          }
 
           svg
             .append("clipPath")
@@ -270,7 +292,7 @@ export function setupOverlays(
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", i.right - i.left)
-            .attr("height", i.bottom - i.top);
+            .attr("height", i.bottom - i.top - 30);
 
           const line_color =
             "#" + (i.graph_line_color ?? QUAD9_COLOR).getHexString();
@@ -315,7 +337,7 @@ export function setupOverlays(
                   return val;
                 }) ?? 0;
               y = y.domain([
-                0,
+                i.graph_y_min !== undefined ? i.graph_y_min : 0,
                 i.graph_y_max !== undefined ? i.graph_y_max : y_max,
               ]);
 

@@ -134,8 +134,12 @@ const FLOAT_KEYS = [
   "scroll_speed",
   "graph_line_width",
   "graph_y_max",
+  "graph_y_min",
+  "graph_y_segments",
   "graph_interval_duration",
   "graph_transition_duration",
+  "graph_x_axis_font_size",
+  "graph_y_axis_font_size",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left", "graph_intervals"];
 
