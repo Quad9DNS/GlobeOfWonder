@@ -113,14 +113,14 @@ export function setupOverlays(
         }
 
         if (i instanceof TextboxData) {
-          if (i.text == undefined) {
-            const index = indicators.findIndex(
-              (val) =>
-                val.data instanceof TextboxData &&
-                boxesEqual(val.data as TextboxData, i),
-            );
-            if (index !== -1) {
-              indicators.splice(index, 1);
+          const index = indicators.findIndex(
+            (val) =>
+              val.data instanceof TextboxData &&
+              boxesEqual(val.data as TextboxData, i),
+          );
+          if (index !== -1) {
+            indicators.splice(index, 1);
+            if (i.text == undefined) {
               return;
             }
           }
@@ -191,18 +191,23 @@ export function setupOverlays(
             }
           }
         } else if (i instanceof GraphData) {
-          if (i.name == undefined) {
-            const index = indicators.findIndex(
-              (val) =>
-                val.data instanceof GraphData &&
-                boxesEqual(val.data as GraphData, i),
-            );
-            if (index !== -1) {
-              indicators.splice(index, 1);
-              if (i.subscription !== undefined) {
-                unsubscribeFromGraph(i.subscription);
+          const index = indicators.findIndex(
+            (val) =>
+              val.data instanceof GraphData &&
+              boxesEqual(val.data as GraphData, i),
+          );
+          if (index !== -1) {
+            const removed = indicators.splice(index, 1);
+            if (removed.length > 0) {
+              const removed_i = removed[0];
+              if (removed_i.data instanceof GraphData) {
+                if (removed_i.data.subscription !== undefined) {
+                  unsubscribeFromGraph(removed_i.data.subscription);
+                }
               }
             }
+          }
+          if (i.name == undefined) {
             return;
           }
 
@@ -216,7 +221,17 @@ export function setupOverlays(
           let y = d3.scaleLinear().range([i.bottom - i.top - 30, 0]);
 
           const build_axes = function (x, y) {
-            let yAxisCall = d3.axisLeft(y);
+            let yAxisCall = d3.axisLeft(y).tickFormat((val: number) => {
+              if (val >= 1e9) {
+                return `${(val / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
+              } else if (val >= 1e6) {
+                return `${(val / 1e6).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+              } else if (val >= 1e3) {
+                return `${(val / 1e3).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
+              } else {
+                return val.toLocaleString();
+              }
+            });
             let xAxisCall = d3
               .axisBottom(x)
               .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!);
@@ -248,10 +263,20 @@ export function setupOverlays(
             .attr("height", i.bottom - i.top - 30)
             .call(xAxisCall);
 
+          svg
+            .append("clipPath")
+            .attr("id", "chart-area")
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", i.right - i.left)
+            .attr("height", i.bottom - i.top);
+
           const line_color =
             "#" + (i.graph_line_color ?? QUAD9_COLOR).getHexString();
           const path = svg
             .append("path")
+            .attr("clip-path", "url(#chart-area)")
             .attr("fill", i.graph_filled ? line_color : "none")
             .attr("stroke", line_color)
             .attr("stroke-width", i.graph_line_width ?? 1)
