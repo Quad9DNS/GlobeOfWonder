@@ -5,7 +5,7 @@
 	{
 		"type": "show_textbox_command",
 		"text": "Demonstrates complex events orchestration,\nautomatic settings and map control.\nClick here to go to the next demo.",
-		"link_url": "?dataDownloadUrl=assets/data/demo1.json",
+		"link_url": "?dataDownloadUrl=assets/data/demo5.json",
 		"new_window": false,
 		"top": 300
 	},
