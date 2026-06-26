@@ -41,6 +41,7 @@ export interface GraphCustomizationData {
   readonly graph_y_max?: number;
   readonly graph_y_min?: number;
   readonly graph_y_segments?: number;
+  readonly graph_missing_point_value?: number;
   readonly graph_interval_duration?: number;
   readonly graph_intervals?: number;
   readonly graph_transition_duration?: number;
@@ -156,6 +157,10 @@ export class GraphData
 
   public get graph_y_segments(): number | undefined {
     return this.additional_data.graph_y_segments;
+  }
+
+  public get graph_missing_point_value(): number | undefined {
+    return this.additional_data.graph_missing_point_value;
   }
 
   public get graph_interval_duration(): number | undefined {
