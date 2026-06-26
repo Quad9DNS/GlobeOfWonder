@@ -194,6 +194,7 @@ Available command data:
 | graph_y_max                        | -                                      | Can be used to set a fixed maximum value on the graph.            |
 | graph_y_min                        | 0                                      | Can be used to set a fixed minimum value on the graph.            |
 | graph_y_segments                   | -                                      | Can be used to set the number of segments to split the Y axis in. |
+| graph_missing_point_value          | -                                      | If defined fills graph with this value where points are missing.  |
 | graph_interval_duration            | 60                                     | Duration of segments on the X axis on the graph in seconds.       |
 | graph_intervals                    | -                                      | Number of intervals to show on graph. Default is no limit.        |
 | graph_transition_duration          | -                                      | Graph transition duration in milliseconds.                        |

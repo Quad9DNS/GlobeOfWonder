@@ -109,7 +109,19 @@ export function subscribeToGraph(
         mapAndFilter(events, { sortedByLifetime: true });
         const currentTime = Date.now();
         const toRemove = new Set<number>();
+        let remove = false;
         for (const time of points.keys()) {
+          // Removing only when sufficient items to be removed are there, to prevent too many graph updates
+          if (
+            time <
+            Math.floor(
+              (Math.floor(currentTime / conf.bucket_size) -
+                conf.bucket_count * 2) *
+                conf.bucket_size,
+            )
+          ) {
+            remove = true;
+          }
           if (
             time <
             Math.floor(
@@ -120,8 +132,10 @@ export function subscribeToGraph(
             toRemove.add(time);
           }
         }
-        for (const time of toRemove) {
-          points.delete(time);
+        if (remove) {
+          for (const time of toRemove) {
+            points.delete(time);
+          }
         }
       }
       callbackfn(points);

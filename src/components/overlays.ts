@@ -389,14 +389,21 @@ export function setupOverlays(
                 gy.call(yAxisCall);
               }
 
-              const original_points: [number, number][] = [];
+              let original_points: [number, number][] = [];
 
-              for (
-                let x = x_extent[0];
-                x <= x_extent[1];
-                x += 1000 * (i.graph_interval_duration ?? 60)
-              ) {
-                original_points.push([x, points.get(x) ?? 0]);
+              if (i.graph_missing_point_value !== undefined) {
+                for (
+                  let x = x_extent[0];
+                  x <= x_extent[1];
+                  x += 1000 * (i.graph_interval_duration ?? 60)
+                ) {
+                  original_points.push([
+                    x,
+                    points.get(x) ?? i.graph_missing_point_value,
+                  ]);
+                }
+              } else {
+                original_points = [...points.entries()];
               }
               original_points.sort();
 
