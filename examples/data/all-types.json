@@ -32,15 +32,45 @@
 		"scroll_direction": "rtl"
 	},
 	{
+		"type": "show_graph_command",
+		"command_delay": 0,
+		"left": 50,
+		"top": 300,
+		"right": 500,
+		"bottom": 600,
+		"border_color": "white",
+		"box_corner_radius": 30,
+		"name": "test_graph",
+		"graph_anchor_lat": 45,
+		"graph_anchor_lon": 15,
+		"graph_anchor_lon_offset_visibility": 30,
+		"graph_anchor_lat_offset_visibility": 30,
+		"graph_intervals": 20,
+		"graph_line_width": 5,
+		"graph_y_max": 50,
+		"graph_y_segments": 10,
+		"graph_interval_duration": 10,
+		"graph_transition_duration": 500,
+		"grid_enabled": true,
+		"grid_color": "white",
+		"grid_style": "dashed_small"
+	},
+	{
 		"type": "circle",
 		"lat": 50,
 		"lon": 5,
+		"graphs": [
+			"test_graph"
+		],
 		"circle_radius": 100
 	},
 	{
 		"type": "pointer",
 		"lat": 50,
 		"lon": 30,
+		"graphs": [
+			"test_graph"
+		],
 		"display_text": "Click here to go to\nthe Globe of Wonder GitHub page!",
 		"link_url": "https://github.com/Quad9DNS/globeofwonder"
 	},
@@ -48,6 +78,9 @@
 		"type": "pointer",
 		"lat": 55,
 		"lon": 35,
+		"graphs": [
+			"test_graph"
+		],
 		"display_text": "Test label on hover only",
 		"display_text_hover_only": true
 	},
@@ -55,6 +88,9 @@
 		"type": "explosion",
 		"lat": 30,
 		"lon": 15,
+		"graphs": [
+			"test_graph"
+		],
 		"ttl": 10000,
 		"counter": 20,
 		"draw_delay": 5000
@@ -63,6 +99,9 @@
 		"type": "bar",
 		"lat": 40,
 		"lon": -5,
+		"graphs": [
+			"test_graph"
+		],
 		"bar_height": 1000
 	},
 	{
@@ -70,6 +109,9 @@
 		"lat": 30,
 		"lon": 15,
 		"ttl": 10000,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 5000,
 		"point2_lat": 50,
 		"point2_lon": 5,
@@ -79,6 +121,9 @@
 		"type": "downloaded",
 		"lat": 40,
 		"lon": 10,
+		"graphs": [
+			"test_graph"
+		],
 		"downloaded_object_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
 		"downloaded_object_scale": 2,
 		"hover_text": "Click here to open wikipedia",
@@ -88,6 +133,9 @@
 		"type": "downloaded",
 		"lat": 50,
 		"lon": 20,
+		"graphs": [
+			"test_graph"
+		],
 		"downloaded_object_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
 		"downloaded_object_scale": 2,
 		"hover_text": "Listen to the sound",
