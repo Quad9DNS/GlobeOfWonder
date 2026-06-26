@@ -119,7 +119,8 @@ export function setupOverlays(
               boxesEqual(val.data as TextboxData, i),
           );
           if (index !== -1) {
-            indicators.splice(index, 1);
+            const indicator = indicators.splice(index, 1)[0];
+            indicator.element.remove();
             if (i.text == undefined) {
               return;
             }
@@ -197,13 +198,11 @@ export function setupOverlays(
               boxesEqual(val.data as GraphData, i),
           );
           if (index !== -1) {
-            const removed = indicators.splice(index, 1);
-            if (removed.length > 0) {
-              const removed_i = removed[0];
-              if (removed_i.data instanceof GraphData) {
-                if (removed_i.data.subscription !== undefined) {
-                  unsubscribeFromGraph(removed_i.data.subscription);
-                }
+            const removed = indicators.splice(index, 1)[0];
+            removed.element.remove();
+            if (removed.data instanceof GraphData) {
+              if (removed.data.subscription !== undefined) {
+                unsubscribeFromGraph(removed.data.subscription);
               }
             }
           }
