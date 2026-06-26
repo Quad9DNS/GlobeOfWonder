@@ -330,7 +330,7 @@ export function setupOverlays(
             .attr("stroke", line_color)
             .attr("stroke-width", i.graph_line_width ?? 1)
             .attr("margin-left", `${x_margin}`)
-            .attr("transform", `translate(${x_margin}, -${y_margin})`);
+            .attr("transform", `translate(${x_margin}, ${y_margin})`);
 
           root.appendChild(svg.node()!);
 
@@ -389,14 +389,25 @@ export function setupOverlays(
                 gy.call(yAxisCall);
               }
 
+              const original_points: [number, number][] = [];
+
+              for (
+                let x = x_extent[0];
+                x <= x_extent[1];
+                x += 1000 * (i.graph_interval_duration ?? 60)
+              ) {
+                original_points.push([x, points.get(x) ?? 0]);
+              }
+              original_points.sort();
+
               let datum = function* () {
-                yield* [...points.entries()].sort();
+                yield* original_points;
               };
               if (i.graph_filled) {
                 const last = Math.max(...points.keys());
                 const first = Math.min(...points.keys());
                 datum = function* () {
-                  yield* [...points.entries()].sort();
+                  yield* original_points;
                   yield [last, 0];
                   yield [first, 0];
                 };
