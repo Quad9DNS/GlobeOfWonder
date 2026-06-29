@@ -294,6 +294,7 @@ export function setupOverlays(
           if (i.graph_y_axis_font_style !== undefined) {
             gy.attr("font-style", i.graph_y_axis_font_style);
           }
+
           const gx = svg
             .append("g")
             .attr("class", "xAxis")
@@ -395,6 +396,39 @@ export function setupOverlays(
               } else {
                 gx.call(xAxisCall);
                 gy.call(yAxisCall);
+              }
+
+              if (i.graph_y_axis_font_color !== undefined) {
+                gy.selectAll("text").style(
+                  "stroke",
+                  "#" + i.graph_y_axis_font_color.getHexString(),
+                );
+              }
+              if (i.graph_y_axis_color !== undefined) {
+                gy.selectAll("path").style(
+                  "stroke",
+                  "#" + i.graph_y_axis_color.getHexString(),
+                );
+                gy.selectAll("line").style(
+                  "stroke",
+                  "#" + i.graph_y_axis_color.getHexString(),
+                );
+              }
+              if (i.graph_x_axis_font_color !== undefined) {
+                gx.selectAll("text").style(
+                  "stroke",
+                  "#" + i.graph_x_axis_font_color.getHexString(),
+                );
+              }
+              if (i.graph_x_axis_color !== undefined) {
+                gx.selectAll("path").style(
+                  "stroke",
+                  "#" + i.graph_x_axis_color.getHexString(),
+                );
+                gx.selectAll("line").style(
+                  "stroke",
+                  "#" + i.graph_x_axis_color.getHexString(),
+                );
               }
 
               let original_points: [number, number][] = [];

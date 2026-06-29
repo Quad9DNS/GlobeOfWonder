@@ -30,14 +30,18 @@ export interface GraphCustomizationData {
   readonly graph_line_color?: THREE.Color;
   readonly graph_line_width?: number;
   readonly graph_filled?: boolean;
+  readonly graph_x_axis_color?: THREE.Color;
   readonly graph_x_axis_labels_visible?: boolean;
   readonly graph_x_axis_font?: string;
   readonly graph_x_axis_font_size?: number;
   readonly graph_x_axis_font_style?: string;
+  readonly graph_x_axis_font_color?: THREE.Color;
+  readonly graph_y_axis_color?: THREE.Color;
   readonly graph_y_axis_labels_visible?: boolean;
   readonly graph_y_axis_font?: string;
   readonly graph_y_axis_font_size?: number;
   readonly graph_y_axis_font_style?: string;
+  readonly graph_y_axis_font_color?: THREE.Color;
   readonly graph_y_max?: number;
   readonly graph_y_min?: number;
   readonly graph_y_segments?: number;
@@ -115,6 +119,10 @@ export class GraphData
     return this.additional_data.graph_filled;
   }
 
+  public get graph_x_axis_color(): THREE.Color | undefined {
+    return this.additional_data.graph_x_axis_color;
+  }
+
   public get graph_x_axis_labels_visible(): boolean | undefined {
     return this.additional_data.graph_x_axis_labels_visible;
   }
@@ -131,6 +139,14 @@ export class GraphData
     return this.additional_data.graph_x_axis_font_style;
   }
 
+  public get graph_x_axis_font_color(): THREE.Color | undefined {
+    return this.additional_data.graph_x_axis_font_color;
+  }
+
+  public get graph_y_axis_color(): THREE.Color | undefined {
+    return this.additional_data.graph_y_axis_color;
+  }
+
   public get graph_y_axis_labels_visible(): boolean | undefined {
     return this.additional_data.graph_y_axis_labels_visible;
   }
@@ -145,6 +161,10 @@ export class GraphData
 
   public get graph_y_axis_font_style(): string | undefined {
     return this.additional_data.graph_y_axis_font_style;
+  }
+
+  public get graph_y_axis_font_color(): THREE.Color | undefined {
+    return this.additional_data.graph_y_axis_font_color;
   }
 
   public get graph_y_max(): number | undefined {

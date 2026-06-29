@@ -183,21 +183,25 @@ Available command data:
 | graph_line_color                   | #dc205e                                | Color for the graph line.                                         |
 | graph_line_width                   | 1                                      | Width of the graph line in pixels.                                |
 | graph_filled                       | false                                  | If set to true, the area below the line will be filled.           |
+| graph_x_axis_color                 | white                                  | Color to use for the X axis (line only).                          |
 | graph_x_axis_labels_visible        | true                                   | Whether the labels on the X axis should be visible.               |
 | graph_x_axis_font                  | Quad9Sans                              | Font to use for labels on the X axis.                             |
 | graph_x_axis_font_size             | 10                                     | Font size to use for labels on the X axis.                        |
 | graph_x_axis_font_style            | -                                      | Can be defined to make the labels on the X axis bold or italic.   |
+| graph_x_axis_font_color            | white                                  | Color for the X axis labels.                   |
+| graph_y_axis_color                 | white                                  | Color to use for the Y axis (line only).                          |
 | graph_y_axis_labels_visible        | true                                   | Whether the labels on the Y axis should be visible.               |
 | graph_y_axis_font                  | Quad9Sans                              | Font to use for labels on the Y axis.                             |
 | graph_y_axis_font_size             | 10                                     | Font size to use for labels on the Y axis.                        |
 | graph_y_axis_font_style            | -                                      | Can be defined to make the labels on the Y axis bold or italic.   |
+| graph_y_axis_font_color            | white                                  | Color for the Y axis labels.                   |
 | graph_y_max                        | -                                      | Can be used to set a fixed maximum value on the graph.            |
 | graph_y_min                        | 0                                      | Can be used to set a fixed minimum value on the graph.            |
 | graph_y_segments                   | -                                      | Can be used to set the number of segments to split the Y axis in. |
 | graph_missing_point_value          | -                                      | If defined fills graph with this value where points are missing.  |
 | graph_interval_duration            | 60                                     | Duration of segments on the X axis on the graph in seconds.       |
 | graph_intervals                    | -                                      | Number of intervals to show on graph. Default is no limit.        |
-| graph_transition_duration          | -                                      | Graph transition duration in milliseconds.                        |
+| graph_transition_duration          | - (instant transitions)                | Graph transition duration in milliseconds.                        |
 | graph_anchor_lat                   | -                                      | Latitude of the graph anchor, to show the graph around.           |
 | graph_anchor_lon                   | -                                      | Longitude of the graph anchor, to show the graph around.          |
 | graph_anchor_lat_offset_visibility | -                                      | Maximum allowed latitude offset of the current view from the anchor. If outside of this range, the graph will not be displayed.                             |
