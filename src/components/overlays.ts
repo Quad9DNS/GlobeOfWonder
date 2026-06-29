@@ -81,32 +81,35 @@ export function setupOverlays(
             boxColor = "#" + i.box_color.getHexString();
           }
           overlayContainer.innerHTML = `
-          <div id="overlaybox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute; background-color: ${boxColor};">
+          <div id="overlaybox" style="top: ${i.top}px; bottom: ${bottom}px; left: ${i.left}px; right: ${right}px; position: absolute;">
+            <div id="overlayboxbg" style="height: ${i.bottom - i.top}px; width: ${i.right - i.left}px; position: absolute; z-index: -1; background-color: ${boxColor};">
+            </div>
           </div>
           `;
 
           const root = overlayContainer.children[0] as HTMLElement;
+          const box_bg = root.children[0] as HTMLElement;
           if (isBoxBorderData(i)) {
             if (i.box_opacity != undefined) {
-              root.style.opacity = `${i.box_opacity}%`;
+              box_bg.style.opacity = `${i.box_opacity}%`;
             }
 
             if (i.box_corner_radius != undefined) {
-              root.style.borderRadius = `${i.box_corner_radius}px`;
+              box_bg.style.borderRadius = `${i.box_corner_radius}px`;
             }
 
             if (i.border_color != undefined) {
-              root.style.borderStyle = "solid";
+              box_bg.style.borderStyle = "solid";
               if (i.border_opacity != undefined) {
-                root.style.borderColor =
+                box_bg.style.borderColor =
                   "#" +
                   i.border_color.getHexString() +
                   (i.border_opacity * 2.55).toString(16);
               } else {
-                root.style.borderColor = "#" + i.border_color.getHexString();
+                box_bg.style.borderColor = "#" + i.border_color.getHexString();
               }
               if (i.border_thickness != undefined) {
-                root.style.borderWidth = `${i.border_thickness}px`;
+                box_bg.style.borderWidth = `${i.border_thickness}px`;
               }
             }
           }
