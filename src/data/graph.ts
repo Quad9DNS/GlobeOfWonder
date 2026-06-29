@@ -18,6 +18,8 @@ import { Subscription } from "../service/graph";
 import { GraphEvent } from "../service/state";
 
 export type GraphGridType = "solid" | "dashed_large" | "dashed_small" | "dots";
+export type GraphPlacement = "top" | "bottom" | "left" | "right";
+export type GraphAlignment = "start" | "middle" | "end";
 
 /**
  * Additional data that can be used to customize textboxes
@@ -30,14 +32,25 @@ export interface GraphCustomizationData {
   readonly graph_line_color?: THREE.Color;
   readonly graph_line_width?: number;
   readonly graph_filled?: boolean;
+  readonly graph_label?: string;
+  readonly graph_label_placement?: GraphPlacement;
+  readonly graph_label_alignment?: GraphAlignment;
+  readonly graph_label_font?: string;
+  readonly graph_label_font_size?: number;
+  readonly graph_label_font_style?: string;
+  readonly graph_label_font_color?: THREE.Color;
+  readonly graph_help_text?: string;
+  readonly graph_help_button_color?: THREE.Color;
   readonly graph_x_axis_color?: THREE.Color;
   readonly graph_x_axis_labels_visible?: boolean;
+  readonly graph_x_axis_label?: string;
   readonly graph_x_axis_font?: string;
   readonly graph_x_axis_font_size?: number;
   readonly graph_x_axis_font_style?: string;
   readonly graph_x_axis_font_color?: THREE.Color;
   readonly graph_y_axis_color?: THREE.Color;
   readonly graph_y_axis_labels_visible?: boolean;
+  readonly graph_y_axis_label?: string;
   readonly graph_y_axis_font?: string;
   readonly graph_y_axis_font_size?: number;
   readonly graph_y_axis_font_style?: string;
@@ -119,12 +132,52 @@ export class GraphData
     return this.additional_data.graph_filled;
   }
 
+  public get graph_label(): string | undefined {
+    return this.additional_data.graph_label;
+  }
+
+  public get graph_label_placement(): GraphPlacement | undefined {
+    return this.additional_data.graph_label_placement;
+  }
+
+  public get graph_label_alignment(): GraphAlignment | undefined {
+    return this.additional_data.graph_label_alignment;
+  }
+
+  public get graph_label_font(): string | undefined {
+    return this.additional_data.graph_label_font;
+  }
+
+  public get graph_label_font_size(): number | undefined {
+    return this.additional_data.graph_label_font_size;
+  }
+
+  public get graph_label_font_style(): string | undefined {
+    return this.additional_data.graph_label_font_style;
+  }
+
+  public get graph_label_font_color(): THREE.Color | undefined {
+    return this.additional_data.graph_label_font_color;
+  }
+
+  public get graph_help_text(): string | undefined {
+    return this.additional_data.graph_help_text;
+  }
+
+  public get graph_help_button_color(): THREE.Color | undefined {
+    return this.additional_data.graph_help_button_color;
+  }
+
   public get graph_x_axis_color(): THREE.Color | undefined {
     return this.additional_data.graph_x_axis_color;
   }
 
   public get graph_x_axis_labels_visible(): boolean | undefined {
     return this.additional_data.graph_x_axis_labels_visible;
+  }
+
+  public get graph_x_axis_label(): string | undefined {
+    return this.additional_data.graph_x_axis_label;
   }
 
   public get graph_x_axis_font(): string | undefined {
@@ -149,6 +202,10 @@ export class GraphData
 
   public get graph_y_axis_labels_visible(): boolean | undefined {
     return this.additional_data.graph_y_axis_labels_visible;
+  }
+
+  public get graph_y_axis_label(): string | undefined {
+    return this.additional_data.graph_y_axis_label;
   }
 
   public get graph_y_axis_font(): string | undefined {
