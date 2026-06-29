@@ -4,7 +4,7 @@ import { Settings } from "../settings";
 import { AppState, GraphEvent } from "./state";
 
 export interface Subscription {
-  callbackfn: (points: Map<number, number>) => void;
+  callbackfn: (points: Map<number, number>, removedOld: boolean) => void;
   graph: string;
   done: boolean;
 }
@@ -76,7 +76,7 @@ function updateEvents(newEventsQueue: GraphEvent[]) {
 export function subscribeToGraph(
   graph: string,
   config: GraphConfig,
-  callbackfn: (points: Map<number, number>) => void,
+  callbackfn: (points: Map<number, number>, removedOld: boolean) => void,
 ): Subscription {
   if (!graphEvents.has(graph)) {
     graphEvents.set(graph, [config, [], new Map()]);
@@ -105,11 +105,11 @@ export function subscribeToGraph(
     const grp = graphEvents.get(graph);
     if (grp !== undefined) {
       const [conf, events, points] = grp;
+      let remove = false;
       if (conf.bucket_count !== undefined) {
         mapAndFilter(events, { sortedByLifetime: true });
         const currentTime = Date.now();
         const toRemove = new Set<number>();
-        let remove = false;
         for (const time of points.keys()) {
           // Removing only when sufficient items to be removed are there, to prevent too many graph updates
           if (
@@ -138,7 +138,7 @@ export function subscribeToGraph(
           }
         }
       }
-      callbackfn(points);
+      callbackfn(points, remove);
     }
     if (!subscription.done) {
       setTimeout(
@@ -162,7 +162,7 @@ export function subscribeToGraph(
   const grp = graphEvents.get(graph);
   if (grp !== undefined) {
     const [_conf, _events, points] = grp;
-    callbackfn(points);
+    callbackfn(points, false);
   }
   return subscription;
 }

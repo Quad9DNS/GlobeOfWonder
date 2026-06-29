@@ -337,7 +337,7 @@ export function setupOverlays(
           subscribeToGraph(
             i.name,
             { bucket_size: bucket_size, bucket_count: i.graph_intervals },
-            (points: Map<number, number>) => {
+            (points: Map<number, number>, removedOld: boolean) => {
               let x_extent = [0, 0];
               if (i.graph_intervals !== undefined) {
                 x_extent = [
@@ -382,7 +382,7 @@ export function setupOverlays(
               ]);
 
               const [xAxisCall, yAxisCall] = build_axes(x, y);
-              if (i.graph_transition_duration !== undefined) {
+              if (i.graph_transition_duration !== undefined && !removedOld) {
                 gx.transition()
                   .duration(i.graph_transition_duration)
                   .call(xAxisCall);
@@ -425,7 +425,8 @@ export function setupOverlays(
                 };
               }
               const path_d = path.datum(datum);
-              if (i.graph_transition_duration !== undefined) {
+              // Disable transitions when removing old points, to prevent weird animations
+              if (i.graph_transition_duration !== undefined && !removedOld) {
                 path_d
                   .transition()
                   .duration(i.graph_transition_duration)
