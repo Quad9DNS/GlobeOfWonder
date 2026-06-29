@@ -140,6 +140,7 @@ const FLOAT_KEYS = [
   "graph_transition_duration",
   "graph_x_axis_font_size",
   "graph_y_axis_font_size",
+  "graph_label_font_size",
 ];
 const INTEGER_KEYS = ["top", "right", "bottom", "left", "graph_intervals"];
 

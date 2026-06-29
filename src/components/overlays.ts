@@ -10,11 +10,15 @@ import { ExpirableObject } from "../data/expirable";
 import { IndicatorData } from "../data/indicator";
 import { TextboxData } from "../data/textbox";
 import { AppState } from "../service/state";
-import { Settings } from "../settings";
+import { Settings, SettingsChangedEvent } from "../settings";
 import { GraphData } from "../data/graph";
 import { subscribeToGraph, unsubscribeFromGraph } from "../service/graph";
 import * as d3 from "d3";
+import * as THREE from "three";
 import { QUAD9_COLOR } from "../globe/common";
+import QuestionMark from "../question_mark.svg?url";
+import QuestionMarkDark from "../question_mark_dark.svg?url";
+import { registerInfoDialog } from "./info_dialog";
 
 class IndicatorPair implements ExpirableObject {
   data: IndicatorData;
@@ -46,7 +50,7 @@ class IndicatorPair implements ExpirableObject {
 export function setupOverlays(
   appContainer: HTMLElement,
   state: AppState,
-  _settings: Settings,
+  settings: Settings,
 ) {
   const overlaysContainer = document.createElement("div");
   overlaysContainer.setAttribute("id", "overlays-container");
@@ -219,13 +223,29 @@ export function setupOverlays(
             .attr("width", i.right - i.left)
             .attr("height", i.bottom - i.top);
 
-          const y_margin =
+          const label = i.graph_label;
+          let label_placement = undefined;
+
+          if (label !== undefined) {
+            switch (i.graph_label_placement) {
+              case "bottom":
+              case "left":
+              case "right":
+              case "top":
+                label_placement = i.graph_label_placement;
+                break;
+              default:
+                label_placement = "top";
+            }
+          }
+
+          let y_margin =
             i.graph_x_axis_font_size !== undefined
               ? i.graph_x_axis_font_size + 20
               : 30;
           let x_margin = 30;
 
-          if (i.graph_y_axis_font_size) {
+          if (i.graph_y_axis_font_size !== undefined) {
             const bitmap = document.createElement("canvas");
             const g = bitmap.getContext("2d")!;
             const fontSize = i.graph_y_axis_font_size ?? 24;
@@ -235,6 +255,32 @@ export function setupOverlays(
             const fontSpec = fontStyle + " " + fontSize + "px " + font;
             g.font = fontSpec;
             x_margin = g.measureText(text).width + 20;
+          }
+
+          let label_margin = 30;
+          if (i.graph_label_font_size !== undefined) {
+            const bitmap = document.createElement("canvas");
+            const g = bitmap.getContext("2d")!;
+            const fontSize = i.graph_label_font_size ?? 24;
+            const text = "888M";
+            const font = i.graph_label_font ?? "Quad9Sans";
+            const fontStyle = i.graph_label_font_style ?? "";
+            const fontSpec = fontStyle + " " + fontSize + "px " + font;
+            g.font = fontSpec;
+            label_margin = g.measureText(text).width + 20;
+          }
+
+          if (i.graph_x_axis_label !== undefined) {
+            y_margin += y_margin + 10;
+          }
+          if (i.graph_y_axis_label !== undefined) {
+            x_margin += x_margin + 10;
+          }
+          if (label_placement == "bottom") {
+            y_margin += label_margin + 10;
+          }
+          if (label_placement == "right") {
+            x_margin += label_margin + 10;
           }
 
           let x = d3
@@ -285,14 +331,32 @@ export function setupOverlays(
             .attr("height", i.bottom - i.top - 2 * y_margin)
             .call(yAxisCall);
 
-          if (i.graph_y_axis_font !== undefined) {
-            gy.attr("font-family", i.graph_y_axis_font);
-          }
-          if (i.graph_y_axis_font_size !== undefined) {
-            gy.attr("font-size", i.graph_y_axis_font_size);
-          }
-          if (i.graph_y_axis_font_style !== undefined) {
-            gy.attr("font-style", i.graph_y_axis_font_style);
+          applyGraphFontStyle(
+            gy,
+            i.graph_y_axis_font,
+            i.graph_y_axis_font_size,
+            i.graph_y_axis_font_style,
+            undefined,
+          );
+
+          if (i.graph_y_axis_label !== undefined) {
+            const ylabel = svg
+              .append("text")
+              .attr("class", "ylabel")
+              .attr("text-anchor", "middle")
+              .attr("x", -(i.bottom - i.top) / 2)
+              .attr("y", x_margin / (label_placement == "left" ? 3 : 2))
+              .attr("width", i.bottom - i.top - 2 * y_margin)
+              .attr("transform", "rotate(-90)")
+              .text(i.graph_y_axis_label);
+
+            applyGraphFontStyle(
+              ylabel,
+              i.graph_y_axis_font,
+              i.graph_y_axis_font_size,
+              i.graph_y_axis_font_style,
+              i.graph_y_axis_font_color,
+            );
           }
 
           const gx = svg
@@ -305,14 +369,101 @@ export function setupOverlays(
             .attr("width", i.right - i.left - 2 * x_margin - 1)
             .attr("height", i.bottom - i.top - 2 * y_margin)
             .call(xAxisCall);
-          if (i.graph_x_axis_font !== undefined) {
-            gx.attr("font-family", i.graph_x_axis_font);
+          applyGraphFontStyle(
+            gx,
+            i.graph_x_axis_font,
+            i.graph_x_axis_font_size,
+            i.graph_x_axis_font_style,
+            undefined,
+          );
+
+          if (i.graph_x_axis_label !== undefined) {
+            const xlabel = svg
+              .append("text")
+              .attr("class", "xlabel")
+              .attr("text-anchor", "middle")
+              .attr("x", (i.right - i.left) / 2)
+              .attr(
+                "y",
+                i.bottom -
+                  i.top -
+                  y_margin / (label_placement == "bottom" ? 1.5 : 2) +
+                  10,
+              )
+              .attr("width", i.right - i.left - 2 * x_margin)
+              .text(i.graph_x_axis_label);
+            applyGraphFontStyle(
+              xlabel,
+              i.graph_x_axis_font,
+              i.graph_x_axis_font_size,
+              i.graph_x_axis_font_style,
+              i.graph_x_axis_font_color ?? new THREE.Color("white"),
+            );
           }
-          if (i.graph_x_axis_font_size !== undefined) {
-            gx.attr("font-size", i.graph_x_axis_font_size);
-          }
-          if (i.graph_x_axis_font_style !== undefined) {
-            gx.attr("font-style", i.graph_x_axis_font_style);
+
+          if (label !== undefined) {
+            const aligment = i.graph_label_alignment ?? "middle";
+            const graphlabel = svg
+              .append("text")
+              .attr("class", "graphlabel")
+              .attr("text-anchor", aligment)
+              .text(label);
+            switch (label_placement) {
+              case "top":
+              case "bottom":
+                graphlabel.attr("width", i.right - i.left - 2 * x_margin);
+                switch (aligment) {
+                  case "start":
+                    graphlabel.attr("x", x_margin);
+                    break;
+                  case "middle":
+                    graphlabel.attr("x", (i.right - i.left) / 2);
+                    break;
+                  case "end":
+                    graphlabel.attr("x", i.right - i.left - x_margin);
+                }
+                break;
+              case "left":
+              case "right":
+                graphlabel
+                  .attr("width", i.bottom - i.top - 2 * y_margin)
+                  .attr("y", x_margin / 2);
+                switch (aligment) {
+                  case "start":
+                    graphlabel.attr("x", y_margin);
+                    break;
+                  case "middle":
+                    graphlabel.attr("x", (i.bottom - i.top) / 2);
+                    break;
+                  case "end":
+                    graphlabel.attr("x", i.bottom - i.top - y_margin);
+                }
+            }
+            switch (label_placement) {
+              case "top":
+                graphlabel.attr("y", label_margin);
+                break;
+              case "bottom":
+                graphlabel.attr("y", i.bottom - i.top - label_margin);
+                break;
+              case "left":
+                graphlabel
+                  .attr("y", label_margin)
+                  .attr("transform", "rotate(-90)");
+                break;
+              case "right":
+                graphlabel
+                  .attr("y", -(i.right - i.left - label_margin))
+                  .attr("transform", "rotate(90)");
+                break;
+            }
+            applyGraphFontStyle(
+              graphlabel,
+              i.graph_label_font,
+              i.graph_label_font_size,
+              i.graph_label_font_style,
+              i.graph_label_font_color,
+            );
           }
 
           svg
@@ -336,6 +487,36 @@ export function setupOverlays(
             .attr("transform", `translate(${x_margin}, ${y_margin})`);
 
           root.appendChild(svg.node()!);
+
+          if (i.graph_help_text !== undefined) {
+            const questionMarkIcon = settings.lightMode
+              ? QuestionMarkDark
+              : QuestionMark;
+            root.insertAdjacentHTML(
+              "beforeend",
+              `<input class="graphinfobutton" type = "image" src = "${questionMarkIcon}" width = '15' style = "display: inline; position: absolute; top: 10px; right: 10px" />`,
+            );
+            const infoButton =
+              root.querySelector<HTMLInputElement>(".graphinfobutton")!;
+            infoButton.style.pointerEvents = "auto";
+            infoButton.style.cursor = "pointer";
+            const containerId = i.name + "info-dialog";
+            registerInfoDialog(
+              appContainer,
+              containerId,
+              infoButton,
+              i.graph_help_text,
+            );
+            settings.addChangedListener(
+              (event: CustomEvent<SettingsChangedEvent>) => {
+                if (event.detail.field_changed == "lightMode") {
+                  infoButton.src = settings.lightMode
+                    ? QuestionMarkDark
+                    : QuestionMark;
+                }
+              },
+            );
+          }
 
           const bucket_size = 1000 * (i.graph_interval_duration ?? 60);
           subscribeToGraph(
@@ -566,4 +747,25 @@ export function setupOverlays(
     });
   }
   window.addEventListener("resize", onWindowResize);
+}
+
+function applyGraphFontStyle<E extends SVGElement>(
+  element: d3.Selection<E, undefined, null, undefined>,
+  font?: string,
+  size?: number,
+  style?: string,
+  color?: THREE.Color,
+) {
+  if (font !== undefined) {
+    element.attr("font-family", font);
+  }
+  if (size !== undefined) {
+    element.attr("font-size", size);
+  }
+  if (style !== undefined) {
+    element.attr("font-style", style);
+  }
+  if (color !== undefined) {
+    element.style("stroke", "#" + color.getHexString());
+  }
 }
