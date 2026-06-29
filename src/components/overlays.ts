@@ -366,13 +366,19 @@ export function setupOverlays(
                 }
               }
               x = x.domain(x_extent);
-              const y_max =
-                d3.max(points.entries(), function ([_time, val]) {
+              let y_extent = d3.extent(
+                points.entries(),
+                function ([_time, val]) {
                   return val;
-                }) ?? 0;
+                },
+              );
+              if (y_extent[0] === undefined) {
+                y_extent = [0, 0];
+              }
+
               y = y.domain([
-                i.graph_y_min !== undefined ? i.graph_y_min : 0,
-                i.graph_y_max !== undefined ? i.graph_y_max : y_max,
+                i.graph_y_min !== undefined ? i.graph_y_min : y_extent[0],
+                i.graph_y_max !== undefined ? i.graph_y_max : y_extent[1],
               ]);
 
               const [xAxisCall, yAxisCall] = build_axes(x, y);
