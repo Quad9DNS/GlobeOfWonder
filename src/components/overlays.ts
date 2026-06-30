@@ -355,7 +355,7 @@ export function setupOverlays(
               i.graph_y_axis_font,
               i.graph_y_axis_font_size,
               i.graph_y_axis_font_style,
-              i.graph_y_axis_font_color,
+              i.graph_y_axis_text_color,
             );
           }
 
@@ -397,7 +397,7 @@ export function setupOverlays(
               i.graph_x_axis_font,
               i.graph_x_axis_font_size,
               i.graph_x_axis_font_style,
-              i.graph_x_axis_font_color ?? new THREE.Color("white"),
+              i.graph_x_axis_text_color ?? new THREE.Color("white"),
             );
           }
 
@@ -462,7 +462,7 @@ export function setupOverlays(
               i.graph_label_font,
               i.graph_label_font_size,
               i.graph_label_font_style,
-              i.graph_label_font_color,
+              i.graph_label_color,
             );
           }
 
@@ -579,10 +579,10 @@ export function setupOverlays(
                 gy.call(yAxisCall);
               }
 
-              if (i.graph_y_axis_font_color !== undefined) {
+              if (i.graph_y_axis_text_color !== undefined) {
                 gy.selectAll("text").style(
                   "stroke",
-                  "#" + i.graph_y_axis_font_color.getHexString(),
+                  "#" + i.graph_y_axis_text_color.getHexString(),
                 );
               }
               if (i.graph_y_axis_color !== undefined) {
@@ -595,10 +595,10 @@ export function setupOverlays(
                   "#" + i.graph_y_axis_color.getHexString(),
                 );
               }
-              if (i.graph_x_axis_font_color !== undefined) {
+              if (i.graph_x_axis_text_color !== undefined) {
                 gx.selectAll("text").style(
                   "stroke",
-                  "#" + i.graph_x_axis_font_color.getHexString(),
+                  "#" + i.graph_x_axis_text_color.getHexString(),
                 );
               }
               if (i.graph_x_axis_color !== undefined) {
