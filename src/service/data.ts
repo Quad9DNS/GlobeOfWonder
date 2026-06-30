@@ -142,7 +142,15 @@ const FLOAT_KEYS = [
   "graph_y_axis_font_size",
   "graph_label_font_size",
 ];
-const INTEGER_KEYS = ["top", "right", "bottom", "left", "graph_intervals"];
+const INTEGER_KEYS = [
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "graph_intervals",
+  "graph_x_axis_tick_label_count",
+  "graph_y_axis_tick_label_count",
+];
 
 export type PositionData = {
   lat: number;

@@ -48,6 +48,7 @@ export interface GraphCustomizationData {
   readonly graph_x_axis_font_size?: number;
   readonly graph_x_axis_font_style?: string;
   readonly graph_x_axis_text_color?: THREE.Color;
+  readonly graph_x_axis_tick_label_count?: number;
   readonly graph_y_axis_color?: THREE.Color;
   readonly graph_y_axis_labels_visible?: boolean;
   readonly graph_y_axis_label?: string;
@@ -55,6 +56,7 @@ export interface GraphCustomizationData {
   readonly graph_y_axis_font_size?: number;
   readonly graph_y_axis_font_style?: string;
   readonly graph_y_axis_text_color?: THREE.Color;
+  readonly graph_y_axis_tick_label_interval?: number;
   readonly graph_y_max?: number;
   readonly graph_y_min?: number;
   readonly graph_y_segments?: number;
@@ -196,6 +198,10 @@ export class GraphData
     return this.additional_data.graph_x_axis_text_color;
   }
 
+  public get graph_x_axis_tick_label_count(): number | undefined {
+    return this.additional_data.graph_x_axis_tick_label_count;
+  }
+
   public get graph_y_axis_color(): THREE.Color | undefined {
     return this.additional_data.graph_y_axis_color;
   }
@@ -222,6 +228,10 @@ export class GraphData
 
   public get graph_y_axis_text_color(): THREE.Color | undefined {
     return this.additional_data.graph_y_axis_text_color;
+  }
+
+  public get graph_y_axis_tick_label_interval(): number | undefined {
+    return this.additional_data.graph_y_axis_tick_label_interval;
   }
 
   public get graph_y_max(): number | undefined {
