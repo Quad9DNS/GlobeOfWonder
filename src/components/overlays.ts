@@ -279,7 +279,7 @@ export function setupOverlays(
           if (label_placement == "bottom") {
             y_margin += label_margin + 10;
           }
-          if (label_placement == "right") {
+          if (label_placement == "left") {
             x_margin += label_margin + 10;
           }
 
@@ -345,7 +345,7 @@ export function setupOverlays(
               .attr("class", "ylabel")
               .attr("text-anchor", "middle")
               .attr("x", -(i.bottom - i.top) / 2)
-              .attr("y", x_margin / (label_placement == "left" ? 3 : 2))
+              .attr("y", x_margin / (label_placement == "left" ? 1.5 : 2))
               .attr("width", i.bottom - i.top - 2 * y_margin)
               .attr("transform", "rotate(-90)")
               .text(i.graph_y_axis_label);
@@ -402,17 +402,29 @@ export function setupOverlays(
           }
 
           if (label !== undefined) {
-            const aligment = i.graph_label_alignment ?? "middle";
+            const alignment = i.graph_label_alignment ?? "middle";
+            let inverted_alignment = "middle";
+            switch (alignment) {
+              case "start":
+                inverted_alignment = "end";
+                break;
+              case "end":
+                inverted_alignment = "start";
+                break;
+            }
             const graphlabel = svg
               .append("text")
               .attr("class", "graphlabel")
-              .attr("text-anchor", aligment)
+              .attr(
+                "text-anchor",
+                label_placement == "right" ? inverted_alignment : alignment,
+              )
               .text(label);
             switch (label_placement) {
               case "top":
               case "bottom":
                 graphlabel.attr("width", i.right - i.left - 2 * x_margin);
-                switch (aligment) {
+                switch (alignment) {
                   case "start":
                     graphlabel.attr("x", x_margin);
                     break;
@@ -428,15 +440,28 @@ export function setupOverlays(
                 graphlabel
                   .attr("width", i.bottom - i.top - 2 * y_margin)
                   .attr("y", x_margin / 2);
-                switch (aligment) {
+                switch (alignment) {
                   case "start":
-                    graphlabel.attr("x", y_margin);
+                    graphlabel.attr(
+                      "x",
+                      (label_placement == "left" ? -1 : 1) *
+                        (i.bottom - i.top - y_margin),
+                    );
                     break;
                   case "middle":
-                    graphlabel.attr("x", (i.bottom - i.top) / 2);
+                    graphlabel.attr(
+                      "x",
+                      ((label_placement == "left" ? -1 : 1) *
+                        (i.bottom - i.top)) /
+                        2,
+                    );
                     break;
                   case "end":
-                    graphlabel.attr("x", i.bottom - i.top - y_margin);
+                    graphlabel.attr(
+                      "x",
+                      (label_placement == "left" ? -1 : 1) * y_margin,
+                    );
+                    break;
                 }
             }
             switch (label_placement) {
