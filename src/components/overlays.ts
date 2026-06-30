@@ -356,6 +356,7 @@ export function setupOverlays(
               i.graph_y_axis_font_size,
               i.graph_y_axis_font_style,
               i.graph_y_axis_text_color,
+              true,
             );
           }
 
@@ -398,6 +399,7 @@ export function setupOverlays(
               i.graph_x_axis_font_size,
               i.graph_x_axis_font_style,
               i.graph_x_axis_text_color ?? new THREE.Color("white"),
+              true,
             );
           }
 
@@ -488,6 +490,7 @@ export function setupOverlays(
               i.graph_label_font_size,
               i.graph_label_font_style,
               i.graph_label_color,
+              true,
             );
           }
 
@@ -604,38 +607,42 @@ export function setupOverlays(
                 gy.call(yAxisCall);
               }
 
-              if (i.graph_y_axis_text_color !== undefined) {
-                gy.selectAll("text").style(
-                  "stroke",
-                  "#" + i.graph_y_axis_text_color.getHexString(),
-                );
-              }
-              if (i.graph_y_axis_color !== undefined) {
-                gy.selectAll("path").style(
-                  "stroke",
-                  "#" + i.graph_y_axis_color.getHexString(),
-                );
-                gy.selectAll("line").style(
-                  "stroke",
-                  "#" + i.graph_y_axis_color.getHexString(),
-                );
-              }
-              if (i.graph_x_axis_text_color !== undefined) {
-                gx.selectAll("text").style(
-                  "stroke",
-                  "#" + i.graph_x_axis_text_color.getHexString(),
-                );
-              }
-              if (i.graph_x_axis_color !== undefined) {
-                gx.selectAll("path").style(
-                  "stroke",
-                  "#" + i.graph_x_axis_color.getHexString(),
-                );
-                gx.selectAll("line").style(
-                  "stroke",
-                  "#" + i.graph_x_axis_color.getHexString(),
-                );
-              }
+              gy.selectAll("text").style(
+                "stroke",
+                i.graph_y_axis_text_color !== undefined
+                  ? "#" + i.graph_y_axis_text_color.getHexString()
+                  : "currentColor",
+              );
+              gy.selectAll("path").style(
+                "stroke",
+                i.graph_y_axis_color !== undefined
+                  ? "#" + i.graph_y_axis_color.getHexString()
+                  : "currentColor",
+              );
+              gy.selectAll("line").style(
+                "stroke",
+                i.graph_y_axis_color !== undefined
+                  ? "#" + i.graph_y_axis_color.getHexString()
+                  : "currentColor",
+              );
+              gx.selectAll("text").style(
+                "stroke",
+                i.graph_x_axis_text_color !== undefined
+                  ? "#" + i.graph_x_axis_text_color.getHexString()
+                  : "currentColor",
+              );
+              gx.selectAll("path").style(
+                "stroke",
+                i.graph_x_axis_color !== undefined
+                  ? "#" + i.graph_x_axis_color.getHexString()
+                  : "currentColor",
+              );
+              gx.selectAll("line").style(
+                "stroke",
+                i.graph_x_axis_color !== undefined
+                  ? "#" + i.graph_x_axis_color.getHexString()
+                  : "currentColor",
+              );
 
               let original_points: [number, number][] = [];
 
@@ -701,7 +708,7 @@ export function setupOverlays(
               if (i.grid_enabled) {
                 let color = i.grid_color?.getHexString();
                 if (color === undefined) {
-                  color = "#ffffffcf";
+                  color = "currentColor";
                 } else {
                   color = "#" + color + "cf";
                 }
@@ -780,6 +787,7 @@ function applyGraphFontStyle<E extends SVGElement>(
   size?: number,
   style?: string,
   color?: THREE.Color,
+  set_color: boolean = false,
 ) {
   if (font !== undefined) {
     element.attr("font-family", font);
@@ -790,7 +798,10 @@ function applyGraphFontStyle<E extends SVGElement>(
   if (style !== undefined) {
     element.attr("font-style", style);
   }
-  if (color !== undefined) {
-    element.style("stroke", "#" + color.getHexString());
+  if (set_color) {
+    element.style(
+      "fill",
+      color !== undefined ? "#" + color.getHexString() : "currentColor",
+    );
   }
 }
