@@ -38,7 +38,7 @@ export interface GraphCustomizationData {
   readonly graph_label_font?: string;
   readonly graph_label_font_size?: number;
   readonly graph_label_font_style?: string;
-  readonly graph_label_font_color?: THREE.Color;
+  readonly graph_label_color?: THREE.Color;
   readonly graph_help_text?: string;
   readonly graph_help_button_color?: THREE.Color;
   readonly graph_x_axis_color?: THREE.Color;
@@ -47,14 +47,14 @@ export interface GraphCustomizationData {
   readonly graph_x_axis_font?: string;
   readonly graph_x_axis_font_size?: number;
   readonly graph_x_axis_font_style?: string;
-  readonly graph_x_axis_font_color?: THREE.Color;
+  readonly graph_x_axis_text_color?: THREE.Color;
   readonly graph_y_axis_color?: THREE.Color;
   readonly graph_y_axis_labels_visible?: boolean;
   readonly graph_y_axis_label?: string;
   readonly graph_y_axis_font?: string;
   readonly graph_y_axis_font_size?: number;
   readonly graph_y_axis_font_style?: string;
-  readonly graph_y_axis_font_color?: THREE.Color;
+  readonly graph_y_axis_text_color?: THREE.Color;
   readonly graph_y_max?: number;
   readonly graph_y_min?: number;
   readonly graph_y_segments?: number;
@@ -156,8 +156,8 @@ export class GraphData
     return this.additional_data.graph_label_font_style;
   }
 
-  public get graph_label_font_color(): THREE.Color | undefined {
-    return this.additional_data.graph_label_font_color;
+  public get graph_label_color(): THREE.Color | undefined {
+    return this.additional_data.graph_label_color;
   }
 
   public get graph_help_text(): string | undefined {
@@ -192,8 +192,8 @@ export class GraphData
     return this.additional_data.graph_x_axis_font_style;
   }
 
-  public get graph_x_axis_font_color(): THREE.Color | undefined {
-    return this.additional_data.graph_x_axis_font_color;
+  public get graph_x_axis_text_color(): THREE.Color | undefined {
+    return this.additional_data.graph_x_axis_text_color;
   }
 
   public get graph_y_axis_color(): THREE.Color | undefined {
@@ -220,8 +220,8 @@ export class GraphData
     return this.additional_data.graph_y_axis_font_style;
   }
 
-  public get graph_y_axis_font_color(): THREE.Color | undefined {
-    return this.additional_data.graph_y_axis_font_color;
+  public get graph_y_axis_text_color(): THREE.Color | undefined {
+    return this.additional_data.graph_y_axis_text_color;
   }
 
   public get graph_y_max(): number | undefined {
