@@ -295,7 +295,13 @@ export function setupOverlays(
             let yAxisCall = d3
               .axisLeft(y)
               .ticks(i.graph_y_segments !== undefined ? i.graph_y_segments : 10)
-              .tickFormat((val: d3.NumberValue) => {
+              .tickFormat((val: d3.NumberValue, index: number) => {
+                if (
+                  i.graph_y_axis_tick_label_interval !== undefined &&
+                  index % i.graph_y_axis_tick_label_interval != 0
+                ) {
+                  return "";
+                }
                 const value = val.valueOf();
                 if (value >= 1e9) {
                   return `${(value / 1e9).toLocaleString(undefined, { maximumFractionDigits: 1 })}B`;
@@ -309,7 +315,16 @@ export function setupOverlays(
               });
             let xAxisCall = d3
               .axisBottom(x)
-              .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!);
+              .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!)
+              .tickFormat((val: d3.NumberValue | Date, index: number) => {
+                if (
+                  i.graph_x_axis_tick_label_count !== undefined &&
+                  index % i.graph_x_axis_tick_label_count != 0
+                ) {
+                  return "";
+                }
+                return x.tickFormat()(val as Date);
+              });
 
             if (i.graph_x_axis_labels_visible === false) {
               xAxisCall = xAxisCall.tickFormat((_v, _i) => "");
