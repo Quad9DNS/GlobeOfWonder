@@ -318,8 +318,8 @@ export function setupOverlays(
               .ticks(d3.timeSecond.every(i.graph_interval_duration ?? 60)!)
               .tickFormat((val: d3.NumberValue | Date, index: number) => {
                 if (
-                  i.graph_x_axis_tick_label_count !== undefined &&
-                  index % i.graph_x_axis_tick_label_count != 0
+                  i.graph_x_axis_tick_label_interval !== undefined &&
+                  index % i.graph_x_axis_tick_label_interval != 0
                 ) {
                   return "";
                 }
