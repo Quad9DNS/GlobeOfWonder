@@ -48,7 +48,7 @@ export interface GraphCustomizationData {
   readonly graph_x_axis_font_size?: number;
   readonly graph_x_axis_font_style?: string;
   readonly graph_x_axis_text_color?: THREE.Color;
-  readonly graph_x_axis_tick_label_count?: number;
+  readonly graph_x_axis_tick_label_interval?: number;
   readonly graph_y_axis_color?: THREE.Color;
   readonly graph_y_axis_labels_visible?: boolean;
   readonly graph_y_axis_label?: string;
@@ -198,8 +198,8 @@ export class GraphData
     return this.additional_data.graph_x_axis_text_color;
   }
 
-  public get graph_x_axis_tick_label_count(): number | undefined {
-    return this.additional_data.graph_x_axis_tick_label_count;
+  public get graph_x_axis_tick_label_interval(): number | undefined {
+    return this.additional_data.graph_x_axis_tick_label_interval;
   }
 
   public get graph_y_axis_color(): THREE.Color | undefined {
