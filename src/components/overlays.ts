@@ -276,10 +276,16 @@ export function setupOverlays(
           if (i.graph_y_axis_label !== undefined) {
             x_margin += x_margin + 10;
           }
-          if (label_placement == "bottom") {
+          if (
+            label_placement == "bottom" ||
+            (label_placement == "top" && i.graph_x_axis_label === undefined)
+          ) {
             y_margin += label_margin + 10;
           }
-          if (label_placement == "left") {
+          if (
+            label_placement == "left" ||
+            (label_placement == "right" && i.graph_y_axis_label === undefined)
+          ) {
             x_margin += label_margin + 10;
           }
 
