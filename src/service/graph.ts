@@ -1,5 +1,3 @@
-import { binarySearchReplaceAny, mapAndFilter } from "../data";
-import { ExpirableObject } from "../data/expirable";
 import { Settings } from "../settings";
 import { AppState, GraphEvent } from "./state";
 
@@ -14,35 +12,7 @@ interface GraphConfig {
   bucket_count?: number;
 }
 
-class ExpirableGraphEvent implements GraphEvent, ExpirableObject {
-  constructor(event: GraphEvent, config: GraphConfig) {
-    this.graphs = event.graphs;
-    this.startTime = event.startTime;
-    this.count = event.count;
-    this.config = config;
-  }
-
-  update(currentTime: number): ExpirableObject | null {
-    if (
-      this.config.bucket_count !== undefined &&
-      this.startTime <
-        currentTime - this.config.bucket_size * this.config.bucket_count
-    ) {
-      return null;
-    } else {
-      return this;
-    }
-  }
-  graphs: string[];
-  startTime: number;
-  count: number;
-  config: GraphConfig;
-}
-
-const graphEvents: Map<
-  string,
-  [GraphConfig, ExpirableGraphEvent[], Map<number, number>]
-> = new Map();
+const graphEvents: Map<string, [GraphConfig, Map<number, number>]> = new Map();
 const subscriptions: Map<string, Subscription[]> = new Map();
 
 export function setupGraphService(state: AppState, settings: Settings) {
@@ -56,13 +26,7 @@ function updateEvents(newEventsQueue: GraphEvent[]) {
     e.graphs.forEach((g: string) => {
       const grp = graphEvents.get(g);
       if (grp !== undefined) {
-        const [conf, events, points] = grp;
-        binarySearchReplaceAny(
-          events,
-          new ExpirableGraphEvent(e, conf),
-          (l, r) => r.startTime - l.startTime,
-          { noReplace: true },
-        );
+        const [conf, points] = grp;
         const bucket = Math.floor(
           Math.floor(e.startTime / conf.bucket_size) * conf.bucket_size,
         );
@@ -79,19 +43,7 @@ export function subscribeToGraph(
   callbackfn: (points: Map<number, number>, removedOld: boolean) => void,
 ): Subscription {
   if (!graphEvents.has(graph)) {
-    graphEvents.set(graph, [config, [], new Map()]);
-  } else {
-    const [_conf, events, _points] = graphEvents.get(graph)!;
-    // Recalculate points for new config
-    const points = new Map();
-    for (const event of events) {
-      const bucket = Math.floor(
-        Math.floor(event.startTime / config.bucket_size) * config.bucket_size,
-      );
-      const current = points.get(bucket) ?? 0;
-      points.set(bucket, current + event.count);
-    }
-    graphEvents.set(graph, [config, events, points]);
+    graphEvents.set(graph, [config, new Map()]);
   }
   if (!subscriptions.has(graph)) {
     subscriptions.set(graph, []);
@@ -104,10 +56,9 @@ export function subscribeToGraph(
   function callback_loop() {
     const grp = graphEvents.get(graph);
     if (grp !== undefined) {
-      const [conf, events, points] = grp;
+      const [conf, points] = grp;
       let remove = false;
       if (conf.bucket_count !== undefined) {
-        mapAndFilter(events, { sortedByLifetime: true });
         const currentTime = Date.now();
         const toRemove = new Set<number>();
         for (const time of points.keys()) {
@@ -161,7 +112,7 @@ export function subscribeToGraph(
   subscriptions.get(graph)?.push(subscription);
   const grp = graphEvents.get(graph);
   if (grp !== undefined) {
-    const [_conf, _events, points] = grp;
+    const [_conf, points] = grp;
     callbackfn(points, false);
   }
   return subscription;
