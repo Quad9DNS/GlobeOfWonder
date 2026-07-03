@@ -55,7 +55,7 @@ export class ExplosionDataLayerGroup
   handleClearEvent(event: ClearMapEvent): CountEvent[] {
     const events = [];
     if (event.types.length == 0 || event.types.includes("explosion")) {
-      if (event.clearEvents) {
+      if (event.clearEvents || event.clearGraphs) {
         for (const explosion of this.data) {
           events.push({
             startTime: explosion.startTime,

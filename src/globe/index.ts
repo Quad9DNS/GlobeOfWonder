@@ -142,6 +142,17 @@ export function setupGlobe(
         if (e.clearEvents) {
           state.newEventsQueue.push(...counters);
         }
+        if (e.clearGraphs) {
+          state.newGraphEventsQueue.push(
+            ...counters.map((c) => {
+              return {
+                graphs: [],
+                clear: true,
+                ...c,
+              };
+            }),
+          );
+        }
       });
 
     state.newPointsQueue

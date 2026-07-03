@@ -292,6 +292,7 @@ type ClearMapCommandTypeData = {
 export type ClearMapCommandData = {
   clear_types?: string[];
   clear_events?: boolean;
+  clear_graphs?: boolean;
 };
 export type ClearMapCommandServiceData = CommonCommandData &
   ClearMapCommandTypeData &
@@ -428,6 +429,7 @@ export function processServiceData(
           graphs: incomingEvent.graphs,
           count: incomingEvent.counter ?? 1,
           startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
+          clear: false,
         });
       }
 
@@ -479,6 +481,7 @@ function parseServiceData(data: string): ServiceData | null {
         k == "display_text_always_faces_viewer" ||
         k == "display_text_hover_only" ||
         k == "clear_events" ||
+        k == "clear_graphs" ||
         k == "grid_enabled" ||
         k == "graph_filled" ||
         k == "graph_x_axis_labels_visible" ||
@@ -669,6 +672,7 @@ function buildAndPublishCommand(
       if (settings.enableClearMapCommands) {
         state.clearEventsQueue.push({
           clearEvents: data.clear_events ?? true,
+          clearGraphs: data.clearGraphs ?? true,
           types: data.clear_types ?? [],
         });
       }

@@ -173,7 +173,7 @@ export class ArcsLayer
   handleClearEvent(event: ClearMapEvent): CountEvent[] {
     const events = [];
     if (event.types.length == 0 || event.types.includes("arc")) {
-      if (event.clearEvents) {
+      if (event.clearEvents || event.clearGraphs) {
         for (const arc of this.arcsData) {
           events.push({
             startTime: arc.startTime,

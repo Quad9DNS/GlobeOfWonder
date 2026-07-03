@@ -87,6 +87,7 @@ setupDataDownloader(
 settings.addEventListener(settings.clearMapEventType, () => {
   state.clearEventsQueue.push({
     clearEvents: true,
+    clearGraphs: true,
     types: [],
   });
 });

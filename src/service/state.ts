@@ -52,6 +52,7 @@ export interface CountEvent {
  */
 export interface GraphEvent extends CountEvent {
   graphs: string[];
+  clear: boolean;
 }
 
 /**
@@ -61,6 +62,7 @@ export interface GraphEvent extends CountEvent {
 export interface ClearMapEvent {
   types: string[];
   clearEvents: boolean;
+  clearGraphs: boolean;
 }
 
 /**
