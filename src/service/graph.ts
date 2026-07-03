@@ -23,7 +23,7 @@ export function setupGraphService(state: AppState, settings: Settings) {
 
 function updateEvents(newEventsQueue: GraphEvent[]) {
   newEventsQueue.splice(0, newEventsQueue.length).forEach((e: GraphEvent) => {
-    e.graphs.forEach((g: string) => {
+    (e.clear ? [...graphEvents.keys()] : e.graphs).forEach((g: string) => {
       const grp = graphEvents.get(g);
       if (grp !== undefined) {
         const [conf, points] = grp;
