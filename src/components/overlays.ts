@@ -581,6 +581,9 @@ export function setupOverlays(
             { bucket_size: bucket_size, bucket_count: i.graph_intervals },
             (points: Map<number, number>, removedOld: boolean) => {
               let x_extent = [0, 0];
+              const current_bucket = Math.floor(
+                Math.floor(Date.now() / bucket_size) * bucket_size,
+              );
               if (i.graph_intervals !== undefined) {
                 x_extent = [
                   Math.floor(
@@ -592,9 +595,7 @@ export function setupOverlays(
                         bucket_size,
                     ) * bucket_size,
                   ),
-                  Math.floor(
-                    Math.floor(Date.now() / bucket_size) * bucket_size,
-                  ),
+                  current_bucket,
                 ];
               } else {
                 const calculated_extent = d3.extent(
@@ -678,7 +679,7 @@ export function setupOverlays(
               if (i.graph_missing_point_value !== undefined) {
                 for (
                   let x = x_extent[0];
-                  x <= x_extent[1];
+                  x <= x_extent[1] && x <= current_bucket;
                   x += 1000 * (i.graph_interval_duration ?? 60)
                 ) {
                   original_points.push([
@@ -687,7 +688,9 @@ export function setupOverlays(
                   ]);
                 }
               } else {
-                original_points = [...points.entries()];
+                original_points = [...points.entries()].filter(
+                  ([time, _]) => time <= current_bucket,
+                );
               }
               original_points.sort();
 
