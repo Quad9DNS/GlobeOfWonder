@@ -18,7 +18,7 @@ import * as THREE from "three";
 import { QUAD9_COLOR } from "../globe/common";
 import QuestionMark from "../question_mark.svg?url";
 import QuestionMarkDark from "../question_mark_dark.svg?url";
-import { registerInfoDialog } from "./info_dialog";
+import { setupInfoDialog } from "./info_dialog";
 
 class IndicatorPair implements ExpirableObject {
   data: IndicatorData;
@@ -209,8 +209,10 @@ export function setupOverlays(
             removed.element.remove();
             if (removed.data instanceof GraphData) {
               if (removed.data.subscription !== undefined) {
+                removed.data.subscription.done = true;
                 unsubscribeFromGraph(removed.data.subscription);
               }
+              removed.data.infoDialog?.remove();
             }
           }
           if (i.name == undefined) {
@@ -550,12 +552,18 @@ export function setupOverlays(
             infoButton.style.pointerEvents = "auto";
             infoButton.style.cursor = "pointer";
             const containerId = i.name + "info-dialog";
-            registerInfoDialog(
+            const infoDialog = registerDialogContainer(
               appContainer,
               containerId,
-              infoButton,
+            );
+            setupInfoDialog(
+              {
+                openInfoButton: infoButton,
+                dialogContainer: infoDialog,
+              },
               i.graph_help_text,
             );
+            i.infoDialog = infoDialog;
             settings.addChangedListener(
               (event: CustomEvent<SettingsChangedEvent>) => {
                 if (event.detail.field_changed == "lightMode") {
@@ -568,7 +576,7 @@ export function setupOverlays(
           }
 
           const bucket_size = 1000 * (i.graph_interval_duration ?? 60);
-          subscribeToGraph(
+          i.subscription = subscribeToGraph(
             i.name,
             { bucket_size: bucket_size, bucket_count: i.graph_intervals },
             (points: Map<number, number>, removedOld: boolean) => {

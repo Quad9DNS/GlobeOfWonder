@@ -88,6 +88,7 @@ export class GraphData
   in_visiblity_cone: boolean = true;
 
   subscription?: Subscription = undefined;
+  infoDialog?: HTMLElement = undefined;
   events: GraphEvent[] = [];
 
   public get left(): number {
