@@ -672,7 +672,7 @@ function buildAndPublishCommand(
       if (settings.enableClearMapCommands) {
         state.clearEventsQueue.push({
           clearEvents: data.clear_events ?? true,
-          clearGraphs: data.clearGraphs ?? true,
+          clearGraphs: data.clear_graphs ?? true,
           types: data.clear_types ?? [],
         });
       }
