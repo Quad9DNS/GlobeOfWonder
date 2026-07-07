@@ -205,6 +205,22 @@ export function setupOverlays(
               boxesEqual(val.data as GraphData, i),
           );
           if (index !== -1) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const replacer = (key: string, val: any) => {
+              return key == "startTime" ||
+                key == "lifetime" ||
+                key == "subscription" ||
+                key == "infoDialog"
+                ? null
+                : val;
+            };
+            if (
+              JSON.stringify(i, replacer) ==
+              JSON.stringify(indicators[index].data, replacer)
+            ) {
+              // Exact same data, we can ignore it
+              return;
+            }
             const removed = indicators.splice(index, 1)[0];
             removed.element.remove();
             if (removed.data instanceof GraphData) {
