@@ -129,6 +129,7 @@ export function setupOverlays(
             const indicator = indicators.splice(index, 1)[0];
             indicator.element.remove();
             if (i.text == undefined) {
+              overlayContainer.remove();
               return;
             }
           }
@@ -219,6 +220,7 @@ export function setupOverlays(
               JSON.stringify(indicators[index].data, replacer)
             ) {
               // Exact same data, we can ignore it
+              overlayContainer.remove();
               return;
             }
             const removed = indicators.splice(index, 1)[0];
@@ -232,6 +234,7 @@ export function setupOverlays(
             }
           }
           if (i.name == undefined) {
+            overlayContainer.remove();
             return;
           }
 
