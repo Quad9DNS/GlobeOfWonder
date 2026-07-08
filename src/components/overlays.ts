@@ -600,20 +600,13 @@ export function setupOverlays(
             { bucket_size: bucket_size, bucket_count: i.graph_intervals },
             (points: Map<number, number>, removedOld: boolean) => {
               let x_extent = [0, 0];
-              const current_bucket = Math.floor(
-                Math.floor(Date.now() / bucket_size) * bucket_size,
-              );
+              // We want previous bucket really, because current one isn't complete
+              const current_bucket =
+                Math.floor(Math.floor(Date.now() / bucket_size) * bucket_size) -
+                bucket_size;
               if (i.graph_intervals !== undefined) {
                 x_extent = [
-                  Math.floor(
-                    Math.floor(
-                      (Date.now() -
-                        i.graph_intervals! *
-                          (i.graph_interval_duration ?? 60) *
-                          1000) /
-                        bucket_size,
-                    ) * bucket_size,
-                  ),
+                  current_bucket - i.graph_intervals * bucket_size,
                   current_bucket,
                 ];
               } else {
