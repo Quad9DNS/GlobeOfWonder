@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { ExpirableObject } from "./expirable";
 
 /**
@@ -183,6 +184,39 @@ export interface BoundingBoxData {
 }
 
 /**
+ * Checks whether the object implements {@link BoundingBoxData} interface
+ */
+export function isBoundingBoxData(object: unknown): object is BoundingBoxData {
+  return (object as BoundingBoxData).top !== undefined;
+}
+
+/**
+ * Represents a border of indicator object
+ */
+export interface BoxBorderData {
+  readonly box_color?: THREE.Color;
+  readonly box_opacity?: number;
+  readonly box_corner_radius?: number;
+  readonly border_color?: THREE.Color;
+  readonly border_thickness?: number;
+  readonly border_opacity?: number;
+}
+
+/**
+ * Checks whether the object implements {@link BoxBorderData} interface
+ */
+export function isBoxBorderData(object: unknown): object is BoxBorderData {
+  return (
+    (object as BoxBorderData).box_color !== undefined ||
+    (object as BoxBorderData).box_opacity !== undefined ||
+    (object as BoxBorderData).box_corner_radius !== undefined ||
+    (object as BoxBorderData).border_color !== undefined ||
+    (object as BoxBorderData).border_thickness !== undefined ||
+    (object as BoxBorderData).border_opacity !== undefined
+  );
+}
+
+/**
  * Checks if two {@link BoundingBoxData} are equal.
  */
 export function boxesEqual(
@@ -275,13 +309,13 @@ export function mapAndFilter<T extends ExpirableObject>(
  * Performs binary search of collection and replaces or inserts a new item
  * Mutates the collection
  *
- * @param [comparator=comparePositions] comparator to use when sorting
+ * @param [comparator] comparator to use when sorting
  * @param [opts={}] additional options - `noReplace` forces this to always insert objects, even if comparator tells they are the same, `ascending` forces ascending sort order
  */
-export function binarySearchReplace<T extends PointData>(
+export function binarySearchReplaceAny<T extends ExpirableObject>(
   collection: T[],
   item: T,
-  comparator: (left: T, right: T) => number = comparePositions,
+  comparator: (left: T, right: T) => number,
   opts: { noReplace?: boolean; ascending?: boolean } = {},
 ) {
   let start = 0;
@@ -305,4 +339,41 @@ export function binarySearchReplace<T extends PointData>(
   }
 
   collection.splice(start, 0, item);
+}
+
+/**
+ * Same as {@link binarySearchReplaceAny}, but for {@link PointData}.
+ *
+ * @param [comparator=comparePositions] comparator to use when sorting
+ */
+export function binarySearchReplace<T extends PointData>(
+  collection: T[],
+  item: T,
+  comparator: (left: T, right: T) => number = comparePositions,
+  opts: { noReplace?: boolean; ascending?: boolean } = {},
+) {
+  return binarySearchReplaceAny(collection, item, comparator, opts);
+}
+
+export function updateVisibilityForOverlay(
+  camera_lon: number,
+  camera_lat: number,
+  anchor_lon?: number,
+  anchor_lat?: number,
+  anchor_lon_offset_visibility?: number,
+  anchor_lat_offset_visibility?: number,
+): boolean {
+  let result = false;
+  if (anchor_lon != undefined && anchor_lon_offset_visibility != undefined) {
+    const normalized_lon = anchor_lon > 180.0 ? anchor_lon - 360.0 : anchor_lon;
+    result =
+      Math.abs(normalized_lon - camera_lon) < anchor_lon_offset_visibility;
+  }
+  if (!result) {
+    return result;
+  }
+  if (anchor_lat != undefined && anchor_lat_offset_visibility != undefined) {
+    result = Math.abs(anchor_lat - camera_lat) < anchor_lat_offset_visibility;
+  }
+  return result;
 }

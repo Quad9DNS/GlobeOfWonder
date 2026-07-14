@@ -137,6 +137,8 @@ export class Settings extends EventTarget {
   accessor enableClearMapCommands: boolean = true;
   @SettingsField()
   accessor enableTextboxCommands: boolean = true;
+  @SettingsField()
+  accessor enableGraphCommands: boolean = true;
 
   @SettingsField()
   accessor analysisModeResolution: number = 3;
@@ -550,6 +552,7 @@ export function setupSettingsDialog(
     ["#enableaudiocommands", "boolean", "enableAudioCommands"],
     ["#enableclearmapcommands", "boolean", "enableClearMapCommands"],
     ["#enabletextboxcommands", "boolean", "enableTextboxCommands"],
+    ["#enablegraphcommands", "boolean", "enableGraphCommands"],
     ["#scalecounter", "boolean", "enableCounterScaling"],
     ["#lightmode", "boolean", "lightMode"],
     ["#showhelp", "boolean", "showHelp"],
@@ -1046,6 +1049,8 @@ function renderDialog(dialogContainer: HTMLElement) {
         <input type="checkbox" id="enableclearmapcommands" name="enableclearmapcommands" />
         <label for="enabletextboxcommands">Enable textbox commands:</label>
         <input type="checkbox" id="enabletextboxcommands" name="enabletextboxcommands" />
+        <label for="enablegraphcommands">Enable graph commands:</label>
+        <input type="checkbox" id="enablegraphcommands" name="enablegraphcommands" />
         <h2 class="grid-item-2cols" style="margin-bottom: auto;">Marker opacity layers</h2>
         <p class="grid-item-2cols" style="font-size: 0.6em; margin: auto;">Configuration for opacity of different objects, grouped into layers by their layer ID.</p>
         <div id="layersArea" class="grid-item-2cols two-col-grid">

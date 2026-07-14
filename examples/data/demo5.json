@@ -4,8 +4,8 @@
 	},
 	{
 		"type": "show_textbox_command",
-		"text": "Demonstrates complex events orchestration,\nautomatic settings and map control.\nClick here to go to the next demo.",
-		"link_url": "?dataDownloadUrl=assets/data/demo5.json",
+		"text": "Demonstrates graphs.\nClick here to go to the next demo.",
+		"link_url": "?dataDownloadUrl=assets/data/demo1.json",
 		"new_window": false,
 		"top": 300
 	},
@@ -19,6 +19,24 @@
 			"showCountersKey": "false",
 			"showWebsocketUi": "false"
 		}
+	},
+	{
+		"type": "show_graph_command",
+		"left": 50,
+		"top": 300,
+		"right": 500,
+		"bottom": 700,
+		"border_color": "white",
+		"box_corner_radius": 30,
+		"name": "test_graph",
+		"graph_intervals": 20,
+		"graph_line_width": 1,
+		"graph_filled": true,
+		"graph_interval_duration": 1,
+		"graph_transition_duration": 500,
+		"grid_enabled": true,
+		"grid_color": "white",
+		"grid_style": "dashed_small"
 	},
 	{
 		"comment": "Initial view command - Center on New York",
@@ -48,6 +66,9 @@
 		"layer_id": 1,
 		"layer_name": "Major Events",
 		"draw_delay": 2000,
+		"graphs": [
+			"test_graph"
+		],
 		"sound_set": [
 			{
 				"type": "sound_link",
@@ -87,6 +108,9 @@
 		"explosion_fallback_radius_interval": 18000,
 		"ttl": 25000,
 		"layer_id": 1,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 5000
 	},
 	{
@@ -114,6 +138,9 @@
 		"opacity": 80,
 		"layer_id": 2,
 		"layer_name": "Geographic Markers",
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 8000
 	},
 	{
@@ -138,6 +165,9 @@
 		"ignore_zoom": true,
 		"hover_text": "Animated circle that faces viewer - Sydney with viewer-facing circle that ignores zoom",
 		"layer_id": 2,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 11000
 	},
 	{
@@ -160,6 +190,9 @@
 		"pointer_glyph_color": "#ffffff",
 		"display_text": "San Francisco",
 		"display_text_interval": 8000,
+		"graphs": [
+			"test_graph"
+		],
 		"hover_text": "=== POINTER MARKERS === - San Francisco marked with custom pointer colors",
 		"link_url": "https://sf.gov",
 		"new_window": true,
@@ -186,6 +219,9 @@
 		"hover_text": "Small pointer with delay - Moscow with smaller scale and fade duration",
 		"fade_duration": 2000,
 		"layer_id": 3,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 17000
 	},
 	{
@@ -212,6 +248,9 @@
 		"hover_text": "=== BAR MARKERS === - Bar chart showing data for Rio de Janeiro",
 		"counter": 3,
 		"layer_id": 4,
+		"graphs": [
+			"test_graph"
+		],
 		"layer_name": "Data Bars",
 		"draw_delay": 20000
 	},
@@ -237,6 +276,9 @@
 		"hover_text": "Tall bar with gradient - Mexico City with taller bar and red-to-yellow gradient",
 		"opacity": 90,
 		"layer_id": 4,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 23000
 	},
 	{
@@ -261,6 +303,9 @@
 		"new_window": true,
 		"layer_id": 5,
 		"layer_name": "Custom Images",
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 26000
 	},
 	{
@@ -289,6 +334,9 @@
 		"hover_text": "=== ARC MARKERS === - Animated dashed arc between New York and London",
 		"layer_id": 6,
 		"layer_name": "Connections",
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 29000
 	},
 	{
@@ -306,6 +354,9 @@
 		"display_text": "Tokyo → Sydney",
 		"hover_text": "Solid arc with different styling - Thick solid arc between Tokyo and Sydney",
 		"layer_id": 6,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 31000
 	},
 	{
@@ -322,6 +373,9 @@
 		"display_text": "SF ↔ Paris",
 		"hover_text": "Dotted arc - Animated dotted arc between San Francisco and Paris",
 		"layer_id": 6,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 33000
 	},
 	{
@@ -371,6 +425,9 @@
 		"display_text_font_style": "Italic",
 		"hover_text": "Marker with long TTL and custom fade - Buenos Aires with long duration and fade effect",
 		"layer_id": 7,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 39000
 	},
 	{
@@ -392,6 +449,9 @@
 		"opacity": 75,
 		"hover_text": "Additional varied marker - Singapore with pink pointer and reduced opacity",
 		"layer_id": 3,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 42000
 	},
 	{
@@ -401,6 +461,9 @@
 		"view_lon": 36.8219,
 		"view_zoom": 3,
 		"view_speed": 1,
+		"graphs": [
+			"test_graph"
+		],
 		"command_delay": 44000
 	},
 	{
@@ -416,6 +479,9 @@
 		"hover_text": "High-altitude bar - Nairobi with very tall bar showing brown to gold gradient",
 		"counter": 7,
 		"layer_id": 4,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 45000
 	},
 	{
@@ -440,6 +506,9 @@
 		"display_text": "Oslo → Stockholm",
 		"hover_text": "Multi-hop arc chain start - First arc in Nordic connection chain",
 		"layer_id": 6,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 48000
 	},
 	{
@@ -455,6 +524,9 @@
 		"display_text": "Stockholm → Helsinki",
 		"hover_text": "Multi-hop arc chain continuation - Second arc in Nordic connection chain",
 		"layer_id": 6,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 50000
 	},
 	{
@@ -478,6 +550,9 @@
 		"explosion_fallback_color": "#FF6347",
 		"hover_text": "Large explosion for comparison - Shanghai with very large explosion radius for size comparison",
 		"layer_id": 1,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 53000
 	},
 	{
@@ -500,6 +575,9 @@
 		"display_text": "Dubai (30% opacity)",
 		"hover_text": "Transparency test circle - Dubai with very low opacity to demonstrate transparency",
 		"layer_id": 2,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 56000
 	},
 	{
@@ -532,6 +610,9 @@
 		"explosion_initial_color": "#ff0000",
 		"layer_id": 8,
 		"layer_name": "Mass Events",
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 60500
 	},
 	{
@@ -544,6 +625,9 @@
 		"hover_text": "Event 2 - Quick succession - Second explosion in rapid sequence",
 		"explosion_initial_color": "#ff3300",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 61000
 	},
 	{
@@ -556,6 +640,9 @@
 		"hover_text": "Event 3 - Quick succession - Third explosion with high counter value",
 		"explosion_initial_color": "#ff6600",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 61500
 	},
 	{
@@ -568,6 +655,9 @@
 		"hover_text": "Event 4 - Quick succession - Fourth explosion with very high counter",
 		"explosion_initial_color": "#ff9900",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 62000
 	},
 	{
@@ -580,6 +670,9 @@
 		"hover_text": "Event 5 - Quick succession - Fifth explosion in the sequence",
 		"explosion_initial_color": "#ffcc00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 62500
 	},
 	{
@@ -592,6 +685,9 @@
 		"hover_text": "Event 6 - Quick succession - Sixth explosion with moderate counter",
 		"explosion_initial_color": "#ffff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 63000
 	},
 	{
@@ -604,6 +700,9 @@
 		"hover_text": "Event 7 - Quick succession - Seventh explosion with high counter",
 		"explosion_initial_color": "#ccff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 63500
 	},
 	{
@@ -616,6 +715,9 @@
 		"hover_text": "Event 8 - Quick succession - Eighth explosion in rapid fire",
 		"explosion_initial_color": "#99ff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 64000
 	},
 	{
@@ -628,6 +730,9 @@
 		"hover_text": "Event 9 - Quick succession - Ninth explosion with very high counter",
 		"explosion_initial_color": "#66ff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 64500
 	},
 	{
@@ -640,6 +745,9 @@
 		"hover_text": "Event 10 - Last quick succession - Tenth and final rapid explosion",
 		"explosion_initial_color": "#33ff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 65000
 	},
 	{
@@ -652,6 +760,9 @@
 		"hover_text": "Event 11 - Slower pace begins - First of the slower-paced explosions",
 		"explosion_initial_color": "#00ff00",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 68000
 	},
 	{
@@ -664,6 +775,9 @@
 		"hover_text": "Event 12 - Continuing the demonstration with varied counter values",
 		"explosion_initial_color": "#00ff33",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 71000
 	},
 	{
@@ -676,6 +790,9 @@
 		"hover_text": "Event 13 - Mid-range counter value explosion",
 		"explosion_initial_color": "#00ff66",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 74000
 	},
 	{
@@ -688,6 +805,9 @@
 		"hover_text": "Event 14 - Lower counter value for size comparison",
 		"explosion_initial_color": "#00ff99",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 77000
 	},
 	{
@@ -700,6 +820,9 @@
 		"hover_text": "Event 15 - Very high counter near maximum",
 		"explosion_initial_color": "#00ffcc",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 80000
 	},
 	{
@@ -712,6 +835,9 @@
 		"hover_text": "Event 16 - Continuing massive demonstration with 3-second intervals",
 		"explosion_initial_color": "#00ffff",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 83000
 	},
 	{
@@ -724,6 +850,9 @@
 		"hover_text": "Event 17 - High counter explosion",
 		"explosion_initial_color": "#00ccff",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 86000
 	},
 	{
@@ -736,6 +865,9 @@
 		"hover_text": "Event 18 - Moderate counter value",
 		"explosion_initial_color": "#0099ff",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 89000
 	},
 	{
@@ -748,6 +880,9 @@
 		"hover_text": "Event 19 - Very high counter explosion",
 		"explosion_initial_color": "#0066ff",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 92000
 	},
 	{
@@ -760,6 +895,9 @@
 		"hover_text": "Event 20 - Mid-range counter demonstration",
 		"explosion_initial_color": "#0033ff",
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 95000
 	},
 	{
@@ -773,6 +911,9 @@
 		"explosion_initial_color": "#ff00ff",
 		"explosion_initial_radius_size": 200,
 		"layer_id": 8,
+		"graphs": [
+			"test_graph"
+		],
 		"draw_delay": 332000
 	},
 	{

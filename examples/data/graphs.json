@@ -1,0 +1,121 @@
+[
+	{
+		"type": "show_graph_command",
+		"command_delay": 0,
+		"left": 50,
+		"top": 300,
+		"right": 500,
+		"bottom": 700,
+		"border_color": "white",
+		"box_corner_radius": 30,
+		"name": "test_graph",
+		"graph_intervals": 20,
+		"graph_line_width": 5,
+		"graph_y_max": 300,
+		"graph_y_min": 10,
+		"graph_y_segments": 10,
+		"graph_interval_duration": 10,
+		"graph_transition_duration": 500,
+		"grid_enabled": true,
+		"grid_color": "white",
+		"grid_style": "dashed_small"
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"counter": 20,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 5000,
+		"counter": 15,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 10000,
+		"counter": 30,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 15000,
+		"counter": 50,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 20000,
+		"counter": 100,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 25000,
+		"counter": 12,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 30000,
+		"counter": 220,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 35000,
+		"counter": 5,
+		"graphs": [
+			"test_graph"
+		]
+	},
+	{
+		"type": "circle",
+		"lat": 50,
+		"lon": 5,
+		"ttl": 1,
+		"draw_delay": 40000,
+		"counter": 15,
+		"graphs": [
+			"test_graph"
+		]
+	}
+]
