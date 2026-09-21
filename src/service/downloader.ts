@@ -66,5 +66,8 @@ function runDownload(
           serviceState,
         );
       }
+    })
+    .catch((err) => {
+      console.error(err);
     });
 }

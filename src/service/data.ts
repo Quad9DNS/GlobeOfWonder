@@ -9,6 +9,7 @@ import {
   Settings,
   SettingsFields,
   updateFilters,
+  VALID_FILTER_KEYS_RE,
 } from "../settings";
 import { AppState, ServiceState } from "./state";
 import { CircleCustomizationData, CircleData } from "../data/circle";
@@ -343,11 +344,14 @@ export function processServiceData(
           ) {
             continue;
           }
+          if (!VALID_FILTER_KEYS_RE.test(key)) {
+            throw new Error("Invalid filter name!");
+          }
           keys.push(key);
         }
         serviceState.updateFilters(keys);
-        updateFilters(settingsFields, settings);
         serviceState.filtersConfigured = true;
+        updateFilters(settingsFields, settings);
       }
 
       if (incomingEvent.layer_id) {

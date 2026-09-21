@@ -15,6 +15,8 @@ const GLOBE_BUMP_MAP_URL =
 const COUNTRIES_GEOJSON_URL =
   import.meta.env.VITE_COUNTRIES_GEOJSON_URL || "assets/data/countries.geojson";
 
+export const VALID_FILTER_KEYS_RE = /^[A-Za-z_][A-Za-z0-9_-]{0,63}$/;
+
 /**
  * UI elements related to settings
  */
@@ -39,7 +41,7 @@ export type LayerConfig = {
 };
 
 /**
- * Decorator for settigns fields that notifies all listeners that the field has been changed
+ * Decorator for settings fields that notifies all listeners that the field has been changed
  */
 function SettingsField<T>(
   fieldMapper: ((instance: Settings, value: T) => T) | undefined = undefined,
@@ -346,9 +348,11 @@ export class Settings extends EventTarget {
         }
       } else if (param.includes("Filter")) {
         const filterKey = param.replace("Filter", "");
-        this.setFilter(filterKey, parameters[param]);
-        for (const service of this.services) {
-          service.filterKeys.push(filterKey);
+        if (VALID_FILTER_KEYS_RE.test(filterKey)) {
+          this.setFilter(filterKey, parameters[param]);
+          for (const service of this.services) {
+            service.filterKeys.push(filterKey);
+          }
         }
       } else if (param.includes("LayerOpacity")) {
         const layerId = param.replace("LayerOpacity[", "").replace("]", "");
@@ -491,8 +495,10 @@ export function setupSettingsDialog(
   const tzSelector =
     fields.dialogContainer.querySelector<HTMLSelectElement>("#timezone")!;
   for (const tz of Intl.supportedValuesOf("timeZone")) {
-    const option = '<option value="' + tz + '" >' + tz + "</option>";
-    tzSelector.insertAdjacentHTML("beforeend", option);
+    const option = document.createElement("option");
+    option.value = tz;
+    option.innerText = tz;
+    tzSelector.insertAdjacentElement("beforeend", option);
   }
 
   type fieldType = [
@@ -783,27 +789,25 @@ export function setupSettingsDialog(
     heatmapsField.title = "WebGPU support is required for Heatmaps!";
   }
 
-  renderFilters(fields, settings);
-
   return fields;
 }
 
 function renderFilters(fields: SettingsFields, settings: Settings) {
   const filtersArea =
     fields.dialogContainer.querySelector<HTMLDivElement>("#filtersArea")!;
-  filtersArea.innerHTML = ``;
+  filtersArea.innerHTML = "";
 
   for (const field in settings.filters) {
-    filtersArea.insertAdjacentHTML(
-      "beforeend",
-      `
-      <label for="${field}filter" class="filter-label">${field}:</label>
-      <input type="text" id="${field}filter" name="${field}filter" class="filter-value" />
-    `,
-    );
-    const inputField = fields.dialogContainer.querySelector<HTMLInputElement>(
-      `#${field}filter`,
-    )!;
+    const filterLabelElement = document.createElement("label");
+    filterLabelElement.className = "filter-label";
+    filterLabelElement.innerText = field;
+    filtersArea.insertAdjacentElement("beforeend", filterLabelElement);
+    const inputField = document.createElement("input");
+    inputField.type = "text";
+    inputField.id = field + "filter";
+    inputField.name = field + "filter";
+    inputField.className = "filter-value";
+    filtersArea.insertAdjacentElement("beforeend", inputField);
     inputField.value = settings.filters[field] ?? "";
     inputField.addEventListener("change", (_event: Event) => {
       settings.setFilter(field, inputField.value);
@@ -821,7 +825,9 @@ function renderFilters(fields: SettingsFields, settings: Settings) {
 export function updateFilters(fields: SettingsFields, settings: Settings) {
   const filterFields: string[] = [];
   for (const service of settings.services) {
-    filterFields.push(...service.filterKeys);
+    if (service.filtersConfigured) {
+      filterFields.push(...service.filterKeys);
+    }
   }
 
   for (const key in settings.filters) {
@@ -874,16 +880,16 @@ function renderLayers(fields: SettingsFields, settings: Settings) {
   });
 
   for (const layer in settings.layers) {
-    layersArea.insertAdjacentHTML(
-      "beforeend",
-      `
-      <label for="layer${layer}" class="filter-label">Layer ${settings.layers[layer].name} opacity:</label>
-      <input type="range" id="layer${layer}" name="layer${layer}" />
-    `,
-    );
-    const inputField = fields.dialogContainer.querySelector<HTMLInputElement>(
-      `#layer${layer}`,
-    )!;
+    const layerLabelElement = document.createElement("label");
+    layerLabelElement.className = "filter-label";
+    layerLabelElement.innerText =
+      "Layer " + settings.layers[layer].name + " opacity:";
+    layersArea.insertAdjacentElement("beforeend", layerLabelElement);
+    const inputField = document.createElement("input");
+    inputField.type = "range";
+    inputField.id = "layer" + layer;
+    inputField.name = "layer" + layer;
+    layersArea.insertAdjacentElement("beforeend", inputField);
     inputField.valueAsNumber = settings.layers[layer].opacity;
     inputField.addEventListener("change", (_event: Event) => {
       settings.setLayerOpacity(
