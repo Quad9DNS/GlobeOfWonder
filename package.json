@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@rollup/plugin-swc": "^0.4.1",
+    "@swc/core": "^1.16.2",
     "@types/three": "^0.186.0",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
