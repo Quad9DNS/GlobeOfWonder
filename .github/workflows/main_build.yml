@@ -74,7 +74,9 @@ jobs:
           git rm -r *
           cp -r ../dist/* .
           git add -A
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "Automated update"
-          git push
+          if git diff-index --cached --quiet HEAD; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git commit -m "Automated update"
+            git push
+          fi
