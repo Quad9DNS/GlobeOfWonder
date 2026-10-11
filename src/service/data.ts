@@ -20,7 +20,7 @@ import {
   DownloadedData,
 } from "../data/downloaded";
 import { ArcCustomizationData, ArcData } from "../data/arc";
-import { BoundingBoxData, LayerData, ScaleData } from "../data";
+import { BoundingBoxData, BoxBorderData, LayerData, ScaleData } from "../data";
 import { normalize } from "../data/camera";
 import {
   delay,
@@ -35,6 +35,12 @@ import {
   TextboxPointerData,
   TextboxPointerCustomizationData,
 } from "../data/textbox";
+import {
+  GraphAnchorCustomizationData,
+  GraphAnchorData,
+  GraphCustomizationData,
+  GraphData,
+} from "../data/graph";
 
 const COMMON_NON_FILTER_KEYS = [
   "lat",
@@ -57,6 +63,7 @@ const COMMON_NON_FILTER_KEYS = [
   "layer_id",
   "layer_name",
   "ignore_zoom",
+  "graphs",
 ];
 const NON_FILTER_KEYS = {
   explosion: [
@@ -126,8 +133,25 @@ const FLOAT_KEYS = [
   "text_pointer_thickness",
   "text_pointer_arrow_size",
   "scroll_speed",
+  "graph_line_width",
+  "graph_y_max",
+  "graph_y_min",
+  "graph_y_segments",
+  "graph_interval_duration",
+  "graph_transition_duration",
+  "graph_x_axis_font_size",
+  "graph_y_axis_font_size",
+  "graph_label_font_size",
 ];
-const INTEGER_KEYS = ["top", "right", "bottom", "left"];
+const INTEGER_KEYS = [
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "graph_intervals",
+  "graph_x_axis_tick_label_count",
+  "graph_y_axis_tick_label_count",
+];
 
 export type PositionData = {
   lat: number;
@@ -143,6 +167,9 @@ export type CounterData = {
   counter?: number;
   counter_include?: boolean;
 };
+export type GraphCountData = {
+  graphs?: string[];
+};
 type EventTypeData = {
   type:
     | ExplosionTypeData["type"]
@@ -156,6 +183,7 @@ type EventTypeData = {
 export type SharedServiceData = PositionData &
   LifetimeData &
   CounterData &
+  GraphCountData &
   LabelsData &
   LinkData &
   LayerData &
@@ -219,6 +247,7 @@ function isCommandData(data: ServiceData): data is ServiceCommandData {
     "view_command",
     "settings_command",
     "show_textbox_command",
+    "show_graph_command",
     "clear_map_command",
     "play_sound_command",
   ].includes(data.type);
@@ -229,6 +258,7 @@ function autoHandleDelay(data: ServiceCommandData): boolean {
     "settings_command",
     "clear_map_command",
     "show_textbox_command",
+    "show_graph_command",
   ].includes(data.type);
 }
 type CommonCommandData = {
@@ -262,6 +292,7 @@ type ClearMapCommandTypeData = {
 export type ClearMapCommandData = {
   clear_types?: string[];
   clear_events?: boolean;
+  clear_graphs?: boolean;
 };
 export type ClearMapCommandServiceData = CommonCommandData &
   ClearMapCommandTypeData &
@@ -278,11 +309,30 @@ export type ShowTextboxCommandServiceData = CommonCommandData &
   ShowTextboxCommandTypeData &
   ShowTextboxCommandData &
   BoundingBoxData &
+  BoxBorderData &
   LinkData &
   TextboxCustomizationData &
   TextboxPointerCustomizationData;
 export type ShowTextboxCommandPointerServiceData =
   ShowTextboxCommandServiceData & SharedServiceData;
+
+type ShowGraphCommandTypeData = {
+  type: "show_graph_command";
+};
+export type ShowGraphCommandData = {
+  settings: Record<string, string>;
+};
+export type ShowGraphCommandServiceData = CommonCommandData &
+  LifetimeData &
+  ShowGraphCommandTypeData &
+  ShowGraphCommandData &
+  BoundingBoxData &
+  BoxBorderData &
+  LinkData &
+  GraphCustomizationData &
+  GraphAnchorCustomizationData;
+export type ShowGraphCommandPointerServiceData = ShowGraphCommandServiceData &
+  SharedServiceData;
 
 type PlaySoundCommandTypeData = {
   type: "play_sound_command";
@@ -303,7 +353,8 @@ export type ServiceCommandData =
   | SettingsCommandServiceData
   | PlaySoundCommandServiceData
   | ClearMapCommandServiceData
-  | ShowTextboxCommandServiceData;
+  | ShowTextboxCommandServiceData
+  | ShowGraphCommandServiceData;
 export type ServiceData = ServiceEventData | ServiceCommandData;
 
 /**
@@ -373,6 +424,14 @@ export function processServiceData(
           startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
         });
       }
+      if (incomingEvent.graphs !== undefined) {
+        appState.newGraphEventsQueue.push({
+          graphs: incomingEvent.graphs,
+          count: incomingEvent.counter ?? 1,
+          startTime: Date.now() + (incomingEvent.draw_delay ?? 0),
+          clear: false,
+        });
+      }
 
       // Ignore invalid 0-0 data
       if (
@@ -421,7 +480,12 @@ function parseServiceData(data: string): ServiceData | null {
         k == "always_faces_viewer" ||
         k == "display_text_always_faces_viewer" ||
         k == "display_text_hover_only" ||
-        k == "clear_events"
+        k == "clear_events" ||
+        k == "clear_graphs" ||
+        k == "grid_enabled" ||
+        k == "graph_filled" ||
+        k == "graph_x_axis_labels_visible" ||
+        k == "graph_y_axis_labels_visible"
       ) {
         return Boolean(v) && v != "false";
       } else {
@@ -608,6 +672,7 @@ function buildAndPublishCommand(
       if (settings.enableClearMapCommands) {
         state.clearEventsQueue.push({
           clearEvents: data.clear_events ?? true,
+          clearGraphs: data.clear_graphs ?? true,
           types: data.clear_types ?? [],
         });
       }
@@ -623,6 +688,20 @@ function buildAndPublishCommand(
             new TextboxPointerData(
               data as ShowTextboxCommandPointerServiceData,
               textboxData,
+            ),
+          );
+        }
+      }
+      break;
+    case "show_graph_command":
+      if (settings.enableGraphCommands) {
+        const graphData = new GraphData(data as ShowGraphCommandServiceData);
+        state.newNonEventIndicatorsQueue.push(graphData);
+        if (data.graph_anchor_lat && data.graph_anchor_lon) {
+          state.newPointsQueue.push(
+            new GraphAnchorData(
+              data as ShowGraphCommandPointerServiceData,
+              graphData,
             ),
           );
         }

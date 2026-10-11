@@ -16,6 +16,10 @@ export class AppState {
    */
   newEventsQueue: CountEvent[] = [];
   /**
+   * Similar to newEventsQueue but is used to fill graphs with data.
+   */
+  newGraphEventsQueue: GraphEvent[] = [];
+  /**
    * All clear map events should be pushed into this queue. Globe is expected to react accordingly and push negative count events for rectifying event counter.
    */
   clearEventsQueue: ClearMapEvent[] = [];
@@ -44,12 +48,21 @@ export interface CountEvent {
 }
 
 /**
+ * Similar to CountEvent, but used to fill graphs.
+ */
+export interface GraphEvent extends CountEvent {
+  graphs: string[];
+  clear: boolean;
+}
+
+/**
  * Represents clear map events that were received.
  * Used to process clearing in the globe and also update events if needed.
  */
 export interface ClearMapEvent {
   types: string[];
   clearEvents: boolean;
+  clearGraphs: boolean;
 }
 
 /**

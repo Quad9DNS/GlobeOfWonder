@@ -20,6 +20,8 @@ import { setupDataDownloader } from "./service/downloader.ts";
 import { setupOverlays } from "./components/overlays.ts";
 import { IndicatorData } from "./data/indicator.ts";
 import { TextboxData } from "./data/textbox.ts";
+import { setupGraphService } from "./service/graph.ts";
+import { GraphData } from "./data/graph.ts";
 
 let appContainer = document.querySelector<HTMLDivElement>("#app")!;
 appContainer.innerHTML = `
@@ -85,12 +87,14 @@ setupDataDownloader(
 settings.addEventListener(settings.clearMapEventType, () => {
   state.clearEventsQueue.push({
     clearEvents: true,
+    clearGraphs: true,
     types: [],
   });
 });
 
 setupEventCounters(appContainer, state, settings);
 setupEventCountKey(appContainer, state, settings);
+setupGraphService(state, settings);
 
 setupGlobe(appContainer, state, settings);
 setupOverlays(appContainer, state, settings);
@@ -114,6 +118,7 @@ declare global {
     DownloadedData: typeof DownloadedData;
     ArcData: typeof ArcData;
     TextboxData: typeof TextboxData;
+    GraphData: typeof GraphData;
     addObject: (newPoint: PointData) => void;
     addIndicator: (newIndicator: IndicatorData) => void;
   }
@@ -126,6 +131,7 @@ if (import.meta.env.MODE == "development") {
   window.DownloadedData = DownloadedData;
   window.ArcData = ArcData;
   window.TextboxData = TextboxData;
+  window.GraphData = GraphData;
   window.addObject = (newPoint: PointData) => {
     state.newPointsQueue.push(newPoint);
   };

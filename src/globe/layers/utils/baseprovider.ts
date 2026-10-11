@@ -70,7 +70,7 @@ export default abstract class CommonObjectProvider<T extends PointData>
   handleClearEvent(event: ClearMapEvent): CountEvent[] {
     const events = [];
     if (event.types.length == 0 || event.types.includes(this.objectType)) {
-      if (event.clearEvents) {
+      if (event.clearEvents || event.clearGraphs) {
         for (const data of this.data) {
           events.push({
             // Most events should have startTime - if they don't, startTime of 0 will probably work fine

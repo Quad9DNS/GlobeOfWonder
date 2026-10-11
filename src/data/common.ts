@@ -45,6 +45,7 @@ export abstract class CommonData<T>
   always_faces_viewer: boolean;
   counter?: number;
   counter_include?: boolean;
+  graphs?: string[];
 
   dispersed_lat?: number;
   dispersed_lon?: number;
