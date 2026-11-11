@@ -11,14 +11,14 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "d3": "^7.9.0",
+    "d3": "^7.9.2",
     "three-globe": "^2.45.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/d3": "^7",
     "@rollup/plugin-swc": "^0.4.1",
-    "@swc/core": "^1.16.21",
+    "@swc/core": "^1.16.22",
     "@types/three": "^0.187.0",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
@@ -26,7 +26,7 @@
     "prettier": "3.9.10",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vite-plugin-singlefile": "^2.3.4",
     "vite-svg-loader": "^5.1.3"
   }
